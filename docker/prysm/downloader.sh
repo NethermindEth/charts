@@ -4,17 +4,18 @@ IFS=$'\n\t'
 
 set -x
 
-EXECUTABLE=${1}
+EXECUTABLE_NAME=${1}
+EXECUTABLE_FULL_NAME=${EXECUTABLE_NAME}-${VERSION}-${TARGETPLATFORM/\//\-}
 echo "VERSION, ${VERSION}"
 echo "TARGETPLATFORM, ${TARGETPLATFORM}"
 
 
-wget -q https://github.com/prysmaticlabs/prysm/releases/download/${VERSION}/${EXECUTABLE}-${VERSION}-${TARGETPLATFORM/\//\-}
-wget -q https://github.com/prysmaticlabs/prysm/releases/download/${VERSION}/${EXECUTABLE}-${VERSION}-${TARGETPLATFORM/\//\-}.sha256
+wget -q https://github.com/prysmaticlabs/prysm/releases/download/"${VERSION}"/"${EXECUTABLE_FULL_NAME}"
+wget -q https://github.com/prysmaticlabs/prysm/releases/download/"${VERSION}"/"${EXECUTABLE_FULL_NAME}".sha256
 ls -la .
-sha256sum -c ${EXECUTABLE}-${VERSION}-${TARGETPLATFORM/\//\-}.sha256
+sha256sum -c "${EXECUTABLE_FULL_NAME}".sha256
 
-mkdir -p /app/cmd/${EXECUTABLE}/
-mv ${EXECUTABLE}-${VERSION}-${TARGETPLATFORM/\//\-} /app/cmd/${EXECUTABLE}/${EXECUTABLE}
+mkdir -p /app/cmd/"${EXECUTABLE_NAME}"/
+mv "${EXECUTABLE_FULL_NAME}" /app/cmd/"${EXECUTABLE_NAME}"/"${EXECUTABLE_NAME}"
 
-chmod +x /app/cmd/${EXECUTABLE}/${EXECUTABLE}
+chmod +x /app/cmd/"${EXECUTABLE_NAME}"/"${EXECUTABLE_NAME}"
