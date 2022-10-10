@@ -36,6 +36,7 @@ jobs:
           file: Dockerfile.beacon
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: VERSION=${{ github.event.inputs.version }}
           tags: nethermindeth/prysm-beacon-chain:${{ github.event.inputs.version }}
 
   build-validator:
@@ -66,6 +67,7 @@ jobs:
           file: Dockerfile.validator
           platforms: linux/amd64,linux/arm64
           push: true
+          build-args: VERSION=${{ github.event.inputs.version }}
           tags: nethermindeth/prysm-validator:${{ github.event.inputs.version }}
 
 
