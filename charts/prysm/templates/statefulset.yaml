@@ -138,6 +138,11 @@ spec:
             - "--terminal-total-difficulty-override={{ $root.Values.totalDifficultyOverride }}"
           {{- end }}
 
+          {{- if $root.Values.global.checkPointSync.enabled }}
+            - "--checkpoint-sync-url={{ $root.Values.global.checkPointSync.url }}"
+            - "--genesis-beacon-api-url={{ $root.Values.global.checkPointSync.url }}"
+          {{- end }}
+
           {{- if or (eq $root.Values.global.network "prater") (eq $root.Values.global.network "ropsten") (eq $root.Values.global.network "sepolia") }}
             - "--genesis-state=/data/genesis.ssz"
           {{- end }}

@@ -25,6 +25,10 @@ global:
   ##
   imagePullSecrets: []
 
+  checkPointSync:
+    enabled: false
+    url: ""
+
   ## Service account
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
   ## Additional settings could be made in non-global section.
