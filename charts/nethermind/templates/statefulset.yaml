@@ -156,9 +156,9 @@ spec:
           {{- end }}
           {{-  if .Values.seq.enabled }}
               --Seq.Enabled
-              --Seq.MinLevel=seq.MinLevel
-              --Seq.ApiKey=seq.ApiKey
-              --Seq.ServerUrl=seq.ServerUrl
+              --Seq.MinLevel={{ .Values.seq.MinLevel }}
+              --Seq.ApiKey={{ .Values.seq.ApiKey }}
+              --Seq.ServerUrl={{ .Values.seq.ServerUrl }}
           {{- end }}
           {{- range .Values.extraFlags }}
               {{ . | quote }}
