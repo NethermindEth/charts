@@ -154,6 +154,12 @@ spec:
               --Merge.TerminalTotalDifficulty={{ .Values.merge.terminalTotalDifficulty }}
               {{- end }}
           {{- end }}
+          {{-  if .Values.seq.enabled }}
+              --Seq.Enabled
+              --Seq.MinLevel=seq.MinLevel
+              --Seq.ApiKey=seq.ApiKey
+              --Seq.ServerUrl=seq.ServerUrl
+          {{- end }}
           {{- range .Values.extraFlags }}
               {{ . | quote }}
           {{- end }}
