@@ -164,7 +164,7 @@ spec:
               mountPath: /data/scripts
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-geth
+        - name: geth
           image: "{{ .Values.geth.image.repository }}:{{ .Values.geth.image.tag }}"
           imagePullPolicy: {{ .Values.geth.image.pullPolicy }}
           command:
@@ -301,7 +301,7 @@ spec:
               scheme: {{ .Values.geth.readinessProbe.httpGet.scheme }}
         {{- end }}
       {{- end }}
-        - name: {{ include "common.names.fullname" . }}-prysm
+        - name: prysm
         {{- if ne .Values.global.network "gnosis" }}
           image: "{{ .Values.prysm.image.repository }}:{{ .Values.prysm.image.tag }}"
           imagePullPolicy: {{ .Values.prysm.image.pullPolicy }}
