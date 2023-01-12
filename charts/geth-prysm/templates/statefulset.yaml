@@ -327,7 +327,7 @@ spec:
           {{- if .Values.prysm.totalDifficultyOverride }}
             - "--terminal-total-difficulty-override={{ .Values.prysm.totalDifficultyOverride }}"
           {{- end }}
-          {{- if .Values.global.checkPointSync.enabled }}
+          {{- if .Values.prysm.global.checkPointSync.enabled }}
             - "--checkpoint-sync-url={{ .Values.prysm.global.checkPointSync.url }}"
             - "--genesis-beacon-api-url={{ .Values.prysm.global.checkPointSync.url }}"
           {{- end }}
