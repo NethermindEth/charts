@@ -63,17 +63,6 @@ global:
       ##
       enabled: false
 
-  ## Configure liveness and readiness probes
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-  ## NB! readinessProbe and livenessProbe must be disabled before fully synced
-  ## Additional settings could be made in non-global section.
-  ##
-  livenessProbe:
-    enabled: true
-
-  readinessProbe:
-    enabled: true
-
   ## Server endpoints for an execution layer jwt authenticated HTTP JSON-RPC connection.
   ## Uses the same endpoint to populate the deposit cache.
   ## A separate Statefulset will be created for each specified address
@@ -393,6 +382,7 @@ geth:
   ## NB! readinessProbe and livenessProbe must be disabled before fully synced
   ##
   livenessProbe:
+    enabled: true
     initialDelaySeconds: 900
     timeoutSeconds: 3
     periodSeconds: 30
@@ -404,6 +394,7 @@ geth:
       scheme: HTTP
   
   readinessProbe:
+    enabled: true
     initialDelaySeconds: 30
     timeoutSeconds: 3
     periodSeconds: 30
@@ -615,6 +606,7 @@ prysm:
   ## NB! readinessProbe and livenessProbe must be disabled before genesis
   ##
   livenessProbe:
+    enabled: true
     initialDelaySeconds: 900
     timeoutSeconds: 3
     periodSeconds: 30
@@ -626,6 +618,7 @@ prysm:
       scheme: HTTP
   
   readinessProbe:
+    enabled: true
     initialDelaySeconds: 300
     timeoutSeconds: 3
     periodSeconds: 30

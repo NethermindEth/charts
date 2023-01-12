@@ -276,7 +276,7 @@ spec:
             - containerPort: {{ .Values.geth.sidecar.bindPort }}
               name: sidecar
               protocol: TCP
-        {{- if or .Values.global.livenessProbe.enabled .Values.geth.livenessProbe.enabled }}
+        {{- if .Values.geth.livenessProbe.enabled }}
           livenessProbe:
             initialDelaySeconds: {{ .Values.geth.livenessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.geth.livenessProbe.timeoutSeconds }}
@@ -288,7 +288,7 @@ spec:
               port: {{ .Values.geth.livenessProbe.httpGet.port }}
               scheme: {{ .Values.geth.livenessProbe.httpGet.scheme }}
         {{- end }}
-        {{- if or .Values.global.readinessProbe.enabled .Values.geth.readinessProbe.enabled }}
+        {{- if .Values.geth.readinessProbe.enabled }}
           readinessProbe:
             initialDelaySeconds: {{ .Values.geth.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.geth.readinessProbe.timeoutSeconds }}
@@ -417,7 +417,7 @@ spec:
             - containerPort: {{ .Values.prysm.sidecar.bindPort }}
               name: sidecar
               protocol: TCP
-        {{- if or .Values.global.livenessProbe.enabled .Values.prysm.livenessProbe.enabled }}
+        {{- if or .Values.prysm.livenessProbe.enabled }}
           livenessProbe:
             initialDelaySeconds: {{ .Values.prysm.livenessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.prysm.livenessProbe.timeoutSeconds }}
@@ -429,7 +429,7 @@ spec:
               port: {{ .Values.prysm.livenessProbe.httpGet.port }}
               scheme: {{ .Values.prysm.livenessProbe.httpGet.scheme }}
         {{- end }}
-        {{- if or .Values.global.readinessProbe.enabled .Values.prysm.readinessProbe.enabled }}
+        {{- if .Values.prysm.readinessProbe.enabled }}
           readinessProbe:
             initialDelaySeconds: {{ .Values.prysm.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.prysm.readinessProbe.timeoutSeconds }}
