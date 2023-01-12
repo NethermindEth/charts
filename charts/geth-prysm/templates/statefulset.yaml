@@ -146,11 +146,11 @@ spec:
               chown -R {{ .Values.global.securityContext.runAsUser }}:{{ .Values.global.securityContext.runAsUser }} /data | true;
           {{- end }}
           volumeMounts:
-            - name: config
+            - name: config-prysm
               mountPath: /config
-            - name: data
+            - name: data-prysm
               mountPath: /data
-            - name: scripts
+            - name: scripts-prysm
               mountPath: /data/scripts
       {{- if or (eq .Values.global.network "mainnet") (eq .Values.global.network "prater") (eq .Values.global.network "ropsten") (eq .Values.global.network "sepolia") }}
         - name: download-genesis-state
@@ -250,14 +250,14 @@ spec:
               protocol: UDP
           {{- end }}
           volumeMounts:
-            - name: data
+            - name: data-geth
               mountPath: /data/ethereum
           {{- if .Values.global.JWTSecret }}
             - name: jwtsecret
               mountPath: /secret
               readOnly: true
           {{- end }}
-            - name: env-nodeport
+            - name: env-nodeport-geth
               mountPath: /env
         {{- with .Values.geth.resources }}
           resources:
@@ -389,15 +389,15 @@ spec:
               protocol: TCP
           {{- end }}
           volumeMounts:
-            - name: data
+            - name: data-prysm
               mountPath: /data
             - name: jwtsecret
               mountPath: /secret
               readOnly: true
-            - name: config
+            - name: config-prysm
               mountPath: /config
           {{- if eq .Values.global.network "gnosis" }}
-            - name: gnosis-config
+            - name: gnosis-config-prysm
               mountPath: /data/gnosis-config
           {{- end }}
         {{- with .Values.prysm.resources }}
