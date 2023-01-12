@@ -1,5 +1,5 @@
 apiVersion: v2
-name: geth_prysm
+name: geth-prysm
 version: 0.1.0
 appVersion: 0.1.0
 kubeVersion: "^1.18.0-0"
