@@ -3,7 +3,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: {{ include "common.names.fullname" . }}
+  name: {{ include "common.names.fullname" . }}-geth
   {{- if .Values.geth.metrics.prometheusRule.namespace }}
   namespace: {{ .Values.geth.metrics.prometheusRule.namespace }}
   {{- else }}
