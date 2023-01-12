@@ -97,6 +97,52 @@ global:
     enabled: true
     maxUnavailable: 1
 
+  ## Node labels for pod assignment
+  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
+  ##
+  nodeSelector: {}
+
+  ## Tolerations for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  ##
+  tolerations: {}
+
+  ## Affinity for pod assignment
+  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  ##
+  ## Example:
+  ## affinity:
+  ##   podAntiAffinity:
+  ##     requiredDuringSchedulingIgnoredDuringExecution:
+  ##     - labelSelector:
+  ##         matchExpressions:
+  ##         - key: app.kubernetes.io/name
+  ##           operator: In
+  ##           values:
+  ##           - prysm
+  ##       topologyKey: kubernetes.io/hostname
+  ##
+  affinity: {}
+
+  ## Used to assign priority to pods
+  ## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+  ##
+  priorityClassName: ""
+
+
+  ## Termination Grace Period
+  ## ref: https://kubernetes.io/docs/tasks/run-application/force-delete-stateful-set-pod/#delete-pods
+  ##
+  terminationGracePeriodSeconds: 300
+
+  ## Pod Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  securityContext:
+    fsGroup: 1001
+    runAsUser: 1001
+
+
 ## Service account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
@@ -193,18 +239,6 @@ geth:
   ##
   additionalLabels:
     client-type: "execution"
-  
-  ## Termination Grace Period
-  ## ref: https://kubernetes.io/docs/tasks/run-application/force-delete-stateful-set-pod/#delete-pods
-  ##
-  terminationGracePeriodSeconds: 300
-  
-  ## Pod Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-  ##
-  securityContext:
-    fsGroup: 1001
-    runAsUser: 1001
   
   # Manually specify TerminalTotalDifficulty, overriding the bundled setting
   terminalTotalDifficulty: ""
@@ -353,39 +387,7 @@ geth:
       - ReadWriteOnce
     size: 900Gi
     annotations: {}
-  
-  ## Node labels for pod assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
-  nodeSelector: {}
-  
-  ## Tolerations for pod assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-  ##
-  tolerations: {}
-  
-  ## Affinity for pod assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  ## Example:
-  ## affinity:
-  ##   podAntiAffinity:
-  ##     requiredDuringSchedulingIgnoredDuringExecution:
-  ##     - labelSelector:
-  ##         matchExpressions:
-  ##         - key: app.kubernetes.io/name
-  ##           operator: In
-  ##           values:
-  ##           - geth
-  ##       topologyKey: kubernetes.io/hostname
-  ##
-  affinity: {}
-  
-  ## used to assign priority to pods
-  ## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
-  ##
-  priorityClassName: ""
-  
+
   ## Configure liveness and readiness probes
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   ## NB! readinessProbe and livenessProbe must be disabled before fully synced
@@ -435,13 +437,6 @@ prysm:
   ##
   additionalLabels:
     client-type: "consensus"
-  
-  ## Pod Security Context
-  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-  ##
-  securityContext:
-    fsGroup: 1001
-    runAsUser: 1001
   
   ## Init image is used to chown data volume, initialise genesis, etc.
   ##
@@ -545,38 +540,6 @@ prysm:
     # p2p options
     - "--p2p-max-peers=160"
     - "--enable-peer-scorer"
-  
-  ## Node labels for pod assignment
-  ## ref: https://kubernetes.io/docs/user-guide/node-selection/
-  ##
-  nodeSelector: {}
-  
-  ## Tolerations for pod assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-  ##
-  tolerations: {}
-  
-  ## Affinity for pod assignment
-  ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-  ##
-  ## Example:
-  ## affinity:
-  ##   podAntiAffinity:
-  ##     requiredDuringSchedulingIgnoredDuringExecution:
-  ##     - labelSelector:
-  ##         matchExpressions:
-  ##         - key: app.kubernetes.io/name
-  ##           operator: In
-  ##           values:
-  ##           - prysm
-  ##       topologyKey: kubernetes.io/hostname
-  ##
-  affinity: {}
-  
-  ## Used to assign priority to pods
-  ## ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
-  ##
-  priorityClassName: ""
   
   ## Monitoring
   ##

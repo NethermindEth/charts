@@ -16,32 +16,34 @@ spec:
     metadata:
       labels:
         {{- include "common.labels.matchLabels" . | nindent 8 }}
+      annotations:
+        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
-    {{- with (concat .Values.geth.imagePullSecrets .Values.geth.imagePullSecrets) }}
+    {{- with (concat .Values.prysm.imagePullSecrets .Values.prysm.imagePullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.geth.affinity }}
+    {{- with .Values.global.affinity }}
       affinity:
         {{ toYaml . | nindent 8 | trim }}
     {{- end }}
-    {{- with .Values.geth.tolerations }}
+    {{- with .Values.global.tolerations }}
       tolerations:
         {{ toYaml . | nindent 8 | trim }}
     {{- end }}
-    {{- with .Values.geth.nodeSelector }}
+    {{- with .Values.global.nodeSelector }}
       nodeSelector:
         {{ toYaml . | nindent 8 | trim }}
     {{- end }}
-    {{- with .Values.geth.securityContext }}
+    {{- with .Values.global.securityContext }}
       securityContext:
         {{ toYaml . | nindent 8 | trim }}
     {{- end }}
     {{- if .Values.geth.terminationGracePeriodSeconds }}
-      terminationGracePeriodSeconds: {{ .Values.geth.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.global.terminationGracePeriodSeconds }}
     {{- end }}
-      serviceAccountName: {{ include "common.names.serviceAccountName" . }}
-      priorityClassName: {{ .Values.geth.priorityClassName | quote }}
+      serviceAccountName: {{ include "common.names.fullname" . }}
+      priorityClassName: {{ .Values.global.priorityClassName | quote }}
       initContainers:
         - name: init-geth
           image: "{{ .Values.geth.initImage.repository }}:{{ .Values.geth.initImage.tag }}"
@@ -85,7 +87,7 @@ spec:
               cat /env/init-nodeport;
           {{- end }}
           {{- if and .Values.geth.persistence.enabled .Values.geth.initChownData }}
-              mkdir -p /data && chown -R {{ .Values.geth.securityContext.runAsUser }}:{{ .Values.geth.securityContext.runAsUser }} /data;
+              mkdir -p /data && chown -R {{ .Values.global.securityContext.runAsUser }}:{{ .Values.global.securityContext.runAsUser }} /data;
           {{- end }}
           volumeMounts:
             - name: env-nodeport-geth
@@ -141,7 +143,7 @@ spec:
               echo "Pod will connect to the ${EE} endpoint";
               cat /config/config.yaml;
           {{- if and .Values.prysm.persistence.enabled .Values.prysm.initChownData }}
-              chown -R {{ .Values.prysm.securityContext.runAsUser }}:{{ .Values.prysm.securityContext.runAsUser }} /data | true;
+              chown -R {{ .Values.global.securityContext.runAsUser }}:{{ .Values.global.securityContext.runAsUser }} /data | true;
           {{- end }}
           volumeMounts:
             - name: config
@@ -495,50 +497,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.prysm.persistence.size | quote }}
----
-apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
-kind: StatefulSet
-metadata:
-  name: {{ include "common.names.fullname" . }}
-  labels:
-    {{- include "common.labels.statefulset" . | nindent 4 }}
-spec:
-  replicas: {{ len .Values.global.executionEndpoints }}
-  podManagementPolicy: "Parallel"
-  selector:
-    matchLabels:
-      {{- include "common.labels.matchLabels" . | nindent 6 }}
-  serviceName: {{ include "common.names.fullname" . }}
-  template:
-    metadata:
-      labels:
-        {{- include "common.labels.matchLabels" . | nindent 8 }}
-      annotations:
-        checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-    spec:
-    {{- with (concat .Values.prysm.imagePullSecrets .Values.prysm.imagePullSecrets) }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.prysm.affinity }}
-      affinity:
-        {{ toYaml . | nindent 8 | trim }}
-    {{- end }}
-    {{- with .Values.prysm.tolerations }}
-      tolerations:
-        {{ toYaml . | nindent 8 | trim }}
-    {{- end }}
-    {{- with .Values.prysm.nodeSelector }}
-      nodeSelector:
-        {{ toYaml . | nindent 8 | trim }}
-    {{- end }}
-    {{- with .Values.prysm.securityContext }}
-      securityContext:
-        {{ toYaml . | nindent 8 | trim }}
-    {{- end }}
-      serviceAccountName: {{ include "common.names.fullname" . }}
-      priorityClassName: {{ .Values.prysm.priorityClassName | quote }}
-      initContainers:
+
 
 
 

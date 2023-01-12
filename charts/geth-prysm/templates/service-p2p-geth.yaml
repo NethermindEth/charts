@@ -14,12 +14,12 @@ metadata:
     {{- include "common.labels.standard" $ | nindent 4 }}
     pod: "{{ include "common.names.fullname" $ }}-{{ $i }}"
     type: p2p
-  {{- with $.Values.p2pNodePort.annotations }}
+  {{- with $.Values.geth.p2pNodePort.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  type: {{ $.Values.p2pNodePort.type }}
+  type: {{ $.Values.geth.p2pNodePort.type }}
   externalTrafficPolicy: Local
   ports:
     - name: p2p-tcp
@@ -27,7 +27,7 @@ spec:
       protocol: TCP
       targetPort: {{ $port }}
       nodePort: {{ $port }}
-  {{- if eq $.Values.p2pNodePort.type "NodePort" }}
+  {{- if eq $.Values.geth.p2pNodePort.type "NodePort" }}
     - name: p2p-udp
       port: {{ include "geth.p2pPort" $ }}
       protocol: UDP
