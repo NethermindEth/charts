@@ -174,7 +174,7 @@ spec:
               . /env/init-nodeport;
             {{- end }}
               exec geth
-          {{- if .Values.global.JWTSecret }}
+          {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
               {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/jwt
               {{- else }}
@@ -228,7 +228,7 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
           ports:
-          {{- if .Values.global.JWTSecret }}
+          {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
             - name: authrpc
               containerPort: {{ .Values.geth.authRpc.port }}
           {{- end }}
@@ -408,9 +408,11 @@ spec:
               mountPath: /external-secrets
               readOnly: true
           {{- end }}
+          {{- if .Values.global.JWTSecret }}
             - name: jwtsecret
               mountPath: /secret
               readOnly: true
+          {{- end }}
             - name: config-prysm
               mountPath: /config
           {{- if eq .Values.global.network "gnosis" }}
@@ -460,9 +462,11 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
+      {{- if .Values.global.JWTSecret }}
         - name: jwtsecret
           secret:
             secretName: {{ include "common.names.fullname" . }}
+      {{- end }}
         - name: config-prysm
           emptyDir: {}
       {{- if .Values.global.externalSecrets.enabled }}
