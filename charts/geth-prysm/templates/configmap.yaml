@@ -22,10 +22,6 @@ data:
       curl --output /data/genesis.ssz "https://raw.githubusercontent.com/eth-clients/merge-testnets/main/sepolia/genesis.ssz"
     fi
 {{- end }}
-  execution-endpoints.txt: |-
-{{- range $i, $e := .Values.global.executionEndpoints }}
-    {{ . }}
-{{- end }}
 
 {{- if eq .Values.global.network "gnosis" }}
 ---

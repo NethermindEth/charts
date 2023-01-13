@@ -63,15 +63,6 @@ global:
       ##
       enabled: false
 
-  ## Server endpoints for an execution layer jwt authenticated HTTP JSON-RPC connection.
-  ## Uses the same endpoint to populate the deposit cache.
-  ## A separate Statefulset will be created for each specified address
-  ##
-  ## !!!!! WARNING !!!!!
-  ## NEVER CHANGE THE ORDER OF ENDPOINTS AS THIS MAY BREAK
-  ## THE CONSENSUS AND EXECTION CLIENTS CONNECTIVITY
-  executionEndpoints: []
-
   ## To get Prysm up and running in only a few minutes
   ## from a recent finalized checkpoint state rather than syncing from genesis.
   ##

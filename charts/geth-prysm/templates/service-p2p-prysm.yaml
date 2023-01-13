@@ -1,5 +1,5 @@
 {{- if .Values.prysm.p2pNodePort.enabled -}}
-{{- range $i, $e := until (len .Values.global.executionEndpoints) }}
+{{- range $i, $e := until (int .Values.global.replicaCount) }}
 {{- $port := add $.Values.prysm.p2pNodePort.startAt $i -}}
 {{- if hasKey $.Values.prysm.p2pNodePort.replicaToNodePort ($i | toString) -}}
   {{ $port = index $.Values.prysm.p2pNodePort.replicaToNodePort ($i | toString) }}
