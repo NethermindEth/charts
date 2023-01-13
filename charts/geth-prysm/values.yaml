@@ -131,6 +131,10 @@ global:
     fsGroup: 1001
     runAsUser: 1001
 
+  externalSecrets:
+    enabled: true
+    secretName: ethereum-validators-secrets
+
 
 ## Service account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/

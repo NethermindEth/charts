@@ -176,7 +176,11 @@ spec:
             {{- end }}
               exec geth
           {{- if .Values.global.JWTSecret }}
+              {{- if .Values.global.externalSecrets.enabled }}
+              --authrpc.jwtsecret=/external-secrets/jwt
+              {{- else }}
               --authrpc.jwtsecret=/secret/jwtsecret
+              {{- end }}
               --authrpc.addr={{ .Values.geth.authRpc.addr }}
               --authrpc.port={{ .Values.geth.authRpc.port }}
               --authrpc.vhosts={{ .Values.geth.authRpc.vhosts }}
@@ -252,6 +256,11 @@ spec:
           volumeMounts:
             - name: data-geth
               mountPath: /data/ethereum
+          {{- if .Values.global.externalSecrets.enabled }}
+            - name: ethereum-validators-secrets
+              mountPath: /external-secrets
+              readOnly: true
+          {{- end }}
           {{- if .Values.global.JWTSecret }}
             - name: jwtsecret
               mountPath: /secret
@@ -315,7 +324,11 @@ spec:
             - "--rpc-port={{ .Values.prysm.rpc.port }}"
             - "--accept-terms-of-use"
             - "--config-file=/config/config.yaml"
+          {{- if .Values.global.externalSecrets.enabled }}
+            - "--jwt-secret=/external-secrets/jwt"
+          {{- else }}
             - "--jwt-secret=/secret/jwtsecret"
+          {{- end }}
           {{- if .Values.prysm.builderEndpoint }}
             - "--http-mev-relay={{ .Values.prysm.builderEndpoint }}"
           {{- end }}
@@ -391,6 +404,11 @@ spec:
           volumeMounts:
             - name: data-prysm
               mountPath: /data
+          {{- if .Values.global.externalSecrets.enabled }}
+            - name: ethereum-validators-secrets
+              mountPath: /external-secrets
+              readOnly: true
+          {{- end }}
             - name: jwtsecret
               mountPath: /secret
               readOnly: true
@@ -448,6 +466,11 @@ spec:
             secretName: {{ include "common.names.fullname" . }}
         - name: config-prysm
           emptyDir: {}
+      {{- if .Values.global.externalSecrets.enabled }}
+        - name: ethereum-validators-secrets
+          secret:
+            secretName: {{ .Values.global.externalSecrets.secretName }}
+      {{- end }}
       {{- if eq .Values.global.network "gnosis" }}
         - name: gnosis-config-prysm
           configMap:
