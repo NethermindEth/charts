@@ -125,7 +125,6 @@ global:
   externalSecrets:
     enabled: false
     secretStoreRef: secretStoreRef
-    target: target
     data:
       - secretKey: jwt
         remoteRef:
