@@ -256,7 +256,7 @@ spec:
             - name: data-geth
               mountPath: /data/ethereum
           {{- if .Values.global.externalSecrets.enabled }}
-            - name: {{ include "common.names.fullname" . }}
+            - name: external-secrets
               mountPath: /external-secrets
               readOnly: true
           {{- end }}
@@ -404,7 +404,7 @@ spec:
             - name: data-prysm
               mountPath: /data
           {{- if .Values.global.externalSecrets.enabled }}
-            - name: {{ include "common.names.fullname" . }}
+            - name: external-secrets
               mountPath: /external-secrets
               readOnly: true
           {{- end }}
@@ -470,9 +470,9 @@ spec:
         - name: config-prysm
           emptyDir: {}
       {{- if .Values.global.externalSecrets.enabled }}
-        - name: {{ include "common.names.fullname" . }}
+        - name: external-secrets
           secret:
-            secretName: {{ .Values.global.externalSecrets.secretName }}
+            secretName: eso-{{ include "common.names.fullname" . }}
       {{- end }}
       {{- if eq .Values.global.network "gnosis" }}
         - name: gnosis-config-prysm
