@@ -256,7 +256,7 @@ spec:
             - name: data-geth
               mountPath: /data/ethereum
           {{- if .Values.global.externalSecrets.enabled }}
-            - name: ethereum-validators-secrets
+            - name: {{ include "common.names.fullname" . }}
               mountPath: /external-secrets
               readOnly: true
           {{- end }}
@@ -404,7 +404,7 @@ spec:
             - name: data-prysm
               mountPath: /data
           {{- if .Values.global.externalSecrets.enabled }}
-            - name: ethereum-validators-secrets
+            - name: {{ include "common.names.fullname" . }}
               mountPath: /external-secrets
               readOnly: true
           {{- end }}
@@ -470,7 +470,7 @@ spec:
         - name: config-prysm
           emptyDir: {}
       {{- if .Values.global.externalSecrets.enabled }}
-        - name: ethereum-validators-secrets
+        - name: {{ include "common.names.fullname" . }}
           secret:
             secretName: {{ .Values.global.externalSecrets.secretName }}
       {{- end }}

@@ -123,9 +123,14 @@ global:
     runAsUser: 1001
 
   externalSecrets:
-    enabled: true
-    secretName: ethereum-validators-secrets
-
+    enabled: false
+    secretStoreRef: secretStoreRef
+    target: target
+    data:
+      - secretKey: jwt
+        remoteRef:
+          key: ethereumValidators
+          property: jwt
 
 ## Service account
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
