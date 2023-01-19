@@ -1,4 +1,4 @@
-{{- if and (or .Values.global.metrics.enabled .Values.metrics.enabled)
+{{- if and (or .Values.global.metrics.enabled .Values.prysm.metrics.enabled)
     (or .Values.global.metrics.serviceMonitor.enabled .Values.prysm.metrics.serviceMonitor.enabled) }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
