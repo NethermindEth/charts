@@ -3,7 +3,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ template "common.names.fullname" . }}
+  name: {{ template "common.names.fullname" . }}-prysm
   {{- if .Values.prysm.metrics.serviceMonitor.namespace }}
   namespace: {{ .Values.prysm.metrics.serviceMonitor.namespace }}
   {{- else }}
