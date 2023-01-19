@@ -16,7 +16,7 @@ metadata:
     {{- end }}
 spec:
   endpoints:
-    - port: metrics
+    - port: metrics-prysm
       path: /metrics
       {{- if .Values.prysm.metrics.serviceMonitor.interval }}
       interval: {{ .Values.prysm.metrics.serviceMonitor.interval }}
