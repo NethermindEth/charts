@@ -994,6 +994,7 @@ spec:
             - sh
             - -ac
             - >
+              cat /tmp/zhejiang/custom_config_data/config.yaml
               exec /opt/teku/bin/teku
               {{- if eq .Values.global.network "zhejiang" }}
               --network=/tmp/zhejiang/custom_config_data/config.yaml
