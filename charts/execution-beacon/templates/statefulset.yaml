@@ -463,7 +463,7 @@ spec:
               readOnly: true
           {{- end }}
             - name: env-nodeport-execution
-              mountPath: /env
+              mountPath: /tmp/zhejiang
         {{- with .Values.resources }}
           resources:
             {{ toYaml . | nindent 12 | trim }}
@@ -522,7 +522,7 @@ spec:
             - -ac
             - >
             {{- if .Values.nethermind.p2pNodePort.enabled }}
-              . /env/init-nodeport;
+              . /testnet/init-nodeport;
             {{- end }}
               exec /nethermind/Nethermind.Runner
           {{- if eq .Values.global.network "gnosis" }}
@@ -621,7 +621,7 @@ spec:
               readOnly: true
           {{- end }}
             - name: env-nodeport-execution
-              mountPath: /env
+              mountPath: /tmp/zhejiang
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- if .Values.nethermind.jsonrpc.enabled }}
@@ -858,7 +858,7 @@ spec:
             {{- if ne .Values.global.network "zhejiang" }}
               --network={{ .Values.global.network }}
             {{- else }}
-              --testnet-dir=/tmp/zhejiang/custom_config_data
+              --testnet-dir=/testnet/custom_config_data
             {{- end}}
               --disable-upnp
               --disable-enr-auto-update
@@ -929,7 +929,7 @@ spec:
               mountPath: /data
           {{- if eq .Values.global.network "zhejiang" }}
             - name: zhejiang-config-beacon
-              mountPath: /tmp/zhejiang
+              mountPath: /testnet
           {{- end }}
           {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
@@ -994,8 +994,49 @@ spec:
             - sh
             - -ac
             - >
-              cat /tmp/zhejiang/custom_config_data/config.yaml;
-              
+              cat /testnet/custom_config_data/config.yaml;
+              exec /opt/teku/bin/teku
+              {{- if eq .Values.global.network "zhejiang" }}
+              --network=/testnet/custom_config_data/config.yaml
+              {{- end }}
+              --config-file=/data/teku/config.yaml
+              --data-beacon-path=/data/teku/beacon
+              --data-path=/data/teku
+              --data-storage-archive-frequency={{ .Values.teku.dataStorageArchiveFrequency }}
+              --data-storage-mode={{ .Values.teku.dataStorageMode }}
+              --data-storage-non-canonical-blocks-enabled={{ .Values.teku.dataStorageNonCanonicalBlocksEnabled }}
+              {{- if .Values.global.externalSecrets.enabled }}
+              --ee-jwt-secret-file=/external-secrets/JWT_SECRET
+              {{- else }}
+              --ee-jwt-secret-file=/secret/jwtsecret
+              {{- end }}
+            {{- if .Values.teku.builderEndpoint }}
+              --builder-endpoint={{ .Values.teku.builderEndpoint }}
+            {{- end }}
+            {{- if .Values.teku.suggestedFeeRecipient }}
+              --validators-proposer-default-fee-recipient={{ .Values.teku.suggestedFeeRecipient }}
+            {{- end }}
+            {{- if .Values.global.checkPointSync.enabled }}
+              --initial-state={{ .Values.global.checkPointSync.url }}/eth/v2/debug/beacon/states/finalized
+            {{- end }}
+            {{- if .Values.teku.restApi.enabled }}
+              --rest-api-enabled={{ .Values.teku.restApi.enabled }}
+              --rest-api-host-allowlist={{ .Values.teku.restApi.hostAllowList | join "," }}
+              --rest-api-interface={{ .Values.teku.restApi.interface }}
+              --rest-api-port={{ .Values.teku.restApi.port }}
+              --rest-api-cors-origins={{ .Values.teku.restApi.corsOrigins | join "," }}
+              --rest-api-docs-enabled={{ .Values.teku.restApi.docsEnabled }}
+            {{- end }}
+            {{- if .Values.teku.global.metrics.enabled }}
+              --metrics-enabled={{ .Values.teku.global.metrics.enabled }}
+              --metrics-categories={{ .Values.teku.metrics.categories | join "," }}
+              --metrics-host-allowlist={{ .Values.teku.metrics.hostAllowList | join "," }}
+              --metrics-interface={{ .Values.teku.metrics.interface }}
+              --metrics-port={{ .Values.teku.metrics.port }}
+            {{- end }}
+            {{- range .Values.teku.extraFlags }}
+              {{ . | quote }}
+            {{- end }}
         {{- if or .Values.teku.restApi.enabled .Values.teku.global.metrics.enabled }}
           ports:
           {{- if .Values.teku.restApi.enabled }}
