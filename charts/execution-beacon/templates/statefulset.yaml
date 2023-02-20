@@ -1114,6 +1114,10 @@ spec:
         - name: config-beacon
           emptyDir: {}
       {{- end }}
+      {{- if eq .Values.global.network "zhejiang" }}
+        - name: zhejiang-config-beacon
+          emptyDir: {}
+      {{- end }}
       {{- if .Values.global.externalSecrets.enabled }}
         - name: external-secrets
           secret:
