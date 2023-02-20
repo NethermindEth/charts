@@ -833,13 +833,13 @@ spec:
               {{ end }}
               echo "Pod will connect to the ${EE} endpoint";
               exec lighthouse
-            {{- if eq .Values.lighthouse.global.network "zhejiang" }}
+            {{- if eq .Values.global.network "zhejiang" }}
               --testnet-dir="."
             {{- end }}
               bn
               --datadir=/data
-            {{- if ne .Values.lighthouse.global.network "zhejiang" }}
-              --network={{ .Values.lighthouse.global.network }}
+            {{- if ne .Values.global.network "zhejiang" }}
+              --network={{ .Values.global.network }}
             {{- end}}
               --disable-upnp
               --disable-enr-auto-update
