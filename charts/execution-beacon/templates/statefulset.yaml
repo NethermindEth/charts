@@ -289,7 +289,7 @@ spec:
               wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
           volumeMounts:
             - name: zhejiang-config-beacon
-              mountPath: /tmp/zhejiang
+              mountPath: /testnet
     {{- end }}
     {{- if .Values.teku.enabled }}
         - name: init-beacon
@@ -522,7 +522,7 @@ spec:
             - -ac
             - >
             {{- if .Values.nethermind.p2pNodePort.enabled }}
-              . /testnet/init-nodeport;
+              . /env/init-nodeport;
             {{- end }}
               exec /nethermind/Nethermind.Runner
           {{- if eq .Values.global.network "gnosis" }}
@@ -790,7 +790,7 @@ spec:
           {{- end }}
           {{- if eq .Values.global.network "zhejiang" }}
             - name: zhejiang-config-beacon
-              mountPath: /tmp/zhejiang
+              mountPath: /testnet
           {{- end }}
         {{- with .Values.prysm.resources }}
           resources:
@@ -1070,7 +1070,7 @@ spec:
               mountPath: /data/teku
           {{- if eq .Values.global.network "zhejiang" }}
             - name: zhejiang-config-beacon
-              mountPath: /tmp/zhejiang
+              mountPath: /testnet
           {{- end }}
           {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
