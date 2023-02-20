@@ -291,6 +291,7 @@ spec:
             - -c
             - >
               wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data"
+              ls -al custom_config_data
           volumeMounts:
             - name: zhejiang-config-beacon
               mountPath: /data/custom_config_data
@@ -931,6 +932,10 @@ spec:
           volumeMounts:
             - name: data-beacon
               mountPath: /data
+          {{- if eq .Values.global.network "zhejiang" }}
+            - name: zhejiang-config-beacon
+              mountPath: /data/custom_config_data
+          {{- end }}
           {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
               mountPath: /external-secrets
