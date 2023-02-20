@@ -287,8 +287,8 @@ spec:
             - -c
             - >
               wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
-              ls -al
-              cat custom_config_data/config.yaml
+              ls -al custom_config_data/;
+              cat custom_config_data/config.yaml;
           volumeMounts:
             - name: zhejiang-config-beacon
               mountPath: /data/zhejiang
