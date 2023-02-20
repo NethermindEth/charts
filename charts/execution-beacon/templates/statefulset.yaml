@@ -289,7 +289,9 @@ spec:
               wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
           volumeMounts:
             - name: zhejiang-config-beacon
-              mountPath: /testnet
+              mountPath: /data/zhejiang
+            - name: data-beacon
+              mountPath: /data
     {{- end }}
     {{- if .Values.teku.enabled }}
         - name: init-beacon
@@ -463,7 +465,7 @@ spec:
               readOnly: true
           {{- end }}
             - name: env-nodeport-execution
-              mountPath: /tmp/zhejiang
+              mountPath: /env
         {{- with .Values.resources }}
           resources:
             {{ toYaml . | nindent 12 | trim }}
@@ -621,7 +623,7 @@ spec:
               readOnly: true
           {{- end }}
             - name: env-nodeport-execution
-              mountPath: /tmp/zhejiang
+              mountPath: /env
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- if .Values.nethermind.jsonrpc.enabled }}
@@ -790,7 +792,7 @@ spec:
           {{- end }}
           {{- if eq .Values.global.network "zhejiang" }}
             - name: zhejiang-config-beacon
-              mountPath: /testnet
+              mountPath: /data/zhejiang
           {{- end }}
         {{- with .Values.prysm.resources }}
           resources:
@@ -858,7 +860,7 @@ spec:
             {{- if ne .Values.global.network "zhejiang" }}
               --network={{ .Values.global.network }}
             {{- else }}
-              --testnet-dir=/testnet/custom_config_data
+              --testnet-dir=/data/zhejiang/custom_config_data
             {{- end}}
               --disable-upnp
               --disable-enr-auto-update
@@ -929,7 +931,7 @@ spec:
               mountPath: /data
           {{- if eq .Values.global.network "zhejiang" }}
             - name: zhejiang-config-beacon
-              mountPath: /testnet
+              mountPath: /data/zhejiang
           {{- end }}
           {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
@@ -994,10 +996,10 @@ spec:
             - sh
             - -ac
             - >
-              cat /testnet/custom_config_data/config.yaml;
+              cat /data/zhejiang/custom_config_data/config.yaml;
               exec /opt/teku/bin/teku
               {{- if eq .Values.global.network "zhejiang" }}
-              --network=/testnet/custom_config_data/config.yaml
+              --network=/data/zhejiang/custom_config_data/config.yaml
               {{- end }}
               --config-file=/data/teku/config.yaml
               --data-beacon-path=/data/teku/beacon
@@ -1070,7 +1072,7 @@ spec:
               mountPath: /data/teku
           {{- if eq .Values.global.network "zhejiang" }}
             - name: zhejiang-config-beacon
-              mountPath: /testnet
+              mountPath: /data/zhejiang
           {{- end }}
           {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
