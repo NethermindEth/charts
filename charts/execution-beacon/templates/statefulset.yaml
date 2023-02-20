@@ -265,6 +265,10 @@ spec:
               echo "EXTERNAL_IP=$EXTERNAL_IP"     >> /env/init-nodeport;
               cat /env/init-nodeport;
         {{- end }}
+        {{- if eq .Values.global.network "zhejiang" }}
+              curl https://codeload.github.com/ethpandaops/withdrawals-testnet/tar.gz/master | \
+              tar -xz --strip=2 withdrawals-testnet-master/zhejiang-testnet/custom_config_data
+        {{- end }}
         {{- if and .Values.lighthouse.persistence.enabled .Values.lighthouse.initChownData }}
               mkdir -p /data && chown -R {{ .Values.lighthouse.securityContext.runAsUser }}:{{ .Values.lighthouse.securityContext.runAsUser }} /data;
         {{- end }}
@@ -274,6 +278,10 @@ spec:
               mountPath: /env
             - name: data-beacon
               mountPath: /data
+        {{- if eq .Values.global.network "zhejiang" }}
+            - name: zhejiang-config-beacon
+              mountPath: /data/custom_config_data
+        {{- end }}
     {{- end }}
     {{- if .Values.teku.enabled }}
         - name: init-beacon
@@ -772,6 +780,10 @@ spec:
             - name: gnosis-config-beacon
               mountPath: /data/gnosis-config
           {{- end }}
+          {{- if eq .Values.global.network "zhejiang" }}
+            - name: zhejiang-config-beacon
+              mountPath: /data/custom_config_data
+          {{- end }}
         {{- with .Values.prysm.resources }}
           resources:
             {{ toYaml . | nindent 12 | trim }}
@@ -833,13 +845,12 @@ spec:
               {{ end }}
               echo "Pod will connect to the ${EE} endpoint";
               exec lighthouse
-            {{- if eq .Values.global.network "zhejiang" }}
-              --testnet-dir="."
-            {{- end }}
               bn
               --datadir=/data
             {{- if ne .Values.global.network "zhejiang" }}
               --network={{ .Values.global.network }}
+            {{- else }}
+              --testnet-dir=/data/custom_config_data
             {{- end}}
               --disable-upnp
               --disable-enr-auto-update
