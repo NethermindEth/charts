@@ -265,10 +265,6 @@ spec:
               echo "EXTERNAL_IP=$EXTERNAL_IP"     >> /env/init-nodeport;
               cat /env/init-nodeport;
         {{- end }}
-        {{- if eq .Values.global.network "zhejiang" }}
-              curl https://codeload.github.com/ethpandaops/withdrawals-testnet/tar.gz/master | \
-              tar -xz --strip=2 withdrawals-testnet-master/zhejiang-testnet/custom_config_data
-        {{- end }}
         {{- if and .Values.lighthouse.persistence.enabled .Values.lighthouse.initChownData }}
               mkdir -p /data && chown -R {{ .Values.lighthouse.securityContext.runAsUser }}:{{ .Values.lighthouse.securityContext.runAsUser }} /data;
         {{- end }}
@@ -282,6 +278,23 @@ spec:
             - name: zhejiang-config-beacon
               mountPath: /data/custom_config_data
         {{- end }}
+    {{- end }}
+    {{- if eq .Values.global.network "zhejiang" }}
+        - name: init-custom-config-data
+          image: "{{ .Values.global.initImageBusybox.repository }}:{{ .Values.global.initImageBusybox.tag }}"
+          imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+          command:
+            - sh
+            - -c
+            - >
+              wget -O - https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz | \
+              tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data"
+          volumeMounts:
+            - name: zhejiang-config-beacon
+              mountPath: /data/custom_config_data
     {{- end }}
     {{- if .Values.teku.enabled }}
         - name: init-beacon
