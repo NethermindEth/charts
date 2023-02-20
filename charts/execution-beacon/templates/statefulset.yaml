@@ -833,8 +833,18 @@ spec:
               {{ end }}
               echo "Pod will connect to the ${EE} endpoint";
               exec lighthouse
+            {{- if eq .Values.lighthouse.global.network "zhejiang" }}
+              --testnet-dir="."
+            {{- end }}
               bn
-              --staking
+              --datadir=/data
+            {{- if ne .Values.lighthouse.global.network "zhejiang" }}
+              --network={{ .Values.lighthouse.global.network }}
+            {{- end}}
+              --disable-upnp
+              --disable-enr-auto-update
+              --target-peers={{ .Values.lighthouse.targetPeers }}
+              --discovery-port={{ include "lighthouse.p2pPort" . }}
             {{- if .Values.lighthouse.http.enabled }}
               --http
               --http-port={{ .Values.lighthouse.http.port }}
@@ -856,12 +866,6 @@ spec:
             {{- else }}
               --execution-jwt=/secret/jwtsecret
             {{- end }}
-              --datadir=/data
-              --network={{ .Values.global.network }}
-              --disable-upnp
-              --disable-enr-auto-update
-              --target-peers={{ .Values.lighthouse.targetPeers }}
-              --discovery-port={{ include "lighthouse.p2pPort" . }}
             {{- if .Values.lighthouse.p2pNodePort.enabled }}
               --enr-address=$EXTERNAL_IP
               --enr-tcp-port=$EXTERNAL_PORT
