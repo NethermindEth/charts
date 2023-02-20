@@ -614,6 +614,7 @@ spec:
               EE=http://localhost:{{ .Values.nethermind.jsonrpc.engine.port }};
               echo "Pod will connect to the ${EE} endpoint";
               exec lighthouse
+              --testnet-dir="."
               bn
               --staking
             {{- if .Values.lighthouse.http.enabled }}
