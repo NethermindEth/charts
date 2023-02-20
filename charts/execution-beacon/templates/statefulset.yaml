@@ -290,7 +290,7 @@ spec:
             - sh
             - -c
             - >
-              wget -O - https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz | \
+              wget -O - https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz && | \
               tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data"
           volumeMounts:
             - name: zhejiang-config-beacon
