@@ -115,9 +115,6 @@ spec:
             - --slashing-protection-db-url=$(ESO_DB_URL)
             - --slashing-protection-db-username=$(ESO_DB_USERNAME)
             - --slashing-protection-db-password=$(ESO_DB_PASSWORD)
-            {{- if eq .Values.network "zhejiang" }}
-            - --network=/testnet/custom_config_data/config.yaml
-            {{- end }}
           env:
             - name: JAVA_OPTS
               value: {{ .Values.web3signerJavaOpts | quote }}
