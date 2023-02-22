@@ -8,7 +8,11 @@ data:
   config.yaml: |
     data-path: "/data/web3signer"
     key-store-path: "/data/keystore"
+    {{- if eq .Values.network "zhejiang" }}
+    eth2.network: /testnet/custom_config_data/config.yaml
+    {{- else }}
     eth2.network: {{ .Values.network }}
+    {{- end }}
     logging: {{ .Values.loggingLevel }}
     eth2.slashing-protection-enabled: true
     eth2.slashing-protection-pruning-enabled: true

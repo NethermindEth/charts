@@ -86,6 +86,23 @@ spec:
           volumeMounts:
             - name: migrations
               mountPath: /flyway/sql
+      {{- if eq .Values.network "zhejiang" }}
+        - name: init-custom-config-data
+          image: "{{ .Values.initImageBusybox.repository }}:{{ .Values.initImageBusybox.tag }}"
+          imagePullPolicy: {{ .Values.initImageBusybox.pullPolicy }}
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+          command:
+            - sh
+            - -c
+            - >
+              wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
+              mv custom_config_data /testnet/custom_config_data;
+          volumeMounts:
+            - name: zhejiang-config
+              mountPath: /testnet
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -136,7 +153,15 @@ spec:
               mountPath: /data
             - name: config
               mountPath: /config
+          {{- if eq .Values.network "zhejiang" }}
+            - name: zhejiang-config
+              mountPath: /testnet
+          {{- end }}
       volumes:
+      {{- if eq .Values.network "zhejiang" }}
+        - name: zhejiang-config
+          emptyDir: {}
+      {{- end }}
         - name: config
           configMap:
             name: {{ include "common.names.fullname" . }}
