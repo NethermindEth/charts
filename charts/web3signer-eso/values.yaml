@@ -28,6 +28,13 @@ cliImage:
   tag: "v1.1.10"
   pullPolicy: IfNotPresent
 
+## Init image is used to chown data volume, initialise genesis, etc.
+##
+initImageBusybox:
+  repository: "busybox"
+  tag: "1.35"
+  pullPolicy: IfNotPresent
+
 # dbKeystoreUrl: "postgresql://username:pass@hostname/dbname"
 # decryptionKey: "generated with stakewise-cli sync-db"
 # dbUrl: "jdbc:postgresql://localhost/web3signer"
