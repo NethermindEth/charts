@@ -141,8 +141,8 @@ spec:
               mountPath: /mnt/gnosis-prysm
       {{- if eq $root.Values.network "zhejiang" }}
           - name: init-custom-config-data
-            image: "{{ .Values.global.initImageBusybox.repository }}:{{ .Values.global.initImageBusybox.tag }}"
-            imagePullPolicy: {{ .Values.global.initImageBusybox.pullPolicy }}
+            image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
+            imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
             securityContext:
               runAsNonRoot: false
               runAsUser: 0
