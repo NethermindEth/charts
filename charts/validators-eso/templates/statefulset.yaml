@@ -139,7 +139,7 @@ spec:
               mountPath: /data
             - name: gnosis-prysm
               mountPath: /mnt/gnosis-prysm
-      {{- if eq .Values.global.network "zhejiang" }}
+      {{- if eq $root.Values.network "zhejiang" }}
           - name: init-custom-config-data
             image: "{{ .Values.global.initImageBusybox.repository }}:{{ .Values.global.initImageBusybox.tag }}"
             imagePullPolicy: {{ .Values.global.initImageBusybox.pullPolicy }}
@@ -240,7 +240,7 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-          {{- if eq .Values.network "zhejiang" }}
+          {{- if eq $root.Values.network "zhejiang" }}
             - name: zhejiang-config-beacon
               mountPath: /testnet
           {{- end }}
