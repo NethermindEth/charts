@@ -88,6 +88,9 @@ spec:
             {{- if eq $root.Values.network "sepolia" }}
             - "--network"
             - "goerli"
+            {{- else if eq $root.Values.network "zhejiang" }}
+            - "--network"
+            - "goerli"
             {{- else }}
             - "--network"
             - "{{ $root.Values.network }}"
@@ -136,6 +139,23 @@ spec:
               mountPath: /data
             - name: gnosis-prysm
               mountPath: /mnt/gnosis-prysm
+      {{- if eq .Values.global.network "zhejiang" }}
+          - name: init-custom-config-data
+            image: "{{ .Values.global.initImageBusybox.repository }}:{{ .Values.global.initImageBusybox.tag }}"
+            imagePullPolicy: {{ .Values.global.initImageBusybox.pullPolicy }}
+            securityContext:
+              runAsNonRoot: false
+              runAsUser: 0
+            command:
+              - sh
+              - -c
+              - >
+                wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
+                mv custom_config_data /testnet/custom_config_data;
+            volumeMounts:
+              - name: zhejiang-config-beacon
+                mountPath: /testnet
+      {{- end }}
       containers:
         - name: validator
           image: "{{ (pluck $root.Values.type $root.Values.image | first ).repository }}:{{ (pluck $root.Values.type $root.Values.image | first ).tag }}"
@@ -157,7 +177,11 @@ spec:
             {{- else if eq $root.Values.type "lighthouse" }}
             - "--network={{ $root.Values.network }}"
             {{- else if eq $root.Values.type "teku" }}
+            {{- if .Values.global.network "zhejiang" }}
+            - "--network=/testnet/custom_config_data/config.yaml"
+            {{- else }}
             - "--network=auto"
+            {{- end }}
             - "--config-file=/data/config"
             - "--validators-external-signer-url={{ $.Values.web3signerEndpoint }}"
             - "--validators-proposer-config=/data/proposerConfig.json"
@@ -216,6 +240,10 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+          {{- if eq .Values.global.network "zhejiang" }}
+            - name: zhejiang-config-beacon
+              mountPath: /testnet
+          {{- end }}
       volumes:
         - name: gnosis-prysm
           configMap:
