@@ -140,21 +140,21 @@ spec:
             - name: gnosis-prysm
               mountPath: /mnt/gnosis-prysm
       {{- if eq $root.Values.network "zhejiang" }}
-          - name: init-custom-config-data
-            image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
-            imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
-            securityContext:
-              runAsNonRoot: false
-              runAsUser: 0
-            command:
-              - sh
-              - -c
-              - >
-                wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
-                mv custom_config_data /testnet/custom_config_data;
-            volumeMounts:
-              - name: zhejiang-config-beacon
-                mountPath: /testnet
+        - name: init-custom-config-data
+          image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
+          imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+          command:
+            - sh
+            - -c
+            - >
+              wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
+              mv custom_config_data /testnet/custom_config_data;
+          volumeMounts:
+            - name: zhejiang-config-beacon
+              mountPath: /testnet
       {{- end }}
       containers:
         - name: validator
