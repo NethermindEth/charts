@@ -88,8 +88,8 @@ spec:
               mountPath: /flyway/sql
       {{- if eq .Values.network "zhejiang" }}
         - name: init-custom-config-data
-          image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
-          imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
+          image: "{{ .Values.initImageBusybox.repository }}:{{ .Values.initImageBusybox.tag }}"
+          imagePullPolicy: {{ .Values.initImageBusybox.pullPolicy }}
           securityContext:
             runAsNonRoot: false
             runAsUser: 0
