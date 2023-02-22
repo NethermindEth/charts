@@ -253,6 +253,10 @@ spec:
           configMap:
             name: {{ template "validators.fullname" $root }}-override-fee-recipient
       {{- end }}
+      {{- if eq $root.Values.network "zhejiang" }}
+        - name: zhejiang-config-beacon
+          emptyDir: {}
+      {{- end }}
         - name: data
           emptyDir: {}
 
