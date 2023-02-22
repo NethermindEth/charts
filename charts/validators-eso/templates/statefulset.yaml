@@ -177,7 +177,7 @@ spec:
             {{- else if eq $root.Values.type "lighthouse" }}
             - "--network={{ $root.Values.network }}"
             {{- else if eq $root.Values.type "teku" }}
-            {{- if eq .Values.network "zhejiang" }}
+            {{- if eq $root.Values.network "zhejiang" }}
             - "--network=/testnet/custom_config_data/config.yaml"
             {{- else }}
             - "--network=auto"
