@@ -153,7 +153,7 @@ spec:
               wget -O - "https://github.com/ethpandaops/withdrawals-testnet/archive/master.tar.gz" | tar xz --strip=2 "withdrawals-testnet-master/zhejiang-testnet/custom_config_data";
               mv custom_config_data /testnet/custom_config_data;
           volumeMounts:
-            - name: zhejiang-config-beacon
+            - name: zhejiang-config
               mountPath: /testnet
       {{- end }}
       containers:
@@ -241,7 +241,7 @@ spec:
             - name: data
               mountPath: /data
           {{- if eq $root.Values.network "zhejiang" }}
-            - name: zhejiang-config-beacon
+            - name: zhejiang-config
               mountPath: /testnet
           {{- end }}
       volumes:
@@ -254,7 +254,7 @@ spec:
             name: {{ template "validators.fullname" $root }}-override-fee-recipient
       {{- end }}
       {{- if eq $root.Values.network "zhejiang" }}
-        - name: zhejiang-config-beacon
+        - name: zhejiang-config
           emptyDir: {}
       {{- end }}
         - name: data
