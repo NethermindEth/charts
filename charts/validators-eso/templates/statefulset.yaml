@@ -177,7 +177,7 @@ spec:
             {{- else if eq $root.Values.type "lighthouse" }}
             - "--network={{ $root.Values.network }}"
             {{- else if eq $root.Values.type "teku" }}
-            {{- if eq .Values.global.network "zhejiang" }}
+            {{- if eq .Values.network "zhejiang" }}
             - "--network=/testnet/custom_config_data/config.yaml"
             {{- else }}
             - "--network=auto"
@@ -240,7 +240,7 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-          {{- if eq .Values.global.network "zhejiang" }}
+          {{- if eq .Values.network "zhejiang" }}
             - name: zhejiang-config-beacon
               mountPath: /testnet
           {{- end }}
