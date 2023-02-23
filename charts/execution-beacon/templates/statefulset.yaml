@@ -518,6 +518,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          {{- if .Values.global.externalSecrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: eso-{{ include "common.names.fullname" . }}
+          {{- end }}
           command:
             - sh
             - -ac
@@ -995,7 +1000,6 @@ spec:
             - sh
             - -ac
             - >
-              cat /testnet/custom_config_data/config.yaml;
               exec /opt/teku/bin/teku
               {{- if eq .Values.global.network "zhejiang" }}
               --network=/testnet/custom_config_data/config.yaml
