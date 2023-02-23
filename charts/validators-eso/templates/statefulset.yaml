@@ -175,7 +175,11 @@ spec:
             - "--chain-config-file /data/config_gnosis_prysm"
             - "--validators-external-signer-url={{ $.Values.web3signerEndpoint }}"
             {{- else if eq $root.Values.type "lighthouse" }}
+          {{- if ne $root.Values.network "zhejiang" }}
             - "--network={{ $root.Values.network }}"
+          {{- else }}
+            - "--testnet-dir=/testnet/custom_config_data"
+          {{- end}}
             {{- else if eq $root.Values.type "teku" }}
             {{- if eq $root.Values.network "zhejiang" }}
             - "--network=/testnet/custom_config_data/config.yaml"
