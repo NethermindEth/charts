@@ -448,7 +448,7 @@ spec:
           {{- end }}
             - name: env-nodeport-execution
               mountPath: /env
-        {{- with .Values.resources }}
+        {{- with .Values.geth.resources }}
           resources:
             {{ toYaml . | nindent 12 | trim }}
         {{- end }}
@@ -923,7 +923,7 @@ spec:
           {{- end }}
             - name: env-nodeport-beacon
               mountPath: /env
-        {{- with .Values.resources }}
+        {{- with .Values.lighthouse.resources }}
           resources:
             {{ toYaml . | nindent 12 | trim }}
         {{- end }}
@@ -1055,8 +1055,10 @@ spec:
               readOnly: true
             - name: env-nodeport-beacon
               mountPath: /env
+        {{- with .Values.teku.resources }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
       {{- if .Values.teku.restApi.enabled }}
         - name: sidecar-beacon
           image: "{{ .Values.teku.sidecar.repository }}:{{ .Values.teku.sidecar.tag }}"
