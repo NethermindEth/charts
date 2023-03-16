@@ -611,8 +611,10 @@ spec:
           {{- end }}
             - name: env-nodeport-execution
               mountPath: /env
+        {{- with .Values.nethermind.resources }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
       {{- if .Values.nethermind.jsonrpc.enabled }}
         - name: sidecar-execution
           image: "{{ .Values.nethermind.sidecar.repository }}:{{ .Values.nethermind.sidecar.tag }}"
