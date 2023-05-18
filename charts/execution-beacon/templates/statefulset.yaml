@@ -1107,7 +1107,6 @@ spec:
               value: "{{ .Values.global.ethsider.execution_endpoint }}"
             - name: BEACON_ENDPOINT
               value: "{{ .Values.global.ethsider.beacon_endpoint }}"
-        {{- end }}
     {{- end }}
       volumes:
       {{- if .Values.global.JWTSecret }}
