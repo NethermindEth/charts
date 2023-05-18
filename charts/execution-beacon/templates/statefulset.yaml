@@ -1098,6 +1098,17 @@ spec:
         {{- end }}
       {{- end }}
     {{- end }}
+    {{- if .Values.ethsider.enabled }}
+        - name: ethsider
+          image: "{{ .Values.ethsider.repository }}:{{ .Values.ethsider.tag }}"
+          imagePullPolicy: {{ .Values.ethsider.pullPolicy }}
+          env:
+            - name: EXECUTION_ENDPOINT
+              value: "{{ .Values.ethsider.execution_endpoint }}"
+            - name: BEACON_ENDPOINT
+              value: "{{ .Values.ethsider.beacon_endpoint }}"
+        {{- end }}
+    {{- end }}
       volumes:
       {{- if .Values.global.JWTSecret }}
         - name: jwtsecret
