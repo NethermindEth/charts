@@ -127,7 +127,7 @@ spec:
               echo "Replace mainnet fee recipient";
               grep -rl -i "0x6b333B20fBae3c5c0969dd02176e30802e2fbBdB" -r /data/ | xargs --no-run-if-empty sed -i "s/0x6b333B20fBae3c5c0969dd02176e30802e2fbBdB/{{ $.Values.suggestedFeeRecipient }}/g";
               echo "Replace gnosis fee recipient";
-              grep -rl -i "0x0000000000000000000000000000000000000000" -r /data/ | xargs --no-run-if-empty sed -i "s/0x0000000000000000000000000000000000000000/{{ $.Values.suggestedFeeRecipient }}/g";          
+              grep -rl -i "0x0000000000000000000000000000000000000000" -r /data/ | xargs --no-run-if-empty sed -i "s/0x0000000000000000000000000000000000000000/{{ $.Values.suggestedFeeRecipient }}/g";
           volumeMounts:
             - name: data
               mountPath: /data
