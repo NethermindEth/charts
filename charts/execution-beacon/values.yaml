@@ -30,7 +30,7 @@ global:
   ethsider:
     enabled: false
     repository: "nethermindeth/ethsider"
-    tag: "v0.0.5"
+    tag: "v0.0.6"
     pullPolicy: IfNotPresent
     execution_endpoint: http://localhost:8545
     beacon_endpoint: http://localhost:4000
