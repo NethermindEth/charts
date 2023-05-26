@@ -551,6 +551,7 @@ spec:
               --Network.P2PPort={{ include "nethermind.p2pPort" . }}
               --Network.DiscoveryPort={{ include "nethermind.p2pPort" . }}
           {{- end }}
+              --Network.MaxActivePeers={{ .Values.nethermind.targetPeers }}
           {{-  if .Values.nethermind.merge.enabled }}
               --Merge.Enabled=true
               {{- if .Values.nethermind.merge.feeRecipient }}

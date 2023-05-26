@@ -515,6 +515,8 @@ nethermind:
     # Overrides the image tag whose default is the chart appVersion.
     tag: "1.14.3"
 
+  targetPeers: 100
+
   nameOverride: ""
   fullnameOverride: ""
 
