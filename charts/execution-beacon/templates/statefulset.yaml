@@ -870,3 +870,19 @@ spec:
         resources:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
+  {{- if .Values.global.customNetwork -}}
+    - metadata:
+        name: custom-configs
+        labels:
+          {{- include "common.labels.statefulset" . | nindent 10 }}
+      {{- with .Values.global.customNetworkConfigs.persistence.annotations }}
+        annotations:
+          {{ toYaml . | nindent 10 | trim }}
+      {{- end }}
+      spec:
+        accessModes: {{ .Values.global.customNetworkConfigs.persistence.accessModes }}
+        storageClassName: {{ .Values.global.customNetworkConfigs.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.global.customNetworkConfigs.persistence.size | quote }}
+  {{- end -}}

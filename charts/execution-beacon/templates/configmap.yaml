@@ -12,6 +12,22 @@ data:
     mkdir -p /data && chown -R {{ .Values.global.securityContext.runAsUser }}:{{ .Values.global.securityContext.runAsUser }} /data;
 {{- end }}
     echo "Namespace: ${POD_NAMESPACE} Pod: ${POD_NAME}";
+{{- if .Values.global.customNetwork -}}
+    echo "Downloading Custom Configs"
+    {{- if .Values.global.customNetworkConfigs.nethermindChainspecSrc -}}
+    wget -c {{ .Values.global.customNetworkConfigs.nethermindChainspecSrc }} -O /data/custom-configs/{{ .Values.global.customNetworkConfigs.nethermindChainspec }}
+    {{- end -}}
+    {{- if .Values.global.customNetworkConfigs.beaconConfigSrc -}}
+    wget -c {{ .Values.global.customNetworkConfigs.beaconConfigSrc }} -O /data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconConfig }}
+    {{- end -}}
+    {{- if .Values.global.customNetworkConfigs.beaconGenesisSrc -}}
+    wget -c {{ .Values.global.customNetworkConfigs.beaconGenesisSrc }} -O /data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconGenesis }}
+    {{- end -}}
+    {{- if .Values.global.customNetworkConfigs.beaconDeployBlock -}}
+    echo {{ .Values.global.customNetworkConfigs.beaconDeployBlock }} > /data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconDeployBlockFile }}
+    {{- end -}}
+    echo "Done"
+{{- end -}}
 {{- if .Values.global.p2pNodePort.enabled }}
   {{- if eq .Values.global.p2pNodePort.type "LoadBalancer" }}
       until [ -n "$(kubectl -n ${POD_NAMESPACE} get svc/${POD_NAME} -o jsonpath='{.status.loadBalancer.ingress[0].ip}')" ]; do echo "Waiting for load balancer to get an IP" && sleep 10; done;
