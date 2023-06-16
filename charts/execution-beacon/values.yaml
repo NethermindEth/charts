@@ -12,15 +12,23 @@ global:
     # Execution custom config file
     nethermindConfig: "none"
     nethermindChainspec: "chainspec.json"
+    nethermindChainspecSrc: ""
     # Beacon custom config files
     beaconConfig: "config.yaml"
+    beaconConfigSrc: ""
     beaconGenesis: "genesis.ssz"
-    beaconDeployBlock: "0"
+    beaconGenesisSrc: ""
     beaconDeployBlockFile: "deploy_block.txt"
-    
-  # Bootnodes
-  executionBootnodes: []
-  beaconBootnodes: []
+    beaconDeployBlock: ""
+    lodestarPreset: ""
+    lodestarNetwork: ""
+    # Persistance
+    persistence:
+      storageClassName: ""
+      accessModes:
+        - ReadWriteOnce
+      size: 100Mi
+      annotations: {}
 
   image:
     imagePullPolicy: IfNotPresent
@@ -261,6 +269,9 @@ execution:
   readinessProbe:
     enabled: false
 
+  ## Execution enodes to use as bootnodes
+  bootnodes: []
+
   ## Whether or not to allocate persistent volume disk for the data directory.
   ## In case of node failure, the node data directory will still persist.
   ##
@@ -381,6 +392,9 @@ execution:
 
 beacon:
   client: nimbus
+
+  ## Beacon enrs to use as bootnodes
+  bootnodes: []
 
   ## Whether or not to allocate persistent volume disk for the data directory.
   ## In case of node failure, the node data directory will still persist.
