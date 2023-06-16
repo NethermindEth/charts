@@ -75,7 +75,7 @@ spec:
                   fieldPath: spec.nodeName
           command: ['/bin/sh', '/scripts/init.sh']
           volumeMounts:
-            {{- if .Values.customNetwork -}}
+            {{- if .Values.global.customNetwork -}}
             {{/*custom network configs for clients*/}}
             - name: custom-configs
               mountPath: /data/custom-configs
@@ -128,21 +128,21 @@ spec:
             */}}
             {{- if eq .Values.execution.client "nethermind" }}
               exec /nethermind/Nethermind.Runner
-            {{- if .Values.customNetwork -}}
-              --config={{ .Values.customNetworkConfigs.nethermindConfig }}
+            {{- if .Values.global.customNetwork -}}
+              --config={{ .Values.global.customNetworkConfigs.nethermindConfig }}
             {{- else if eq .Values.global.network "gnosis" -}}
               --config=xdai
             {{- else -}}
               --config={{ .Values.global.network }}
             {{- end -}}
               --datadir=/data/execution
-            {{- if and .Values.customNetwork .Values.customNetworkConfigs.nethermindChainspec -}}
-              --Init.ChainSpecPath=/data/custom-configs/{{ .Values.customNetworkConfigs.nethermindChainspec }}
+            {{- if and .Values.global.customNetwork .Values.global.customNetworkConfigs.nethermindChainspecSrc -}}
+              --Init.ChainSpecPath=/data/custom-configs/{{ .Values.global.customNetworkConfigs.nethermindChainspec }}
             {{- end -}}
-            {{- if .Values.executionBootnodes -}}
-              --Network.Bootnodes="{{ join ',' .Values.executionBootnodes }}"
-              --Discovery.Bootnodes="{{ join ',' .Values.executionBootnodes }}"
-              --Network.StaticPeers="{{ join ',' .Values.executionBootnodes }}"
+            {{- if .Values.execution.bootnodes -}}
+              --Network.Bootnodes="{{ join ',' .Values.execution.bootnodes }}"
+              --Discovery.Bootnodes="{{ join ',' .Values.execution.bootnodes }}"
+              --Network.StaticPeers="{{ join ',' .Values.execution.bootnodes }}"
             {{- end -}}
             {{- if .Values.execution.jsonrpc.enabled }}
               --JsonRpc.Enabled={{ .Values.execution.jsonrpc.enabled }}
@@ -221,8 +221,8 @@ spec:
             {{- end }}
             {{- end }}
               --maxpeers={{ .Values.execution.targetPeers }}
-            {{- if .Values.executionBootnodes -}}
-              --bootnodes="{{ join ',' .Values.executionBootnodes }}"
+            {{- if .Values.execution.bootnodes -}}
+              --bootnodes="{{ join ',' .Values.execution.bootnodes }}"
             {{- end -}}
             {{- if .Values.global.p2pNodePort.enabled }}
               --nat=extip:$EXTERNAL_IP
@@ -248,8 +248,8 @@ spec:
               --data-path=/data/execution
               --sync-mode=X_SNAP
               --p2p-enabled=true
-            {{- if .Values.executionBootnodes -}}
-              --bootnodes="{{ join ',' .Values.executionBootnodes }}"
+            {{- if .Values.execution.bootnodes -}}
+              --bootnodes="{{ join ',' .Values.execution.bootnodes }}"
             {{- end -}}
             {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
               --engine-jwt-secret=/external-secrets/JWT_SECRET
@@ -279,8 +279,8 @@ spec:
               --datadir=/data/execution
               --private.api.addr={{ .Values.execution.privateApiAddr }}
               --chain={{ .Values.global.network }}
-            {{- if .Values.executionBootnodes -}}
-              --bootnodes="{{ join ',' .Values.executionBootnodes }}"
+            {{- if .Values.execution.bootnodes -}}
+              --bootnodes="{{ join ',' .Values.execution.bootnodes }}"
             {{- end -}}
             {{- if .Values.global.p2pNodePort.enabled }}
               --nat=extip:$EXTERNAL_IP
@@ -367,7 +367,7 @@ spec:
           volumeMounts:
             - name: data-execution
               mountPath: /data/execution
-            {{- if .Values.customNetwork -}}
+            {{- if .Values.global.customNetwork -}}
             - name: custom-configs
               mountPath: /data/custom-configs
             {{- end -}}
