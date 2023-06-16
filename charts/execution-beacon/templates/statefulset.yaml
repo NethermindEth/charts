@@ -75,6 +75,11 @@ spec:
                   fieldPath: spec.nodeName
           command: ['/bin/sh', '/scripts/init.sh']
           volumeMounts:
+            {{- if .Values.customNetwork -}}
+            {{/*custom network configs for clients*/}}
+            - name: custom-configs
+              mountPath: /data/custom-configs
+            {{- end -}}
             - name: data-execution
               mountPath: /data/execution
             - name: data-beacon
@@ -123,12 +128,17 @@ spec:
             */}}
             {{- if eq .Values.execution.client "nethermind" }}
               exec /nethermind/Nethermind.Runner
-            {{- if eq .Values.global.network "gnosis" }}
+            {{- if .Values.customNetwork -}}
+              --config={{ .Values.customNetworkConfigs.nethermindConfig }}
+            {{- else if eq .Values.global.network "gnosis" -}}
               --config=xdai
-            {{- else }}
+            {{- else -}}
               --config={{ .Values.global.network }}
-            {{- end }}
+            {{- end -}}
               --datadir=/data/execution
+            {{- if and .Values.customNetwork .Values.customNetworkConfigs.nethermindChainspec -}}
+              --Init.ChainSpecPath=/data/custom-configs/{{ .Values.customNetworkConfigs.nethermindChainspec }}
+            {{- end -}}
             {{- if .Values.execution.jsonrpc.enabled }}
               --JsonRpc.Enabled={{ .Values.execution.jsonrpc.enabled }}
               --JsonRpc.EnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
