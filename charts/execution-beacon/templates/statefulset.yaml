@@ -367,6 +367,10 @@ spec:
           volumeMounts:
             - name: data-execution
               mountPath: /data/execution
+            {{- if .Values.customNetwork -}}
+            - name: custom-configs
+              mountPath: /data/custom-configs
+            {{- end -}}
             {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
               mountPath: /external-secrets
