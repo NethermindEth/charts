@@ -139,6 +139,11 @@ spec:
             {{- if and .Values.customNetwork .Values.customNetworkConfigs.nethermindChainspec -}}
               --Init.ChainSpecPath=/data/custom-configs/{{ .Values.customNetworkConfigs.nethermindChainspec }}
             {{- end -}}
+            {{- if .Values.executionBootnodes -}}
+              --Network.Bootnodes="{{ join ',' .Values.executionBootnodes }}"
+              --Discovery.Bootnodes="{{ join ',' .Values.executionBootnodes }}"
+              --Network.StaticPeers="{{ join ',' .Values.executionBootnodes }}"
+            {{- end -}}
             {{- if .Values.execution.jsonrpc.enabled }}
               --JsonRpc.Enabled={{ .Values.execution.jsonrpc.enabled }}
               --JsonRpc.EnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
@@ -216,6 +221,9 @@ spec:
             {{- end }}
             {{- end }}
               --maxpeers={{ .Values.execution.targetPeers }}
+            {{- if .Values.executionBootnodes -}}
+              --bootnodes="{{ join ',' .Values.executionBootnodes }}"
+            {{- end -}}
             {{- if .Values.global.p2pNodePort.enabled }}
               --nat=extip:$EXTERNAL_IP
               --port=$EXTERNAL_EXECUTION_PORT
@@ -240,6 +248,9 @@ spec:
               --data-path=/data/execution
               --sync-mode=X_SNAP
               --p2p-enabled=true
+            {{- if .Values.executionBootnodes -}}
+              --bootnodes="{{ join ',' .Values.executionBootnodes }}"
+            {{- end -}}
             {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
               --engine-jwt-secret=/external-secrets/JWT_SECRET
             {{- else }}
@@ -268,6 +279,9 @@ spec:
               --datadir=/data/execution
               --private.api.addr={{ .Values.execution.privateApiAddr }}
               --chain={{ .Values.global.network }}
+            {{- if .Values.executionBootnodes -}}
+              --bootnodes="{{ join ',' .Values.executionBootnodes }}"
+            {{- end -}}
             {{- if .Values.global.p2pNodePort.enabled }}
               --nat=extip:$EXTERNAL_IP
               --port=$EXTERNAL_EXECUTION_PORT
