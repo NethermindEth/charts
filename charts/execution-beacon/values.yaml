@@ -7,6 +7,21 @@ global:
   ##
   network: mainnet
 
+  customNetwork: false
+  customNetworkConfigs:
+    # Execution custom config file
+    nethermindConfig: "none"
+    nethermindChainspec: "chainspec.json"
+    # Beacon custom config files
+    beaconConfig: "config.yaml"
+    beaconGenesis: "genesis.ssz"
+    beaconDeployBlock: "0"
+    beaconDeployBlockFile: "deploy_block.txt"
+    
+  # Bootnodes
+  executionBootnodes: []
+  beaconBootnodes: []
+
   image:
     imagePullPolicy: IfNotPresent
     execution:
