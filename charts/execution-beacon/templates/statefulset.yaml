@@ -75,6 +75,11 @@ spec:
                   fieldPath: spec.nodeName
           command: ['/bin/sh', '/scripts/init.sh']
           volumeMounts:
+            {{- if .Values.global.customNetwork -}}
+            {{/*custom network configs for clients*/}}
+            - name: custom-configs
+              mountPath: /data/custom-configs
+            {{- end -}}
             - name: data-execution
               mountPath: /data/execution
             - name: data-beacon
@@ -123,12 +128,22 @@ spec:
             */}}
             {{- if eq .Values.execution.client "nethermind" }}
               exec /nethermind/Nethermind.Runner
-            {{- if eq .Values.global.network "gnosis" }}
+            {{- if .Values.global.customNetwork -}}
+              --config={{ .Values.global.customNetworkConfigs.nethermindConfig }}
+            {{- else if eq .Values.global.network "gnosis" -}}
               --config=xdai
-            {{- else }}
+            {{- else -}}
               --config={{ .Values.global.network }}
-            {{- end }}
+            {{- end -}}
               --datadir=/data/execution
+            {{- if and .Values.global.customNetwork .Values.global.customNetworkConfigs.nethermindChainspecSrc -}}
+              --Init.ChainSpecPath=/data/custom-configs/{{ .Values.global.customNetworkConfigs.nethermindChainspec }}
+            {{- end -}}
+            {{- if .Values.execution.bootnodes -}}
+              --Network.Bootnodes="{{ join ',' .Values.execution.bootnodes }}"
+              --Discovery.Bootnodes="{{ join ',' .Values.execution.bootnodes }}"
+              --Network.StaticPeers="{{ join ',' .Values.execution.bootnodes }}"
+            {{- end -}}
             {{- if .Values.execution.jsonrpc.enabled }}
               --JsonRpc.Enabled={{ .Values.execution.jsonrpc.enabled }}
               --JsonRpc.EnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
@@ -206,6 +221,9 @@ spec:
             {{- end }}
             {{- end }}
               --maxpeers={{ .Values.execution.targetPeers }}
+            {{- if .Values.execution.bootnodes -}}
+              --bootnodes="{{ join ',' .Values.execution.bootnodes }}"
+            {{- end -}}
             {{- if .Values.global.p2pNodePort.enabled }}
               --nat=extip:$EXTERNAL_IP
               --port=$EXTERNAL_EXECUTION_PORT
@@ -230,6 +248,9 @@ spec:
               --data-path=/data/execution
               --sync-mode=X_SNAP
               --p2p-enabled=true
+            {{- if .Values.execution.bootnodes -}}
+              --bootnodes="{{ join ',' .Values.execution.bootnodes }}"
+            {{- end -}}
             {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
               --engine-jwt-secret=/external-secrets/JWT_SECRET
             {{- else }}
@@ -258,6 +279,9 @@ spec:
               --datadir=/data/execution
               --private.api.addr={{ .Values.execution.privateApiAddr }}
               --chain={{ .Values.global.network }}
+            {{- if .Values.execution.bootnodes -}}
+              --bootnodes="{{ join ',' .Values.execution.bootnodes }}"
+            {{- end -}}
             {{- if .Values.global.p2pNodePort.enabled }}
               --nat=extip:$EXTERNAL_IP
               --port=$EXTERNAL_EXECUTION_PORT
@@ -343,6 +367,10 @@ spec:
           volumeMounts:
             - name: data-execution
               mountPath: /data/execution
+            {{- if .Values.global.customNetwork -}}
+            - name: custom-configs
+              mountPath: /data/custom-configs
+            {{- end -}}
             {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
               mountPath: /external-secrets
@@ -372,7 +400,24 @@ spec:
           args: 
             - "--datadir=/data/beacon"
             - "--execution-endpoint=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}"
+          {{- if .Values.global.customNetwork -}}
+          {{- if .Values.global.customNetworkConfigs.beaconConfigSrc -}}
+            - "--chain-config-file=/data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconConfig }}"
+          {{- end -}}
+          {{- if .Values.global.customNetworkConfigs.beaconGenesisSrc -}}
+            - "--genesis-state=/data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconGenesis }}"
+          {{- end -}}
+          {{- if .Values.global.customNetworkConfigs.beaconDeployBlock -}}
+            - "--contract-deployment-block={{ .Values.global.customNetworkConfigs.beaconDeployBlock }}"
+          {{- end -}}
+          {{- else -}}
             - "--{{ .Values.global.network }}"
+          {{- end -}}
+          {{- if .Values.beacon.bootnodes -}}
+            {{- range $i, $enr := list .Values.beacon.bootnodes -}}
+              - "--bootstrap-node='{{ $enr }}'"
+            {{- end -}}
+          {{- end -}}
           {{- if .Values.beacon.grpc.enabled }}
             - "--rpc-host={{ .Values.beacon.grpc.host }}"
             - "--rpc-port={{ .Values.beacon.grpc.port }}"
@@ -431,7 +476,13 @@ spec:
               . /env/init-nodeport;
               {{- end }}
               exec /opt/teku/bin/teku
+            {{- if .Values.global.customNetwork -}}
+            {{- if .Values.global.customNetworkConfigs.beaconConfigSrc -}}
+              --network=/data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconConfig }}
+            {{- end -}}
+            {{- else -}}
               --network={{ .Values.global.network }}
+            {{- end -}}
               --data-beacon-path=/data/beacon/teku
               --data-path=/data/beacon
               --data-storage-archive-frequency={{ .Values.beacon.dataStorageArchiveFrequency }}
@@ -449,9 +500,14 @@ spec:
             {{- if .Values.beacon.suggestedFeeRecipient }}
               --validators-proposer-default-fee-recipient={{ .Values.beacon.suggestedFeeRecipient }}
             {{- end }}
-            {{- if .Values.beacon.checkPointSync.enabled }}
+            {{- if .Values.beacon.checkPointSync.enabled -}}
               --initial-state={{ .Values.beacon.checkPointSync.url }}/eth/v2/debug/beacon/states/finalized
-            {{- end }}
+            {{- else if .Values.global.customNetworkConfigs.beaconGenesisSrc -}}
+              --initial-state=/data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconGenesis }}
+            {{- end -}}
+            {{- if .Values.beacon.bootnodes -}}
+              --p2p-discovery-bootnodes={{ join ',' .Values.beacon.bootnodes }}
+            {{- end -}}
             {{- if .Values.beacon.restApi.enabled }}
               --rest-api-enabled={{ .Values.beacon.restApi.enabled }}
               --rest-api-host-allowlist={{ .Values.beacon.restApi.hostAllowList | join "," }}
@@ -490,15 +546,23 @@ spec:
               . /env/init-nodeport;
               {{- end }}
               exec lighthouse
+            {{- if .Values.global.customNetwork -}}
+              --testnet-dir=/data/custom-configs
+            {{- end -}}
               bn
               --staking
             {{- if .Values.beacon.proposerOnly }}
               --proposer-only
             {{- end }}
               --datadir=/data/beacon
+            {{- if not .Values.global.customNetwork -}}
               --network={{ .Values.global.network }}
+            {{- end -}}
               --disable-upnp
               --target-peers={{ index .Values.beacon.targetPeersMap .Values.beacon.client }}
+            {{- if .Values.beacon.bootnodes -}}
+              --boot-nodes="{{ join ',' .Values.beacon.bootnodes }}"
+            {{- end -}}
             {{- if .Values.beacon.restApi.enabled }}
               --http
               --http-port={{ index .Values.beacon.restApi.portMap "lighthouse" }}
@@ -602,7 +666,25 @@ spec:
               --max-old-space-size=4096
               /usr/app/node_modules/.bin/lodestar
               beacon
+            {{- if .Values.global.customNetwork -}}
+            {{- if .Values.global.customNetworkConfigs.lodestarPreset -}}
+            --preset={{ .Values.global.customNetworkConfigs.lodestarPreset }}
+            {{- end -}}
+            {{- if .Values.global.customNetworkConfigs.lodestarNetwork -}}
+            --network={{ .Values.global.customNetworkConfigs.lodestarNetwork }}
+            {{- end -}}
+            {{- if .Values.global.customNetworkConfigs.beaconConfigSrc -}}
+            --paramsFile=/data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconConfig }}
+            {{- end -}}
+            {{- if .Values.global.customNetworkConfigs.beaconGenesisSrc -}}
+            --genesisStateFile=/data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconGenesis }}
+            {{- end -}}
+            {{- if .Values.global.customNetworkConfigs.beaconDeployBlock -}}
+            --eth1.depositContractDeployBlock=/data/custom-configs/{{ .Values.global.customNetworkConfigs.beaconDeployBlock }}
+            {{- end -}}
+            {{- else -}}
               --network={{ .Values.global.network }}
+            {{- end -}}
               --dataDir=/data/beacon
             {{- if .Values.beacon.checkPointSync.enabled }}
               --checkpointSyncUrl={{ .Values.beacon.checkPointSync.url }}
@@ -627,6 +709,9 @@ spec:
             {{- end }}
               --execution.urls=http://127.0.0.1:{{ .Values.execution.jsonrpc.engine.port }}
               --targetPeers={{ index .Values.beacon.targetPeersMap .Values.beacon.client }}
+            {{- if .Values.beacon.bootnodes -}}
+              --boot-nodes="{{ join ',' .Values.beacon.bootnodes }}"
+            {{- end -}}
             {{- if .Values.global.p2pNodePort.enabled }}
               --nat
               --enr.ip=$EXTERNAL_IP
@@ -680,6 +765,10 @@ spec:
           volumeMounts:
             - name: data-beacon
               mountPath: /data/beacon
+          {{- if .Values.global.customNetwork -}}
+            - name: custom-configs
+              mountPath: /data/custom-configs
+          {{- end -}}
           {{- if .Values.global.externalSecrets.enabled }}
             - name: external-secrets
               mountPath: /external-secrets
@@ -781,3 +870,19 @@ spec:
         resources:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
+  {{- if .Values.global.customNetwork -}}
+    - metadata:
+        name: custom-configs
+        labels:
+          {{- include "common.labels.statefulset" . | nindent 10 }}
+      {{- with .Values.global.customNetworkConfigs.persistence.annotations }}
+        annotations:
+          {{ toYaml . | nindent 10 | trim }}
+      {{- end }}
+      spec:
+        accessModes: {{ .Values.global.customNetworkConfigs.persistence.accessModes }}
+        storageClassName: {{ .Values.global.customNetworkConfigs.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.global.customNetworkConfigs.persistence.size | quote }}
+  {{- end -}}
