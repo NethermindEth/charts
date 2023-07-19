@@ -4,7 +4,7 @@
 
 global:
   replicaCount: 1
-  
+
   ## Eth2 network ID
   ##
   network: mainnet
@@ -28,7 +28,7 @@ global:
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
-  
+
   ## RBAC configuration.
   ## ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
   ## Additional settings could be made in non-global section.
@@ -37,7 +37,7 @@ global:
     ## Specifies whether RBAC resources are to be created
     ##
     create: true
-  
+
   ## Monitoring
   ## Additional settings could be made in non-global section.
   ##
@@ -62,7 +62,7 @@ global:
       ## Create a custom prometheusRule Resource for scraping metrics using PrometheusOperator
       ##
       enabled: false
-  
+
   ## Configure liveness and readiness probes
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   ## NB! readinessProbe and livenessProbe must be disabled before fully synced
@@ -77,15 +77,15 @@ global:
 ## Init image is used to chown data volume, initialise genesis, etc.
 ##
 initImage:
-  repository: "busybox"
-  tag: "1.35"
+  repository: "bitnami/kubectl"
+  tag: "1.24"
   pullPolicy: IfNotPresent
 
 ## Sidecar image is used to perform Liveness/Readiness probes.
 ##
 sidecar:
   repository: "europe-west4-docker.pkg.dev/stakewiselabs/public/ethnode-sidecar"
-  tag: "v1.0.3"
+  tag: "v1.0.5"
   pullPolicy: IfNotPresent
   bindAddr: "0.0.0.0"
   bindPort: 3000
@@ -95,8 +95,10 @@ sidecar:
 ##
 image:
   repository: "ethereum/client-go"
-  tag: "v1.10.23"
+  tag: "v1.10.25"
   pullPolicy: IfNotPresent
+
+targetPeers: 100
 
 ## Credentials to fetch images from private registry
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -121,6 +123,16 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+## Additional labels for all resources
+##
+additionalLabels:
+  client-type: "execution"
+
+## Termination Grace Period
+## ref: https://kubernetes.io/docs/tasks/run-application/force-delete-stateful-set-pod/#delete-pods
+##
+terminationGracePeriodSeconds: 300
+
 ## Pod Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 ##
@@ -132,6 +144,9 @@ securityContext:
 ## ref: https://kubernetes.io/docs/reference/access-authn-authz/rbac/
 ##
 rbac:
+  # The name of the cluster role to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
   ## Required ClusterRole rules
   ##
   clusterRules:
@@ -198,16 +213,18 @@ podDisruptionBudget:
   enabled: true
   maxUnavailable: 1
 
-## Configure session affinity for to hit the same geth node
+## Defines whether the service must be headless
+##
+svcHeadless: true
+
+## Configure session affinity for validator clients to hit the same beacon node
 ## for the period specified in `timeoutSeconds`
-## https://kubernetes.io/docs/concepts/services-networking/service/#proxy-mode-userspace
+## ref: https://kubernetes.io/docs/concepts/services-networking/service/#proxy-mode-userspace
 ##
 sessionAffinity:
-  ## Whether to enable session affinity or not
-  ##
-  enabled: true
-  ## The session duration in seconds
-  ##
+  # Whether to enable session affinity or not
+  enabled: false
+  # The session duration in seconds
   timeoutSeconds: 86400
 
 ## When p2pNodePort is enabled, your P2P port will be exposed via service type NodePort.
@@ -221,6 +238,9 @@ p2pNodePort:
   ## @param p2pNodePort.annotations
   ##
   annotations: {}
+  ## @param p2pNodePort.type
+  ## Options: NodePort, LoadBalancer
+  type: NodePort
   ## @param p2pNodePort.startAt The ports allocation will start from this value
   ##
   startAt: 31100
@@ -229,17 +249,6 @@ p2pNodePort:
   replicaToNodePort: {}
   #  "0": 32345
   #  "3": 32348
-  initContainer:
-    image:
-      ## @param p2pNodePort.initContainer.repository Container image to fetch nodeport information
-      ##
-      repository: bitnami/kubectl
-      ## @param p2pNodePort.initContainer.tag Container tag
-      ##
-      tag: "1.24"
-      ## @param p2pNodePort.initContainer.pullPolicy Container pull policy
-      ##
-      pullPolicy: IfNotPresent
 
 ## Monitoring
 ##
@@ -332,6 +341,18 @@ tolerations: {}
 
 ## Affinity for pod assignment
 ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+##
+## Example:
+## affinity:
+##   podAntiAffinity:
+##     requiredDuringSchedulingIgnoredDuringExecution:
+##     - labelSelector:
+##         matchExpressions:
+##         - key: app.kubernetes.io/name
+##           operator: In
+##           values:
+##           - geth
+##       topologyKey: kubernetes.io/hostname
 ##
 affinity: {}
 

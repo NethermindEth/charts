@@ -72,10 +72,36 @@ spec:
           env:
             - name: WEB3SIGNER_URL
               value: {{ $root.Values.web3signerEndpoint }}
-          args: ["sync-validator-keys", "--db-url", "{{ $root.Values.dbKeystoreUrl }}", "--output-dir", "/data", "--index", "{{ . }}"]
+          args:
+            - "sync-validator-keys"
+            - "--db-url"
+            - "{{ $root.Values.dbKeystoreUrl }}"
+            - "--output-dir"
+            - "/data"
+            - "--index"
+            - "{{ . }}"
+            {{- if eq $root.Values.network "sepolia" }}
+            - "--network"
+            - "goerli"
+            {{- else }}
+            - "--network"
+            - "{{ $root.Values.network }}"
+            {{- end }}
+          {{- if $root.Values.feeOverride }}
+            - "--solo-fees-file"
+            - "/fee/feeOverride.json"
+          {{- end }}
+          {{- if not $root.Values.enableBuilder }}
+            - "--proposal-builder-enabled"
+            - "false"
+          {{- end }}
           volumeMounts:
             - name: data
               mountPath: /data
+          {{- if $root.Values.feeOverride }}
+            - name: fee-override
+              mountPath: /fee
+          {{- end }}
         - name: prepare
           image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
           imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
@@ -85,15 +111,21 @@ spec:
             - sh
             - -c
             - >
+              ls -lha /data;
               mkdir -p /data/lighthouse/validators;
               cp /data/validator_definitions.yml /data/lighthouse/validators/validator_definitions.yml;
               cp /mnt/gnosis-prysm/config.yaml /data/config_gnosis_prysm;
               cat /data/signer_keys.yml > /data/config;
               cat /data/config;
+              cat /data/proposerConfig.json;
               echo "" >>
               cat /data/signer_keys.yml >> /data/config_gnosis_prysm;
               cat /data/config_gnosis_prysm;
               chown -R {{ $root.Values.securityContext.runAsUser }}:{{ $root.Values.securityContext.runAsUser }} /data;
+              echo "Replace goerli fee recipient";
+              grep -rl -i "0x6A9d30e05C6832E868390F155388c7d97A6faEAC" -r /data/ | xargs --no-run-if-empty sed -i "s/0x6A9d30e05C6832E868390F155388c7d97A6faEAC/{{ $.Values.suggestedFeeRecipient }}/g";
+              echo "Replace mainnet fee recipient";
+              grep -rl -i "0x6b333B20fBae3c5c0969dd02176e30802e2fbBdB" -r /data/ | xargs --no-run-if-empty sed -i "s/0x6b333B20fBae3c5c0969dd02176e30802e2fbBdB/{{ $.Values.suggestedFeeRecipient }}/g";
           volumeMounts:
             - name: data
               mountPath: /data
@@ -112,6 +144,7 @@ spec:
             - "--{{ $root.Values.network }}"
             - "--config-file=/data/config"
             - "--validators-external-signer-url={{ $.Values.web3signerEndpoint }}"
+            - "--proposer-settings-file=/data/proposerConfig.json"
             {{- else if and (eq $root.Values.type "prysm") (eq $root.Values.network "gnosis") }}
             - "--config-file /data/config_gnosis_prysm"
             - "--chain-config-file /data/config_gnosis_prysm"
@@ -122,12 +155,10 @@ spec:
             - "--network=auto"
             - "--config-file=/data/config"
             - "--validators-external-signer-url={{ $.Values.web3signerEndpoint }}"
+            - "--validators-proposer-config=/data/proposerConfig.json"
+            {{- if $root.Values.enableBuilder }}
+            - "--validators-proposer-blinded-blocks-enabled=true"
             {{- end }}
-
-            {{- if eq $root.Values.type "teku" }}
-            - "--validators-proposer-default-fee-recipient={{ $.Values.suggestedFeeRecipient }}"
-            {{- else }}
-            - "--suggested-fee-recipient={{ $.Values.suggestedFeeRecipient }}"
             {{- end }}
 
             {{- include "validator-graffiti" $ | nindent 12 }}
@@ -184,6 +215,11 @@ spec:
         - name: gnosis-prysm
           configMap:
             name: {{ template "validators.fullname" $root }}-gnosis-prysm
+      {{- if $root.Values.feeOverride }}
+        - name: fee-override
+          configMap:
+            name: {{ template "validators.fullname" $root }}-override-fee-recipient
+      {{- end }}
         - name: data
           emptyDir: {}
 

@@ -12,7 +12,7 @@ image:
   repository: consensys/web3signer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "22.8.1"
+  tag: "22.10.0"
 
 ## Init image is used to chown data volume, etc.
 ##
@@ -60,7 +60,11 @@ fullnameOverride: ""
 
 ## Network
 ## Options: mainnet, prater, gnosis
-network: "prater"
+network: "mainnet"
+
+## Sets logging verbosity.
+## Log levels are OFF, FATAL, WARN, INFO, DEBUG, TRACE, ALL.
+loggingLevel: "INFO"
 
 ## Number of epochs to keep when pruning the slashing protection database.
 ##
