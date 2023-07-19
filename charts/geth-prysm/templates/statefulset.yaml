@@ -211,7 +211,6 @@ spec:
               --override.terminaltotaldifficulty={{ .Values.geth.terminalTotalDifficulty }}
           {{- end }}
               --datadir=/data/ethereum
-              --ethash.dagdir=/data/ethereum/.ethash
               --ipcdisable
               --{{ .Values.global.network }}
           {{- range .Values.geth.extraFlags }}
