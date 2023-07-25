@@ -1,0 +1,33 @@
+{{- if .Values.geth.rpcSVCNLB.enabled -}}
+{{- range $i, $e := until (int .Values.global.replicaCount) }}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.names.fullname" $ }}-nlb-{{ $i }}
+  labels:
+    {{- include "common.labels.standard" $ | nindent 4 }}
+    pod: "{{ include "common.names.fullname" $ }}-{{ $i }}"
+    type: rpc-nlb
+  {{- with $.Values.geth.rpcSVCNLB.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ $.Values.geth.rpcSVCNLB.type }}
+  externalTrafficPolicy: Local
+  ports:
+    - name: rpc-tcp
+      port: {{ $.Values.geth.rpcSVCNLB.port }}
+      protocol: TCP
+      targetPort: {{ $.Values.geth.rpcSVCNLB.port }}
+  selector:
+    {{- include "common.labels.matchLabels" $ | nindent 4 }}
+    statefulset.kubernetes.io/pod-name: "{{ include "common.names.fullname" $ }}-{{ $i }}"
+  {{- with $.Values.geth.rpcSVCNLB.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}
