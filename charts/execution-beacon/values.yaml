@@ -501,6 +501,13 @@ geth:
       port: sidecar
       scheme: HTTP
 
+  rpcSVCNLB:
+    enabled: false
+    type: LoadBalancer
+    port: 8545
+    annotations: {}
+    loadBalancerSourceRanges: []
+  
 
 nethermind:
   enabled: false
