@@ -78,7 +78,6 @@ spec:
            protocol: TCP
         {{- end }}
         args:
-         - --metrics
         {{- range $key, $value := .Values.args }}
          - {{ $key }}={{ $value }}
         {{- end }}

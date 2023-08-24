@@ -22,7 +22,8 @@ args:
    --db-path: "/var/lib/juno"
    --network: "goerli"
    --eth-node: "wss://"
-
+   --http: "true"
+   --metrics: "true"
 ### Node selector and Tanits
 nodeSelector:
    enabled: false
