@@ -48,11 +48,7 @@ svc:
 # Ingress
    ingress:
     enabled: true
-    ## GCP Certificate
-    managedCertificate:
-      enabled: true
-      domain:
-        - "rpc-goerli-juno.nethermind.dev"
+    host: "rpc-goerli-1-juno.nethermind.dev"   
     ## ALB Backend Config
     backendConfig:
       sessionAffinity:
@@ -80,7 +76,7 @@ svc:
     - host: "rpc-goerli-juno.nethermind.dev"
       http:
         paths:
-         - path: /*
+         - path: /
            pathType: ImplementationSpecific
            backend:
             service:
