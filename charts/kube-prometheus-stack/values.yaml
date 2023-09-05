@@ -672,14 +672,14 @@ alertmanager:
     ## Storage is the definition of how storage will be used by the Alertmanager instances.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
     ##
-    storage: {}
-    # volumeClaimTemplate:
-    #   spec:
-    #     storageClassName: gluster
-    #     accessModes: ["ReadWriteOnce"]
-    #     resources:
-    #       requests:
-    #         storage: 50Gi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard-rwo
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
     #     selector: {}
 
 
@@ -3311,16 +3311,16 @@ prometheus:
     ## Prometheus StorageSpec for persistent data
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/storage.md
     ##
-    storageSpec: {}
+    storageSpec:
     ## Using PersistentVolumeClaim
     ##
-    #  volumeClaimTemplate:
-    #    spec:
-    #      storageClassName: gluster
-    #      accessModes: ["ReadWriteOnce"]
-    #      resources:
-    #        requests:
-    #          storage: 50Gi
+     volumeClaimTemplate:
+       spec:
+         storageClassName: standard-rwo
+         accessModes: ["ReadWriteOnce"]
+         resources:
+           requests:
+             storage: 50Gi
     #    selector: {}
 
     ## Using tmpfs volume
@@ -3359,7 +3359,7 @@ prometheus:
         scheme: http
         static_configs:
           - targets:
-            - juno-goerli-1-prom.dev-goerli-1.svc.cluster.local:9090
+            - juno-goerli-1-metrics.dev-goerli-1.svc.cluster.local:9090
 
       - job_name: dev-goerli-2
         metrics_path: /
@@ -3367,7 +3367,7 @@ prometheus:
         scheme: http
         static_configs:
           - targets:
-            - juno-goerli-2-prom.dev-goerli-2.svc.cluster.local:9090
+            - juno-goerli-2-metrics.dev-goerli-2.svc.cluster.local:9090
 
       - job_name: dev-integration
         metrics_path: /
@@ -3375,7 +3375,7 @@ prometheus:
         scheme: http
         static_configs:
           - targets:
-            - juno-integration-prom.dev-integration.svc.cluster.local:9090
+            - juno-integration-metrics.dev-integration.svc.cluster.local:9090
 
       - job_name: dev-mainnet
         metrics_path: /
@@ -3383,7 +3383,55 @@ prometheus:
         scheme: http
         static_configs:
           - targets:
-            - juno-mainnet-1-prom.dev-mainnet-1.svc.cluster.local:9090
+            - juno-mainnet-metrics.dev-mainnet.svc.cluster.local:9090
+     
+      - job_name: 'kubernetes-pods'
+
+        kubernetes_sd_configs:
+          - role: pod
+
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape_slow]
+            action: drop
+            regex: true
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+            action: replace
+            regex: (https?)
+            target_label: __scheme__
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port, __meta_kubernetes_pod_ip]
+            action: replace
+            regex: (\d+);(([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4})
+            replacement: '[$2]:$1'
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port, __meta_kubernetes_pod_ip]
+            action: replace
+            regex: (\d+);((([0-9]+?)(\.|$)){4})
+            replacement: $2:$1
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+            replacement: __param_$1
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: pod
+          - source_labels: [__meta_kubernetes_pod_phase]
+            regex: Pending|Succeeded|Failed|Completed
+            action: drop
+          - source_labels: [__meta_kubernetes_pod_node_name]
+            action: replace
+            target_label: node
 
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
