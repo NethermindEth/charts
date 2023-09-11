@@ -8,7 +8,7 @@ metadata:
     addToHostAliases: "true"
     fqdn: {{ .Values.svc.fdqn }}
   annotations:
-    cloud.google.com/backend-config:  '{"ports": {"{{ $.Values.svc.targetPort }}":"{{ .Values.deployment.projectName }}"}}'
+    cloud.google.com/backend-config:  '{"ports": {"{{ $.Values.svc.healthTargetPort }}":"{{ .Values.deployment.projectName }}"}}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: {{ .Values.svc.clustertype }}
@@ -18,7 +18,7 @@ spec:
       timeoutSeconds: 30
   ports:
   {{- range .Values.deployment.port }}
-  - port: {{ $.Values.svc.targetPort }}
+  - port: {{ . }}
     name: port-{{ . }}
     targetPort: {{ . }}
     protocol: TCP
