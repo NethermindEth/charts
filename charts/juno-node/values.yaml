@@ -15,6 +15,7 @@ deployment:
       memory: 8Gi
    port:
     - 6060
+    - 6061
 
 ### Container Arguments
 args:
@@ -24,6 +25,9 @@ args:
    --http: "true"
    --metrics: "true"
    --pending-poll-interval: "2s"
+   --ws: "true"
+   --ws-port: "6061"
+
 ### Node selector and Tanits
 nodeSelector:
    enabled: false
@@ -44,17 +48,18 @@ serviceAccount:
 svc:
    clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
    fdqn: juno.cluster.local
-   targetPort: "6060"
+   healthTargetPort: "6060"
 # Ingress
    ingress:
     enabled: true
     host: "rpc-goerli-1-juno.nethermind.dev"   
     ## ALB Backend Config
     backendConfig:
+      timeoutSec: 300
       sessionAffinity:
          affinityType: "CLIENT_IP"
       connectionDraining:
-         drainingTimeoutSec: 30
+         drainingTimeoutSec: 300
       healthCheck:
          checkIntervalSec: 15
          timeoutSec: 15
@@ -82,6 +87,16 @@ svc:
              name: goerli
              port:
                number: 6060
+    - host: "wss-goerli-juno.nethermind.dev"
+      http:
+        paths:
+         - path: /
+           pathType: ImplementationSpecific
+           backend:
+            service:
+             name: goerli
+             port:
+               number: 6061
 
 ### Horizontal pod scaling
 hpa:
