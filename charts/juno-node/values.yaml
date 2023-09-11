@@ -48,7 +48,7 @@ serviceAccount:
 svc:
    clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
    fdqn: juno.cluster.local
-   targetPort: "6060"
+   healthTargetPort: "6060"
 # Ingress
    ingress:
     enabled: true
