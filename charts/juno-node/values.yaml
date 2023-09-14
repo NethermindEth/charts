@@ -1,11 +1,11 @@
 ### Basic
 deployment:
-   projectName: goerli
-   namespace: dev-goerli-1
+   projectName: goerli-test
+   namespace: test
    replicas: 1
    imagename: nethermind/juno
    imagetag: v0.6.0
-   snapshotUrl: "https://juno-snapshot.s3.us-east-2.amazonaws.com/goerli2/juno_goerli2_v0.4.0_125026.tar" # if Value is Null sync start from 0 block
+   snapshotUrl: "" # if Value is Null sync start from 0 block
    resources:
     limits:
       cpu: "4"
@@ -20,6 +20,7 @@ deployment:
 ### Container Arguments
 args:
    --http-port: "6060"
+   --eth-node: "wss://goerli.infura.io/ws/v3/80ceb13a11394ce3a6bc12bcdece3305"
    --db-path: "/var/lib/juno"
    --network: "goerli"
    --http: "true"
@@ -28,39 +29,20 @@ args:
    --ws: "true"
    --ws-port: "6061"
 
-### Node selector and Tanits
-nodeSelector:
-   enabled: false
-   label:
-     network: juno
-
-taintsToleration:
-   enabled: false
-   tolerations:
-      network: juno
-
-### Service account
-serviceAccount: 
-   enabled: false
-   name: "juno"
 
 ### Networking Service
 svc:
-   clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
-   fdqn: juno.cluster.local
-   healthTargetPort: "6060"
-# Ingress
-   ingress:
-    enabled: true
-    host: "rpc-goerli-1-juno.nethermind.dev"   
-    ## ALB Backend Config
-    backendConfig:
-      timeoutSec: 300
-      sessionAffinity:
+   globalStaticIpName: "juno-test-ip"
+   rpc:
+     clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
+     port: "6060"
+     backendConfig:
+       timeoutSec: 400
+       sessionAffinity:
          affinityType: "CLIENT_IP"
-      connectionDraining:
+       connectionDraining:
          drainingTimeoutSec: 300
-      healthCheck:
+       healthCheck:
          checkIntervalSec: 15
          timeoutSec: 15
          healthyThreshold: 1
@@ -68,35 +50,56 @@ svc:
          port: 6060
          type: HTTP
          requestPath: /
-      customResponseHeaders:
+       customResponseHeaders:
          headers:
           - "X-Frame-Options: SAMEORIGIN"
           - "X-Content-Type-Options: nosniff"
           - "X-XSS-Protection: 1; mode=block"
           - "Referrer-Policy: no-referrer-when-downgrade"
           - "Strict-Transport-Security: max-age=63072000; includeSubDomains; preload"
-    ## Ingress Rules
+          
+   wss:
+     clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
+     port: "6061"
+     backendConfig:
+       timeoutSec: 400
+       sessionAffinity:
+         affinityType: "CLIENT_IP"
+       connectionDraining:
+         drainingTimeoutSec: 300
+       healthCheck:
+         checkIntervalSec: 15
+         timeoutSec: 15
+         healthyThreshold: 1
+         unhealthyThreshold: 2 
+         port: 6060
+         type: HTTP
+     ## ALB Ingress Rules
+     # Ingress
+   ingress:
+    enabled: true
     rules:
-    - host: "rpc-goerli-juno.nethermind.dev"
-      http:
+     - host: "test.juno.rpc.nethermind.dev"
+       http:
         paths:
-         - path: /
+         - path: /*
            pathType: ImplementationSpecific
            backend:
             service:
-             name: goerli
+             name: goerli-test
              port:
                number: 6060
-    - host: "wss-goerli-juno.nethermind.dev"
-      http:
-        paths:
-         - path: /
+         - path: /ws
            pathType: ImplementationSpecific
            backend:
             service:
-             name: goerli
+             name: goerli-test-wss
              port:
                number: 6061
+    tls:
+     - hosts:
+       - "test.juno.rpc.nethermind.dev"
+       secretName: juno-test-alb-tls-cert
 
 ### Horizontal pod scaling
 hpa:
@@ -121,3 +124,19 @@ env:
    data:
    - name: NETWORK
      value: "juno"
+
+### Node selector and Tanits
+nodeSelector:
+   enabled: false
+   label:
+     network: juno
+
+taintsToleration:
+   enabled: false
+   tolerations:
+      network: juno
+
+### Service account
+serviceAccount: 
+   enabled: false
+   name: "juno"

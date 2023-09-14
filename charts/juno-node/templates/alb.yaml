@@ -1,4 +1,4 @@
-{{- if $.Values.svc.ingress.enabled }}
+{{- if $.Values.svc.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -9,12 +9,13 @@ metadata:
     cert-manager.io/acme-challenge-type: http01
     cert-manager.io/cluster-issuer: letsencrypt-gce
     ingress.kubernetes.io/force-ssl-redirect: "true"
+    {{- if .Values.svc.globalStaticIpName }}
+    kubernetes.io/ingress.global-static-ip-name: "{{ $.Values.svc.globalStaticIpName }}"
+    {{- end }}
     kubernetes.io/tls-acme: "true"
 spec:
   rules:
 {{ toYaml .Values.svc.ingress.rules | indent 2 }}
   tls:
-  - hosts:
-    - {{ .Values.svc.ingress.host }}
-    secretName: {{ .Values.deployment.projectName }}-alb-tls-cert
+{{ toYaml .Values.svc.ingress.tls | indent 2 }} 
 {{- end -}}
