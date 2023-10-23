@@ -67,10 +67,6 @@ svc:
     port: "6060"
     backendConfig:
       timeoutSec: 400
-      sessionAffinity:
-        affinityType: "CLIENT_IP"
-      connectionDraining:
-        drainingTimeoutSec: 300
       healthCheck:
         checkIntervalSec: 15
         timeoutSec: 15
