@@ -55,13 +55,7 @@ taintsToleration:
       network: juno
 
   ### Configmap
-config:
-  enabled: false
-  BUCKET: "gs://juno-prod-pgo-bucket"
-  DURATION: "30"
-  ITERATION: "10"
-  ENV: "juno-integration"
-  URL: "http://localhost:6062/debug/pprof/profile"
+
 
   ### PGO Container 
 pgo:
@@ -75,7 +69,12 @@ pgo:
     requests:
       cpu: "1"
       memory: 2Gi
-
+  config:
+    BUCKET: "gs://juno-prod-pgo-bucket"
+    DURATION: "30"
+    ITERATION: "10"
+    ENV: "juno-integration"
+    URL: "http://localhost:6062/debug/pprof/profile"
 
   ### Service account
 serviceAccount: 
