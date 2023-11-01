@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 
 global:
+  owner: ""
+  project: ""
   imagePullSecrets: []
   network: mainnet
 
@@ -26,24 +28,37 @@ securityContext:
 ##
 rbac:
   create: true
+  name: ""	
+  rules:	
+    - apiGroups: [""]	
+      resources:	
+      - "services"	
+      - "pods"	
+      verbs:	
+      - "list"	
+      - "get"	
+      - "patch"
 
 ## Init image is used to chown data volume, initialise genesis, etc.
 ##
 initImageBusybox:
   repository: "busybox"
-  tag: "1.35"
+  tag: "1.36.1"
   pullPolicy: IfNotPresent
 
 ## CLI image is used to fetch public keys.
 ##
 cliImage:
-  repository: europe-west4-docker.pkg.dev/stakewiselabs/public/cli
-  tag: "v1.2.7"
+  repository: 238155366538.dkr.ecr.eu-west-1.amazonaws.com/keystores-cli
+  tag: "v0.0.2"
   pullPolicy: IfNotPresent
 
-## Database connection string, ex. 'postgresql://username:pass@hostname/dbname'
-##
-dbKeystoreUrl: ""
+externalSecrets:
+  enabled: true
+  secretStoreRef:
+    name: secretStoreName
+    kind: secretStoreKind
+  data: []
 
 ## Configuration for validators
 ## ref: https://lighthouse-book.sigmaprime.io/validator-management.html
@@ -90,9 +105,7 @@ validatorsKeyIndex: 0
 ##
 validatorsCount: 0
 
-## Default fee recipient for all validator keys.
-##
-suggestedFeeRecipient: ""
+validatorsNoOfKeys: 100
 
 ## Whether a builder should be used for proposalConfig
 enableBuilder: false
@@ -104,16 +117,22 @@ image:
   pullPolicy: IfNotPresent
   prysm:
     repository: "gcr.io/prysmaticlabs/prysm/validator"
-    tag: "v3.1.1"
+    tag: "v4.0.8"
   prysmGnosis:
     repository: "ghcr.io/gnosischain/gbc-prysm-validator"
     tag: "v2.1.2-gbc"
   lighthouse:
     repository: "sigp/lighthouse"
-    tag: "v3.1.2"
+    tag: "v4.4.1"
   teku:
     repository: "consensys/teku"
-    tag: "22.10.1"
+    tag: "23.9.0"
+  nimbus: 	
+    repository: "statusim/nimbus-validator-client"
+    tag: "multiarch-v23.9.0"
+  lodestar:
+    repository: "chainsafe/lodestar"
+    tag: "v1.11.0"
 
 ## Credentials to fetch images from private registry
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -184,10 +203,12 @@ extraFlags:
   prysm: []
   lighthouse: []
   teku: []
+  nimbus: []	
+  lodestar: []
 
 ## Web3Signer Endpoint
 ##
-web3signerEndpoint: http://web3signer:6174
+web3signerEndpoint: ""
 
 ## List of Beacon Chain node addresses
 ##
@@ -210,6 +231,12 @@ graffiti: ""
 ## used for stakewise solo validators only
 ##
 feeOverride: ""
+
+enableWatcher: false
+
+## Lodestar specific setting	
+## Enables strict checking of the validator's feeRecipient with the one returned by engine	
+strictFeeRecipientCheck: false
 
 ## Monitoring
 ##
@@ -234,6 +261,14 @@ metrics:
       - "--metrics-host-allowlist=*"
       - "--metrics-interface=0.0.0.0"
       - "--metrics-port=9090"
+    nimbus:	
+      - "--metrics"	
+      - "--metrics-port=9090"	
+      - "--metrics-address=0.0.0.0"	
+    lodestar:	
+      - "--metrics"	
+      - "--metrics.address=0.0.0.0"	
+      - "--metrics.port=9090"
 
   ## Prometheus Service Monitor
   ## ref: https://github.com/coreos/prometheus-operator
