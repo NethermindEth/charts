@@ -162,7 +162,7 @@ hpa:
   cpuUtilization: 80
 
 batchjob:
-   enabled: true
+   enabled: false
    schedule: "* */1 * * *"
 ### Persistant Volume
 pvc:
