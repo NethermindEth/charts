@@ -26,10 +26,10 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: pvc-deleter-role
+  name: {{ .Values.deployment.projectName }}-deleter-role
 subjects:
 - kind: ServiceAccount
-  name: pvc-deleter-sa
+  name: {{ .Values.deployment.projectName }}-deleter-sa
 ---
 apiVersion: batch/v1
 kind: CronJob
