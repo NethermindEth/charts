@@ -161,6 +161,8 @@ svc_lb:
   hostname: integration.juno.prod
   wss_hostname: integration-wss.juno.prod
 
+batchjob:
+  enabled: false
 ### Horizontal pod scaling
 hpa:
   enabled: false
