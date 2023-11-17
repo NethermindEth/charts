@@ -39,7 +39,7 @@ externalSecrets:
 dirk:
   server:
     rules:
-      admin-ips: []
+      adminIPs: [127.0.0.1]
   loglevel: Debug
   clientName: client1
   tracing:
