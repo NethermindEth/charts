@@ -37,6 +37,9 @@ externalSecrets:
     key: dirk
 
 dirk:
+  server:
+    rules:
+      admin-ips: []
   loglevel: Debug
   clientName: client1
   tracing:
