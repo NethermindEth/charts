@@ -88,11 +88,12 @@ svc:
     clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
     port: "6060"
     backendConfig:
-      timeoutSec: 400
+      timeoutSec: 300
       sessionAffinity:
-        affinityType: "CLIENT_IP"
+        affinityType: "GENERATED_COOKIE"
+        affinityCookieTtlSec: 100
       connectionDraining:
-        drainingTimeoutSec: 300
+        drainingTimeoutSec: 30
       healthCheck:
         checkIntervalSec: 15
         timeoutSec: 15
@@ -115,7 +116,8 @@ svc:
     backendConfig:
       timeoutSec: 400
       sessionAffinity:
-        affinityType: "CLIENT_IP"
+        affinityType: "GENERATED_COOKIE"
+        affinityCookieTtlSec: 100
       connectionDraining:
         drainingTimeoutSec: 300
       healthCheck:
@@ -124,6 +126,23 @@ svc:
         healthyThreshold: 1
         unhealthyThreshold: 2 
         port: 6060
+        type: HTTP
+  grpc:
+    clustertype: ClusterIP
+    port: "6064"
+    backendConfig:
+      timeoutSec: 300
+      sessionAffinity:
+        affinityType: "GENERATED_COOKIE"
+        affinityCookieTtlSec: 100
+      connectionDraining:
+        drainingTimeoutSec: 30
+      healthCheck:
+        checkIntervalSec: 15
+        timeoutSec: 15
+        healthyThreshold: 1
+        unhealthyThreshold: 2 
+        port: 6064
         type: HTTP
     ## ALB Ingress Rules
     # Ingress
@@ -159,8 +178,6 @@ svc_lb:
   hostname: integration.juno.prod
   wss_hostname: integration-wss.juno.prod
 
-batchjob:
-  enabled: false
 ### Horizontal pod scaling
 hpa:
   enabled: false
