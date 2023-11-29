@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.deployment.projectName }}-grpc
+  namespace: {{ .Values.deployment.namespace }}
+  labels:
+    app: {{ .Values.deployment.projectName }}
+  annotations:
+    cloud.google.com/backend-config:  '{"ports": {"{{ $.Values.svc.grpc.port }}":"{{ .Values.deployment.projectName }}-grpc"}}'
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  type: {{ .Values.svc.grpc.clustertype }}
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 30
+  ports:
+  - port: {{ .Values.svc.grpc.port }}
+    name: port-{{ .Values.svc.grpc.port }}
+    targetPort: {{ .Values.svc.grpc.port }}
+    protocol: TCP
+  selector:
+    app: {{ .Values.deployment.projectName }}
