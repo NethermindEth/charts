@@ -128,6 +128,7 @@ svc:
         port: 6060
         type: HTTP
   grpc:
+    enabled: false
     clustertype: ClusterIP
     port: "6064"
     backendConfig:
