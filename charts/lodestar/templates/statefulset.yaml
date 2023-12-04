@@ -47,15 +47,9 @@ spec:
               containerPort: {{ .Values.service.ports.http }}
               protocol: TCP
           livenessProbe:
-            tcpSocket:
-              port: http
-            initialDelaySeconds: 60
-            periodSeconds: 120
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
-            tcpSocket:
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 10
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

@@ -95,3 +95,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+livnessProbe: null
+readinessProbe: null

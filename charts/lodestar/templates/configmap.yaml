@@ -25,9 +25,6 @@ data:
     exec node /usr/app/packages/cli/bin/lodestar validator \
         --dataDir="/opt/data" \
         --network="$NETWORK" \
-        --rest \
-        --rest.address=0.0.0.0 \
-        --rest.port={{ .Values.service.ports.http }} \
         --metrics=true \
         --metrics.address="0.0.0.0" \
         --metrics.port={{ .Values.service.ports.metrics }} \
