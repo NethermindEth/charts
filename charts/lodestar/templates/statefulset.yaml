@@ -43,14 +43,19 @@ spec:
             - name: metrics
               containerPort: {{ .Values.service.ports.metrics }}
               protocol: TCP
+            - name: http
+              containerPort: {{ .Values.service.ports.http }}
+              protocol: TCP
           livenessProbe:
-            httpGet:
-              path: /
-              port: p2p
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 120
           readinessProbe:
-            httpGet:
-              path: /
-              port: p2p
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

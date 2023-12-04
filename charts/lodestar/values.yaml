@@ -58,6 +58,7 @@ service:
   ports:
     metrics: 5064
     p2p: 9000
+    http: 9596
 
 ingress:
   enabled: false

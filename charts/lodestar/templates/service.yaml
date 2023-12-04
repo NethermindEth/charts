@@ -16,5 +16,9 @@ spec:
       targetPort: metrics
       protocol: TCP
       name: metrics
+    - port: {{ .Values.service.ports.http }}
+      targetPort: http
+      protocol: TCP
+      name: http
   selector:
     {{- include "lodestar.selectorLabels" . | nindent 4 }}
