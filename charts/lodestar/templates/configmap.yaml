@@ -7,7 +7,8 @@ metadata:
     {{- include "lodestar.labels" . | nindent 4 }}
 data:
   run.sh: |
-    #!/bin/bash
+    #!/bin/sh
+
     for f in /home/charon/validator_keys/keystore-*.json; do
       echo "Importing key ${f}"
 
