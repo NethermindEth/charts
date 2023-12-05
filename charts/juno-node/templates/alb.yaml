@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: "gce"
     cert-manager.io/acme-challenge-type: http01
     cert-manager.io/cluster-issuer: letsencrypt-gce
-    ingress.kubernetes.io/force-ssl-redirect: "true"
+    ingress.kubernetes.io/force-ssl-redirect: "false"
     kubernetes.io/tls-acme: "true"
     {{- if .Values.svc.globalStaticIpName }}
     kubernetes.io/ingress.global-static-ip-name: "{{ $.Values.svc.globalStaticIpName }}"
