@@ -1102,6 +1102,10 @@ spec:
         - name: ethsider
           image: "{{ .Values.global.ethsider.repository }}:{{ .Values.global.ethsider.tag }}"
           imagePullPolicy: {{ .Values.global.ethsider.pullPolicy }}
+          securityContext:
+            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
           env:
             - name: EXECUTION_ENDPOINT
               value: "{{ .Values.global.ethsider.execution_endpoint }}"
