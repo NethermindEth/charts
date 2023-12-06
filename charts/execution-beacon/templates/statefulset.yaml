@@ -121,6 +121,11 @@ spec:
         - name: execution
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
+          {{- if .Values.global.externalSecrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: eso-{{ include "common.names.fullname" . }}
+          {{- end }}
           command:
             - sh
             - -ac
