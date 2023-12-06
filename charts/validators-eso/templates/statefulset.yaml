@@ -60,6 +60,9 @@ spec:
       {{- with $root.Values.securityContext }}
       securityContext:
         {{ toYaml . | nindent 8 | trim }}
+        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
+        runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
+        readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
       {{- end }}
       serviceAccountName: "validators"
       priorityClassName: {{ $root.Values.priorityClassName | quote }}
@@ -68,7 +71,9 @@ spec:
           image: "{{ $root.Values.cliImage.repository }}:{{ $root.Values.cliImage.tag }}"
           imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
           securityContext:
-            runAsUser: 0
+            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
           env:
             - name: WEB3SIGNER_URL
               value: {{ $root.Values.web3signerEndpoint }}
@@ -101,7 +106,9 @@ spec:
           image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
           imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
           securityContext:
-            runAsUser: 0
+            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
           command:
             - sh
             - -c
@@ -127,6 +134,10 @@ spec:
         - name: watcher
           image: "{{ $root.Values.cliImage.repository }}:{{ $root.Values.cliImage.tag }}"
           imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
+          securityContext:
+            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
           env:
             - name: WEB3SIGNER_URL
               value: {{ $root.Values.web3signerEndpoint }}
@@ -156,6 +167,10 @@ spec:
         - name: validator
           image: "{{ (pluck $root.Values.type $root.Values.image | first ).repository }}:{{ (pluck $root.Values.type $root.Values.image | first ).tag }}"
           imagePullPolicy: {{ $root.Values.image.pullPolicy }}
+          securityContext:
+            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
           args:
             {{- range (pluck $root.Values.type $root.Values.flags | first) }}
             - {{ . | quote }}
