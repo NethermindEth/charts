@@ -54,10 +54,10 @@ spec:
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
           env:
             - name: POD_IP
               valueFrom:
@@ -98,10 +98,10 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.beacon.imagePullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
           command:
             - sh
             - -ac
@@ -129,10 +129,10 @@ spec:
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
           command:
             - sh
             - -ac
@@ -394,10 +394,10 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
           {{/*
           Configuration for Prysm beacon client
           */}}
