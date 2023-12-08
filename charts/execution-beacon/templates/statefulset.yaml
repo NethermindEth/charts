@@ -175,6 +175,11 @@ spec:
               --Metrics.ExposePort={{ .Values.execution.metrics.port }}
               --Metrics.NodeName=$POD_NAME
             {{- end }}
+            {{- if .Values.execution.seq.enabled }}
+              --Seq.MinLevel={{ .Values.execution.seq.minLevel }}
+              --Seq.ServerUrl={{ .Values.execution.seq.serverUrl }}
+              --Mining.ExtraData={{ .Values.execution.seq.miningExtraData }}
+            {{- end }}
               --Network.MaxActivePeers={{ .Values.execution.targetPeers }}
             {{- if .Values.global.p2pNodePort.enabled }}
               --Network.ExternalIp=$EXTERNAL_IP
