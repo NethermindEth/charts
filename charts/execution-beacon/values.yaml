@@ -302,11 +302,22 @@ execution:
   ## -------------------------- Execution node specific settings -----------------------------------------
   # Manually specify TerminalTotalDifficulty, overriding the bundled setting
   terminalTotalDifficulty: ""
+  
+  ## -------------------------- Nethermind specific settings -----------------------------------------
+  ## Seq logging
   seq:
-    enabled: true
+    enabled: false
     minLevel: ""
     serverUrl: ""
-    miningExtraData: ""
+
+  ## -------------------------- Nethermind specific settings -----------------------------------------
+  ## Fields to override in nethermind config
+  mining:
+    enabled: false
+    extraData: ""
+
+  ## -------------------------- Nethermind specific settings -----------------------------------------
+  ## JsonRpc settings to override in nethermind config
   jsonrpc:
     enabled: true
     namespaces:

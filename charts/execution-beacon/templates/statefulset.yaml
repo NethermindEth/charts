@@ -178,7 +178,9 @@ spec:
             {{- if .Values.execution.seq.enabled }}
               --Seq.MinLevel={{ .Values.execution.seq.minLevel }}
               --Seq.ServerUrl={{ .Values.execution.seq.serverUrl }}
-              --Mining.ExtraData={{ .Values.execution.seq.miningExtraData }}
+            {{- end }}
+            {{- if .Values.execution.mining.enabled }}
+              --Mining.ExtraData={{ .Values.execution.mining.extraData }}
             {{- end }}
               --Network.MaxActivePeers={{ .Values.execution.targetPeers }}
             {{- if .Values.global.p2pNodePort.enabled }}
