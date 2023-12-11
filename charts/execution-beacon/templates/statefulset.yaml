@@ -133,9 +133,7 @@ spec:
               {{- if .Values.global.p2pNodePort.enabled }}
               . /env/init-nodeport;
               {{- end }}
-            {{/*
-            Configuration for Nethermind execution client
-            */}}
+            {{- /* Configuration for Nethermind execution client */}}
             {{- if eq .Values.execution.client "nethermind" }}
               exec /nethermind/Nethermind.Runner
             {{- if eq .Values.global.network "gnosis" }}
@@ -175,13 +173,6 @@ spec:
               --Metrics.ExposePort={{ .Values.execution.metrics.port }}
               --Metrics.NodeName=$POD_NAME
             {{- end }}
-            {{- if .Values.execution.seq.enabled }}
-              --Seq.MinLevel={{ .Values.execution.seq.minLevel }}
-              --Seq.ServerUrl={{ .Values.execution.seq.serverUrl }}
-            {{- end }}
-            {{- if .Values.execution.mining.enabled }}
-              --Mining.ExtraData={{ .Values.execution.mining.extraData }}
-            {{- end }}
               --Network.MaxActivePeers={{ .Values.execution.targetPeers }}
             {{- if .Values.global.p2pNodePort.enabled }}
               --Network.ExternalIp=$EXTERNAL_IP
@@ -195,9 +186,7 @@ spec:
             {{- if .Values.execution.terminalTotalDifficulty }}
               --Merge.TerminalTotalDifficulty={{ .Values.execution.terminalTotalDifficulty }}
             {{- end }}
-            {{/*
-            Configuration for Geth execution client
-            */}}
+            {{- /* Configuration for Geth execution client */}}
             {{- else if eq .Values.execution.client "geth" }}
               exec geth
               --syncmode=snap
@@ -243,9 +232,7 @@ spec:
               --metrics.port={{ .Values.execution.metrics.port }}
               --metrics.addr={{ .Values.execution.metrics.host }}  
             {{- end }}
-            {{/*
-            Configuration for Besu execution client
-            */}}
+            {{- /* Configuration for Besu execution client */}}
             {{- else if eq .Values.execution.client "besu" }}
               exec /opt/besu/bin/besu
               --network={{ .Values.global.network }}
@@ -272,9 +259,7 @@ spec:
               --metrics.port={{ .Values.execution.metrics.port }}
               --metrics.addr={{ .Values.execution.metrics.host }}  
             {{- end }}
-            {{/*
-            Configuration for Erigon execution client
-            */}}
+            {{- /* Configuration for Erigon execution client */}}
             {{- else if eq .Values.execution.client "erigon" }}
               exec erigon
               --datadir=/data/execution
