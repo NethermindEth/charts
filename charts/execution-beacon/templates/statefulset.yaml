@@ -470,6 +470,7 @@ spec:
             {{- end }}
               --p2p-enabled=true
               --p2p-peer-upper-bound={{ .Values.beacon.targetPeers }}
+              --p2p-peer-lower-bound={{ .Values.beacon.targetPeersMin }}
             {{- if .Values.global.p2pNodePort.enabled }}
               --p2p-advertised-port=$EXTERNAL_BEACON_PORT
               --p2p-advertised-ip=$EXTERNAL_IP

@@ -489,6 +489,7 @@ beacon:
     portName: "rpc"
 
   targetPeers: 50
+  targetPeersMin: 10
 
   ## Sets the total difficulty to manual overrides the default
   ## TERMINAL_TOTAL_DIFFICULTY value. WARNING: This flag should be used only if you
