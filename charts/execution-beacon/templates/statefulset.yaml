@@ -136,11 +136,7 @@ spec:
             {{- /* Configuration for Nethermind execution client */}}
             {{- if eq .Values.execution.client "nethermind" }}
               exec /nethermind/Nethermind.Runner
-            {{- if eq .Values.global.network "gnosis" }}
-              --config=xdai
-            {{- else }}
               --config={{ .Values.global.network }}
-            {{- end }}
               --datadir=/data/execution
             {{- if .Values.execution.jsonrpc.enabled }}
               --JsonRpc.Enabled={{ .Values.execution.jsonrpc.enabled }}
@@ -318,6 +314,11 @@ spec:
           {{- if .Values.execution.javaOpts.enabled }}
             - name: BESU_OPTS
               value: {{ .Values.execution.javaOpts.maxHeapSize }}
+          {{- end }}
+          {{- if .Values.global.externalSecrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: eso-{{ include "common.names.fullname" . }}
           {{- end }}
           ports:
             {{- if eq .Values.execution.client "erigon" }}
