@@ -107,6 +107,12 @@ spec:
            containerPort: {{ . }}
            protocol: TCP
         {{- end }}
+        env:
+          - name: JUNO_GW_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.feederGateway.secret.targetName }}
+                key: {{ .Values.feederGateway.secret.secretKey }}
         {{- if $.Values.deployment.healthCheck.enabled }}
         readinessProbe:
           exec:

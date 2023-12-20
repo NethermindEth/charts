@@ -185,3 +185,23 @@ env:
   data:
   - name: NETWORK
     value: "juno"
+
+
+feederGateway: 
+  clustersecretstore:
+    projectID: dummy-project-id
+    clusterLocation: dummy-region
+    clusterName: dummy-name
+    serviceAccountname: dummy-external-secrets
+    serviceAccountnamespace: dummy-external-secrets
+
+  secret:
+    refreshInterval: 10m
+    secretStoreName: dummy
+    secretStoreKind: ClusterSecretStore
+    targetName: dummy # name of the k8s secret to be created
+    targetCreationPolicy: Owner
+    key: dummy # name of the secret to target secret manager 
+    property: dummy # name of the property to retrieve from secret manager
+    version: "1" # version of secret 
+    secretKey: dummy # name of the secret data key
