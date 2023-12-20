@@ -111,8 +111,8 @@ spec:
           - name: JUNO_GW_API_KEY
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.feederGateway.secret.targetName }}
-                key: {{ .Values.feederGateway.secret.secretKey }}
+                name: {{ .Values.secret.feederGateway.targetName }}
+                key: {{ .Values.secret.feederGateway.secretKey }}
         {{- if $.Values.deployment.healthCheck.enabled }}
         readinessProbe:
           exec:

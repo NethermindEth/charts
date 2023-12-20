@@ -186,16 +186,8 @@ env:
   - name: NETWORK
     value: "juno"
 
-
-feederGateway: 
-  clustersecretstore:
-    projectID: dummy-project-id
-    clusterLocation: dummy-region
-    clusterName: dummy-name
-    serviceAccountname: dummy-external-secrets
-    serviceAccountnamespace: dummy-external-secrets
-
-  secret:
+secret:
+  feederGateway:
     refreshInterval: 10m
     secretStoreName: dummy
     secretStoreKind: ClusterSecretStore
