@@ -42,6 +42,9 @@ spec:
         runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
         fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
         readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+        capabilities:
+          drop:
+            - ALL
       initContainers:
         - name: init
           image: "{{ .Values.initImage.repository }}:{{ .Values.initImage.tag }}"
@@ -51,6 +54,9 @@ spec:
             runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -ac
@@ -70,6 +76,9 @@ spec:
             runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           args:
             - -user=$(ESO_DB_USERNAME)
             - -password=$(ESO_DB_PASSWORD)
@@ -104,6 +113,9 @@ spec:
             runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
@@ -158,6 +170,9 @@ spec:
           imagePullPolicy: {{ .Values.cliImage.pullPolicy }}
           securityContext:
             runAsUser: 0
+            capabilities:
+              drop:
+                - ALL
           envFrom:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}

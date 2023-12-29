@@ -58,6 +58,9 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: POD_IP
               valueFrom:
@@ -102,6 +105,9 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -ac
@@ -133,6 +139,9 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           {{- if .Values.global.externalSecrets.enabled }}
           envFrom:
             - secretRef:
@@ -395,6 +404,9 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           {{/*
           Configuration for Prysm beacon client
           */}}

@@ -39,6 +39,9 @@ spec:
             runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default false }}
+            capabilities:
+              drop:
+                - ALL
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
