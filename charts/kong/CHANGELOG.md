@@ -2,7 +2,125 @@
 
 ## Unreleased
 
-Nothing yet.
+### Fixed
+
+* Add RBAC rules for get, list and watch operations on namespaces so that Gateway API
+  controllers in KIC can access using a cached controller-runtime client.
+  [#974](https://github.com/Kong/charts/pull/974)
+
+## 2.33.2
+
+* Fix a template bug related to the `affinity` field for migrations Pods.
+  [#972](https://github.com/Kong/charts/pull/972)
+
+## 2.33.1
+
+### Fixed
+
+* Use changed `incubator.ingress-controller.konghq.com` API group name in `KongServiceFacade`
+  RBAC rules. Refer to [KIC#5302](https://github.com/Kong/kubernetes-ingress-controller/pull/5302)
+  for rename reasoning.
+  [#968](https://github.com/Kong/charts/pull/968)
+
+## 2.33.0
+
+### Improvements
+
+* Only allow `None` ClusterIPs on ClusterIP-type Services.
+  [#961](https://github.com/Kong/charts/pull/961)
+  [#962](https://github.com/Kong/charts/pull/962)
+* Bumped Kong version to 3.5.
+  [#957](https://github.com/Kong/charts/pull/957)
+* Support for `affinity` configuration has been added to migration job templates.
+* Display a warning message when Kong Manager is enabled and the Admin API is disabled.
+* Validate Gateway API's `Gateway` and `HTTPRoute` resources in the controller's
+  admission webhook only when KIC version is 3.0 or higher.
+  [#954](https://github.com/Kong/charts/pull/954)
+* Added controller's RBAC rules for `KongServiceFacade` CRD (installed only when
+  KongServiceFacade feature gate turned on and KIC version >= 3.1.0).
+  [#963](https://github.com/Kong/charts/pull/963)
+
+## 2.32.0
+
+### Improvements
+
+* Add new `deployment.hostname` value to make identifying instances in
+  controlplane/dataplane configurations easier.
+  [#943](https://github.com/Kong/charts/pull/943)
+
+## 2.31.0
+
+### Improvements
+
+* Added controller's RBAC rules for `KongUpstreamPolicy` CRD.
+  [#917](https://github.com/Kong/charts/pull/917)
+* Added services resource to admission webhook config for KIC >= 3.0.0.
+  [#919](https://github.com/Kong/charts/pull/919)
+* Update default ingress controller version to v3.0
+  [#929](https://github.com/Kong/charts/pull/929)
+  [#930](https://github.com/Kong/charts/pull/930)
+
+### Fixed
+
+* The target port for cmetrics should only be applied if the ingress controller is enabled.
+  [#926](https://github.com/Kong/charts/pull/926)
+* Fix RBAC for Gateway API v1.
+  [#928](https://github.com/Kong/charts/pull/928)
+* Enable Admission webhook for Gateway API v1 resources.
+  [#928](https://github.com/Kong/charts/pull/928)
+
+## 2.30.0
+
+### Improvements
+
+* Prevent installing PodDisruptionBudget for `replicaCount: 1` or `autoscaling.minReplicas: 1`.
+  [#896](https://github.com/Kong/charts/pull/896)
+* The admission webhook now will be triggered on Secrets creation for KIC 2.12.1+.
+  [#907](https://github.com/Kong/charts/pull/907)
+* Container security context defaults now comply with the restricted pod
+  security standard. This includes an enforced run as user ID set to 1000. UID
+  1000 is used for official Kong images other than Alpine images (which use UID
+  100) and for KIC images 3.0.0+ (older images use UID 65532). Images that do
+  not use UID 1000 can still run with this user, as static image files are
+  world-accessible and runtime-created files are created in temporary
+  directories created for the run as user.
+  [#911](https://github.com/Kong/charts/pull/911)
+* Allow using templates (via `tpl`) when specifying `proxy.nameOverride`.
+  [#914](https://github.com/Kong/charts/pull/914)
+
+## 2.29.0
+
+### Improvements
+* Make it possible to set the admission webhook's `timeoutSeconds`.
+  [#894](https://github.com/Kong/charts/pull/894)
+
+## 2.28.1
+
+### Fixed
+
+* The admission webhook now includes Gateway API resources and Ingress
+  resources for controller versions 2.12+. This version introduces new
+  validations for Kong's regex path implementation.
+  [#892](https://github.com/Kong/charts/pull/892)
+
+## 2.28.0
+
+### Improvements
+
+* Bump default `kong` image tag to 3.4.
+  [#883](https://github.com/Kong/charts/pull/883)
+* Bump default ingress controller image tag to 2.12.
+* Added validation rule for `latency` upstream load balancing algorithm to
+  CRDs. [Upgrade your CRDs](https://github.com/Kong/charts/blob/main/charts/kong/UPGRADE.md#updates-to-crds)
+  when installing this release.
+
+## 2.27.0
+
+### Improvements
+
+* Listens now all support `.address` configuration. This was an existing
+  setting that was not applied properly for some listens.
+  [#881](https://github.com/Kong/charts/pull/881)
 
 ## 2.26.5
 

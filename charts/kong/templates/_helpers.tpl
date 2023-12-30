@@ -252,7 +252,9 @@ spec:
   externalTrafficPolicy: {{ .externalTrafficPolicy }}
   {{- end }}
   {{- if .clusterIP }}
+  {{- if (or (not (eq .clusterIP "None")) (and (eq .type "ClusterIP") (eq .clusterIP "None"))) }}
   clusterIP: {{ .clusterIP }}
+  {{- end }}
   {{- end }}
   selector:
     {{- .selectorLabels | nindent 4 }}
@@ -330,10 +332,11 @@ Create KONG_STREAM_LISTEN string
 */}}
 {{- define "kong.streamListen" -}}
   {{- $unifiedListen := list -}}
+  {{- $address := (default "0.0.0.0" .address) -}}
   {{- range .stream -}}
     {{- $listenConfig := dict -}}
     {{- $listenConfig := merge $listenConfig . -}}
-    {{- $_ := set $listenConfig "address" "0.0.0.0" -}}
+    {{- $_ := set $listenConfig "address" $address -}}
     {{/* You set NGINX stream listens to UDP using a parameter due to historical reasons.
          Our configuration is dual-purpose, for both the Service and listen string, so we
          forcibly inject this parameter if that's the Service protocol. The default handles
@@ -446,19 +449,34 @@ The name of the service used for the ingress controller's validation webhook
 {{ include "kong.fullname" . }}-validation-webhook
 {{- end -}}
 
+
+{{/*
+The name of the Service which will be used by the controller to update the Ingress status field.
+*/}}
+
+{{- define "kong.controller-publish-service" -}}
+{{- $proxyOverride := "" -}}
+  {{- if .Values.proxy.nameOverride -}}
+    {{- $proxyOverride = ( tpl .Values.proxy.nameOverride . ) -}}
+  {{- end -}}
+{{- (printf "%s/%s" ( include "kong.namespace" . ) ( default ( printf "%s-proxy" (include "kong.fullname" . )) $proxyOverride )) -}}
+{{- end -}}
+
 {{- define "kong.ingressController.env" -}}
 {{/*
     ====== AUTO-GENERATED ENVIRONMENT VARIABLES ======
 */}}
 
+
 {{- $autoEnv := dict -}}
   {{- $_ := set $autoEnv "CONTROLLER_KONG_ADMIN_TLS_SKIP_VERIFY" true -}}
-  {{- $_ := set $autoEnv "CONTROLLER_PUBLISH_SERVICE" (printf "%s/%s" ( include "kong.namespace" . ) ( .Values.proxy.nameOverride | default ( printf "%s-proxy" (include "kong.fullname" . )))) -}}
+  {{- $_ := set $autoEnv "CONTROLLER_PUBLISH_SERVICE" ( include "kong.controller-publish-service" . ) -}}
   {{- $_ := set $autoEnv "CONTROLLER_INGRESS_CLASS" .Values.ingressController.ingressClass -}}
   {{- $_ := set $autoEnv "CONTROLLER_ELECTION_ID" (printf "kong-ingress-controller-leader-%s" .Values.ingressController.ingressClass) -}}
 
   {{- if .Values.ingressController.admissionWebhook.enabled }}
-    {{- $_ := set $autoEnv "CONTROLLER_ADMISSION_WEBHOOK_LISTEN" (printf "0.0.0.0:%d" (int64 .Values.ingressController.admissionWebhook.port)) -}}
+    {{- $address := (default "0.0.0.0" .Values.ingressController.admissionWebhook.address) -}}
+    {{- $_ := set $autoEnv "CONTROLLER_ADMISSION_WEBHOOK_LISTEN" (printf "%s:%d" $address (int64 .Values.ingressController.admissionWebhook.port)) -}}
   {{- end }}
   {{- if (not (eq (len .Values.ingressController.watchNamespaces) 0)) }}
     {{- $_ := set $autoEnv "CONTROLLER_WATCH_NAMESPACE" (.Values.ingressController.watchNamespaces | join ",") -}}
@@ -955,7 +973,7 @@ the template that it itself is using form the above sections.
   {{- end -}}
   {{- $listenConfig := dict -}}
   {{- $listenConfig := merge $listenConfig . -}}
-  {{- $_ := set $listenConfig "address" $address -}}
+  {{- $_ := set $listenConfig "address" (default $address .address) -}}
   {{- $_ := set $autoEnv "KONG_ADMIN_LISTEN" (include "kong.listen" $listenConfig) -}}
 
   {{- if or .tls.client.secretName .tls.client.caBundle -}}
@@ -1237,7 +1255,6 @@ Kubernetes namespace-scoped resources it uses to build Kong configuration.
 
 Collectively, these are built from:
 kubectl kustomize github.com/kong/kubernetes-ingress-controller/config/rbac?ref=main
-kubectl kustomize github.com/kong/kubernetes-ingress-controller/config/rbac/knative?ref=main
 kubectl kustomize github.com/kong/kubernetes-ingress-controller/config/rbac/gateway?ref=main
 
 However, there is no way to generate the split between cluster and namespaced
@@ -1245,6 +1262,43 @@ role sets used in the charts. Updating these requires separating out cluster
 resource roles into their separate templates.
 */}}
 {{- define "kong.kubernetesRBACRules" -}}
+{{- if and (semverCompare ">= 3.1.0" (include "kong.effectiveVersion" .Values.ingressController.image))
+           (contains (print .Values.ingressController.env.feature_gates) "KongServiceFacade=true") }}
+- apiGroups:
+  - incubator.ingress-controller.konghq.com
+  resources:
+  - kongservicefacades
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - incubator.ingress-controller.konghq.com
+  resources:
+  - kongservicefacades/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if (semverCompare ">= 3.0.0" (include "kong.effectiveVersion" .Values.ingressController.image)) }}
+- apiGroups:
+  - configuration.konghq.com
+  resources:
+  - kongupstreampolicies
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - configuration.konghq.com
+  resources:
+  - kongupstreampolicies/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
 {{- if (semverCompare ">= 2.11.0" (include "kong.effectiveVersion" .Values.ingressController.image)) }}
 - apiGroups:
   - configuration.konghq.com
@@ -1421,7 +1475,7 @@ resource roles into their separate templates.
   - get
   - patch
   - update
-{{- if or (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1alpha2") (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1beta1") }}
+{{- if or (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1alpha2") (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1beta1") (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1")}}
 - apiGroups:
   - gateway.networking.k8s.io
   resources:
@@ -1604,7 +1658,7 @@ Kubernetes Cluster-scoped resources it uses to build Kong configuration.
   - list
   - watch
 {{- end }}
-{{- if or (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1alpha2") (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1beta1") }}
+{{- if or (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1alpha2") (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1beta1") (.Capabilities.APIVersions.Has "gateway.networking.k8s.io/v1")}}
 - apiGroups:
   - gateway.networking.k8s.io
   resources:
@@ -1620,6 +1674,14 @@ Kubernetes Cluster-scoped resources it uses to build Kong configuration.
   verbs:
   - get
   - update
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
 {{- end }}
 - apiGroups:
   - networking.k8s.io

@@ -60,6 +60,11 @@ deployment:
   # Use a DaemonSet controller instead of a Deployment controller
   daemonset: false
   hostNetwork: false
+  # Set the Deployment's spec.template.hostname field.
+  # This propagates to Kong API endpoints that report
+  # the hostname, such as the admin API root and hybrid mode
+  # /clustering/data-planes endpoint
+  hostname: ""
   # kong_prefix empty dir size
   prefixDir:
     sizeLimit: 256Mi
@@ -121,11 +126,13 @@ extraLabels: {}
 # Specify Kong's Docker image and repository details here
 image:
   repository: kong
-  tag: "3.3"
+  tag: "3.5"
   # Kong Enterprise
   # repository: kong/kong-gateway
-  # tag: "3.3"
+  # tag: "3.5"
 
+  # Specify a semver version if your image tag is not one (e.g. "nightly")
+  effectiveSemver:
   pullPolicy: IfNotPresent
   ## Optionally specify an array of imagePullSecrets.
   ## Secrets must be manually created in the namespace.
@@ -508,13 +515,13 @@ dblessConfig:
 # -----------------------------------------------------------------------------
 
 # Kong Ingress Controller's primary purpose is to satisfy Ingress resources
-# created in k8s.  It uses CRDs for more fine grained control over routing and
+# created in k8s. It uses CRDs for more fine grained control over routing and
 # for Kong specific configuration.
 ingressController:
   enabled: true
   image:
     repository: kong/kubernetes-ingress-controller
-    tag: "2.11"
+    tag: "3.0"
     # Optionally set a semantic version for version-gated features. This can normally
     # be left unset. You only need to set this if your tag is not a semver string,
     # such as when you are using a "next" tag. Set this to the effective semantic
@@ -574,6 +581,8 @@ ingressController:
     service:
       # Specify custom labels for the validation webhook service.
       labels: {}
+    # Tune the default Kubernetes timeoutSeconds of 10 seconds
+    # timeoutSeconds: 10
 
   ingressClass: kong
   # annotations for IngressClass resource (Kubernetes 1.18+)
@@ -766,6 +775,15 @@ certificates:
 # Miscellaneous parameters
 # -----------------------------------------------------------------------------
 
+declarativeSetup:
+   enabled: true
+   filename: kong.yaml
+   kongConf: |
+     pluginserver_names = header-validation
+     pluginserver_header_validation_socket = /usr/local/kong/header-validation.socket
+     pluginserver_header_validation_start_cmd = /usr/local/bin/header-validation
+     pluginserver_header_validation_query_cmd = /usr/local/bin/header-validation --dump
+     
 waitImage:
   # Wait for the database to come online before starting Kong or running migrations
   # If Kong is to access the database through a service mesh that injects a sidecar to
@@ -943,7 +961,15 @@ securityContext: {}
 
 # securityContext for containers.
 containerSecurityContext:
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: true
+  runAsUser: 0
+  runAsNonRoot: false
+#  seccompProfile:
+#    type: RuntimeDefault
+#  capabilities:
+#    drop:
+#    - ALL
 
 ## Optional DNS configuration for Kong pods
 # dnsPolicy: ClusterFirst
@@ -964,7 +990,7 @@ serviceMonitor:
   # If you wish to gather metrics from a Kong instance with the proxy disabled (such as a hybrid control plane), see:
   # https://github.com/Kong/charts/blob/main/charts/kong/README.md#prometheus-operator-integration
   enabled: false
-  # interval: 10s
+  # interval: 30s
   # Specifies namespace, where ServiceMonitor should be installed
   # namespace: monitoring
   # labels:
