@@ -1,0 +1,161 @@
+_format_version: "3.0"
+plugins:
+- config:
+    header_key: dblah
+  enabled: true
+  instance_name: RPC_SaaS_UNAUTH_Header_Validation
+  name: header-validation
+  protocols:
+  - https
+  - http
+  route: RPC_SaaS_UNAUTH_Route
+  service: RPC_SaaS_UNAUTH
+- config:
+    header_key: dblah
+  enabled: true
+  instance_name: RPC_SaaS_AUTH_Header_Validation
+  name: header-validation
+  protocols:
+  - http
+  - https
+  route: RPC_Saas_AUTH_Route
+  service: RPC_SaaS_AUTH
+- config:
+    anonymous: null
+    hide_credentials: false
+    key_in_body: false
+    key_in_header: true
+    key_in_query: true
+    key_names:
+    - apikey
+    - X-Apikey
+    run_on_preflight: true
+  enabled: true
+  instance_name: RPC_SaaS_AUTH_Key_Auth
+  name: key-auth
+  protocols:
+  - grpc
+  - grpcs
+  - http
+  - https
+  route: RPC_Saas_AUTH_Route
+  service: RPC_SaaS_AUTH
+- config:
+    day: null
+    error_code: 429
+    error_message: API rate limit exceeded
+    fault_tolerant: true
+    header_name: null
+    hide_client_headers: false
+    hour: null
+    limit_by: ip
+    minute: null
+    month: null
+    path: null
+    policy: local
+    redis_database: 0
+    redis_host: null
+    redis_password: null
+    redis_port: 6379
+    redis_server_name: null
+    redis_ssl: false
+    redis_ssl_verify: false
+    redis_timeout: 2000
+    redis_username: null
+    second: 100
+    sync_rate: -1
+    year: null
+  enabled: true
+  instance_name: RPC_SaaS_UNAUTH_Rate_Limit
+  name: rate-limiting
+  protocols:
+  - grpc
+  - grpcs
+  - http
+  - https
+  route: RPC_SaaS_UNAUTH_Route
+  service: RPC_SaaS_UNAUTH
+- config:
+    day: null
+    error_code: 429
+    error_message: API rate limit exceeded
+    fault_tolerant: true
+    header_name: null
+    hide_client_headers: false
+    hour: null
+    limit_by: consumer
+    minute: null
+    month: null
+    path: null
+    policy: local
+    redis_database: 0
+    redis_host: null
+    redis_password: null
+    redis_port: 6379
+    redis_server_name: null
+    redis_ssl: false
+    redis_ssl_verify: false
+    redis_timeout: 2000
+    redis_username: null
+    second: 1000
+    sync_rate: -1
+    year: null
+  enabled: true
+  instance_name: RPC_SaaS_AUTH_Rate_Limit
+  name: rate-limiting
+  protocols:
+  - grpc
+  - grpcs
+  - http
+  - https
+  route: RPC_Saas_AUTH_Route
+  service: RPC_SaaS_AUTH
+services:
+- connect_timeout: 60000
+  enabled: true
+  host: httpbin.org
+  name: RPC_SaaS_AUTH
+  path: /anything
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    name: RPC_Saas_AUTH_Route
+    path_handling: v0
+    paths:
+    - /auth
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+  write_timeout: 60000
+- connect_timeout: 60000
+  enabled: true
+  host: httpbin.org
+  name: RPC_SaaS_UNAUTH
+  path: /anything
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  routes:
+  - https_redirect_status_code: 426
+    name: RPC_SaaS_UNAUTH_Route
+    path_handling: v0
+    paths:
+    - /unauth
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    request_buffering: true
+    response_buffering: true
+    strip_path: true
+  write_timeout: 60000
