@@ -307,11 +307,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          {{- if .Values.global.externalSecrets.enabled }}
-          envFrom:
-            - secretRef:
-                name: eso-{{ include "common.names.fullname" . }}
-          {{- end }}
           {{- if and (eq .Values.execution.client "nethermind") (.Values.global.p2pNodePort.enabled) }}
             {{- range $i, $e := until (int .Values.global.replicaCount) }}
             {{- $portExecution := add $.Values.global.p2pNodePort.startAtExecution $i }}
