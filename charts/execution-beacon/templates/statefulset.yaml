@@ -121,9 +121,7 @@ spec:
         - name: execution
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
-          {{/*
-          Configuration for Nethermind execution client
-          */}}
+          {{/* Configuration for Nethermind execution client */}}
           {{- if eq .Values.execution.client "nethermind" }}
           args:
             - --config={{ .Values.global.network }}
@@ -179,9 +177,7 @@ spec:
               {{- if .Values.global.p2pNodePort.enabled }}
               . /env/init-nodeport;
               {{- end }}
-            {{/*
-            Configuration for Geth execution client
-            */}}
+            {{/* Configuration for Geth execution client */}}
             {{- if eq .Values.execution.client "geth" }}
               exec geth
               --syncmode=snap
@@ -227,9 +223,7 @@ spec:
               --metrics.port={{ .Values.execution.metrics.port }}
               --metrics.addr={{ .Values.execution.metrics.host }}  
             {{- end }}
-            {{/*
-            Configuration for Besu execution client
-            */}}
+            {{- /* Configuration for Besu execution client */}}
             {{- else if eq .Values.execution.client "besu" }}
               exec /opt/besu/bin/besu
               --network={{ .Values.global.network }}
@@ -256,9 +250,7 @@ spec:
               --metrics.port={{ .Values.execution.metrics.port }}
               --metrics.addr={{ .Values.execution.metrics.host }}  
             {{- end }}
-            {{/*
-            Configuration for Erigon execution client
-            */}}
+            {{- /* Configuration for Erigon execution client */}}
             {{- else if eq .Values.execution.client "erigon" }}
               exec erigon
               --datadir=/data/execution
@@ -315,6 +307,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          {{- if .Values.global.externalSecrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: eso-{{ include "common.names.fullname" . }}
+          {{- end }}
           {{- if and (eq .Values.execution.client "nethermind") (.Values.global.p2pNodePort.enabled) }}
             {{- range $i, $e := until (int .Values.global.replicaCount) }}
             {{- $portExecution := add $.Values.global.p2pNodePort.startAtExecution $i }}
@@ -463,9 +460,6 @@ spec:
               --network={{ .Values.global.network }}
               --data-beacon-path=/data/beacon/teku
               --data-path=/data/beacon
-              --data-storage-archive-frequency={{ .Values.beacon.dataStorageArchiveFrequency }}
-              --data-storage-mode={{ .Values.beacon.dataStorageMode }}
-              --data-storage-non-canonical-blocks-enabled={{ .Values.beacon.dataStorageNonCanonicalBlocksEnabled }}
               --ee-endpoint=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}
               {{- if .Values.global.externalSecrets.enabled }}
               --ee-jwt-secret-file=/external-secrets/JWT_SECRET
@@ -489,6 +483,8 @@ spec:
               --rest-api-cors-origins={{ .Values.beacon.restApi.corsOrigins | join "," }}
             {{- end }}
               --p2p-enabled=true
+              --p2p-peer-upper-bound={{ .Values.beacon.targetPeers }}
+              --p2p-peer-lower-bound={{ .Values.beacon.targetPeersMin }}
             {{- if .Values.global.p2pNodePort.enabled }}
               --p2p-advertised-port=$EXTERNAL_BEACON_PORT
               --p2p-advertised-ip=$EXTERNAL_IP
