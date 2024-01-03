@@ -11,14 +11,14 @@ global:
   ##
   podSecurityContext: {}
 
-  securityContext:
-    capabilities:
-      drop:
-      - ALL
-    readOnlyRootFilesystem: true
-    runAsNonRoot: true
-    runAsUser: 10000
-    fsGroup: 10000
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 10000
+    # fsGroup: 10000
 
 replicaCount: 3
 
