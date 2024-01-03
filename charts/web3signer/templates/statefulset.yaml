@@ -37,10 +37,10 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "web3signer.serviceAccountName" . }}
       securityContext:
-        runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
-        runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
-        fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
-        readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+        runAsNonRoot: {{ .Values.global.podSecurityContext.runAsNonRoot | default true }}
+        runAsUser: {{ .Values.global.podSecurityContext.runAsUser | default 10000 }}
+        fsGroup: {{ .Values.global.podSecurityContext.fsGroup | default 10000 }}
+        readOnlyRootFilesystem: {{ .Values.global.podSecurityContext.readOnlyRootFilesystem | default true }}
         capabilities:
           drop:
             - ALL
@@ -61,7 +61,7 @@ spec:
             - -ac
             - >
               mkdir -p /data/web3signer /data/keystore;
-              chown -R {{ .Values.podSecurityContext.runAsUser }}:{{ .Values.podSecurityContext.fsGroup }} /data/web3signer
+              chown -R {{ .Values.global.securityContext.runAsUser }}:{{ .Values.global.securityContext.fsGroup }} /data/web3signer
           envFrom:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}
