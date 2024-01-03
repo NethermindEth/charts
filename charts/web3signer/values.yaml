@@ -14,9 +14,6 @@ global:
     runAsNonRoot: true
     runAsUser: 10000
     fsGroup: 10000
-    capabilities:
-      drop:
-      - ALL
 
   securityContext:
     readOnlyRootFilesystem: true
