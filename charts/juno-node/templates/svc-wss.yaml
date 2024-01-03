@@ -10,10 +10,6 @@ metadata:
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: {{ .Values.svc.wss.clustertype }}
-  sessionAffinity: ClientIP
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: 30
   ports:
   - port: {{ .Values.svc.wss.port }}
     name: port-{{ .Values.svc.wss.port }}

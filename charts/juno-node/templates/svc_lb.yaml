@@ -14,10 +14,6 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: {{ .Values.svc_lb.hostname }} 
 spec:
   type: {{ .Values.svc_lb.clustertype }}
-  sessionAffinity: ClientIP
-  sessionAffinityConfig:
-    clientIP:
-      timeoutSeconds: 30
   ports:
   - port: {{ .Values.svc.rpc.port }}
     name: port-{{ .Values.svc.rpc.port }}
