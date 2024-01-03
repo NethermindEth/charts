@@ -37,11 +37,10 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "web3signer.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-        runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-        runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-        fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-        readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+        runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+        runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+        fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+        readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
         capabilities:
           drop:
             - ALL
@@ -50,10 +49,10 @@ spec:
           image: "{{ .Values.initImage.repository }}:{{ .Values.initImage.tag }}"
           imagePullPolicy: {{ .Values.initImage.pullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
             capabilities:
               drop:
                 - ALL
@@ -62,6 +61,7 @@ spec:
             - -ac
             - >
               mkdir -p /data/web3signer /data/keystore;
+              chown -R {{ .Values.podSecurityContext.runAsUser }}:{{ .Values.podSecurityContext.fsGroup }} /data/web3signer
           envFrom:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}
@@ -72,10 +72,10 @@ spec:
           image: "{{ .Values.flywayImage.repository }}:{{ .Values.flywayImage.tag }}"
           imagePullPolicy: {{ .Values.flywayImage.pullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
             capabilities:
               drop:
                 - ALL
@@ -94,10 +94,13 @@ spec:
           image: "{{ .Values.cliImage.repository }}:{{ .Values.cliImage.tag }}"
           imagePullPolicy: {{ .Values.cliImage.pullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           envFrom:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}
@@ -108,11 +111,10 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
             capabilities:
               drop:
                 - ALL
@@ -173,11 +175,6 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
-            capabilities:
-              drop:
-                - ALL
-          securityContext:
-            runAsUser: 0
             capabilities:
               drop:
                 - ALL
