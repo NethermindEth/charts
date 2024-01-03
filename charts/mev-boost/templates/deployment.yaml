@@ -31,6 +31,9 @@ spec:
         runAsUser: {{ .Values.securityContext.runAsUser | default 10000 }}
         fsGroup: {{ .Values.securityContext.fsGroup | default 10000 }}
         readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default false }}
+        capabilities:
+          drop:
+            - ALL
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

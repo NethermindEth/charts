@@ -748,6 +748,14 @@ spec:
         - name: ethsider
           image: "{{ .Values.global.ethsider.repository }}:{{ .Values.global.ethsider.tag }}"
           imagePullPolicy: {{ .Values.global.ethsider.pullPolicy }}
+          securityContext:
+            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
+            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
+            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
+            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: EXECUTION_ENDPOINT
               value: "http://localhost:{{ .Values.execution.jsonrpc.http.port }}"
