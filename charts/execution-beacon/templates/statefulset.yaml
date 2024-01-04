@@ -37,10 +37,8 @@ spec:
       nodeSelector:
         {{ toYaml . | nindent 8 | trim }}
     {{- end }}
-    {{- with .Values.global.securityContext }}
       securityContext:
-        {{ toYaml . | nindent 8 | trim }}
-    {{- end }}
+        {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
     {{- if .Values.global.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.global.terminationGracePeriodSeconds }}
     {{- end }}
@@ -54,13 +52,7 @@ spec:
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
-            capabilities:
-              drop:
-                - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           env:
             - name: POD_IP
               valueFrom:
@@ -101,13 +93,7 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.beacon.imagePullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
-            capabilities:
-              drop:
-                - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           command:
             - sh
             - -ac
@@ -135,13 +121,7 @@ spec:
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
-            capabilities:
-              drop:
-                - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           {{- if .Values.global.externalSecrets.enabled }}
           envFrom:
             - secretRef:
@@ -400,13 +380,7 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
-            capabilities:
-              drop:
-                - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           {{/*
           Configuration for Prysm beacon client
           */}}
@@ -748,14 +722,7 @@ spec:
         - name: ethsider
           image: "{{ .Values.global.ethsider.repository }}:{{ .Values.global.ethsider.tag }}"
           imagePullPolicy: {{ .Values.global.ethsider.pullPolicy }}
-          securityContext:
-            runAsNonRoot: {{ .Values.global.securityContext.runAsNonRoot | default true }}
-            runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
-            fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
-            readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
-            capabilities:
-              drop:
-                - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           env:
             - name: EXECUTION_ENDPOINT
               value: "http://localhost:{{ .Values.execution.jsonrpc.http.port }}"
