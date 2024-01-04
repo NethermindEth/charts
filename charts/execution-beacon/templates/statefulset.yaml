@@ -722,6 +722,7 @@ spec:
         - name: ethsider
           image: "{{ .Values.global.ethsider.repository }}:{{ .Values.global.ethsider.tag }}"
           imagePullPolicy: {{ .Values.global.ethsider.pullPolicy }}
+          securityContext:
             {{- toYaml .Values.global.securityContext | nindent 12 }}
           env:
             - name: EXECUTION_ENDPOINT
