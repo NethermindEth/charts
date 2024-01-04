@@ -45,9 +45,7 @@ spec:
       serviceAccountName: {{ include "common.names.fullname" . }}
       priorityClassName: {{ .Values.global.priorityClassName | quote }}
       initContainers:
-        {{/*
-        Container used for initialising data directory and setting right values for ports and external_ip
-        */}}
+        {{/* Container used for initialising data directory and setting right values for ports and external_ip */}}
         - name: init
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
@@ -85,9 +83,7 @@ spec:
               mountPath: /env
             - name: scripts-init
               mountPath: /scripts
-        {{/*
-        Container used for initialising nimbus checkpoint sync
-        */}}
+        {{/* Container used for initialising nimbus checkpoint sync */}}
         {{- if and (eq .Values.beacon.client "nimbus") .Values.beacon.checkPointSync.enabled }}
         - name: init-nimbus
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
@@ -114,9 +110,7 @@ spec:
           {{- end }}
         {{- end }}
       containers:
-        {{/*
-        Container used for Execution clients: Nethermind, Geth, Besu, Erigon
-        */}}
+        {{/* Container used for Execution clients: Nethermind, Geth, Besu, Erigon */}}
         - name: execution
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
@@ -378,17 +372,18 @@ spec:
           resources:
             {{ toYaml . | nindent 12 | trim }}
           {{- end }}
-        {{/*
-        Container used for Beacon clients: Prysm, Teku, Lighthouse, Nimbus, Lodestar
-        */}}
+        {{/* Container used for Beacon clients: Prysm, Teku, Lighthouse, Nimbus, Lodestar */}}
         - name: beacon
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
-          {{/*
-          Configuration for Prysm beacon client
-          */}}
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 10000
+            capabilities:
+              drop:
+              - ALL
+          {{/* Configuration for Prysm beacon client */}}
           {{- if eq .Values.beacon.client "prysm" }}
           args: 
             - "--datadir=/data/beacon"
@@ -440,9 +435,7 @@ spec:
           {{- range .Values.beacon.extraFlags }}
             - {{ . | quote }}
           {{- end }}
-          {{/*
-          Configuration for Teku beacon client
-          */}}
+          {{/* Configuration for Teku beacon client */}}
           {{- else if eq .Values.beacon.client "teku" }}
           command:
             - sh
@@ -499,9 +492,7 @@ spec:
             {{- range .Values.beacon.extraFlags }}
               {{ . | quote }}
             {{- end }}
-           {{/*
-          Configuration for Lighthouse beacon client
-          */}}
+           {{/* Configuration for Lighthouse beacon client */}}
           {{- else if eq .Values.beacon.client "lighthouse" }}
           command:
             - sh
@@ -556,9 +547,7 @@ spec:
             {{- range .Values.beacon.extraFlags }}
               {{ . }}
             {{- end }}
-          {{/*
-          Configuration for Nimbus beacon client
-          */}}
+          {{/* Configuration for Nimbus beacon client */}}
           {{- else if eq .Values.beacon.client "nimbus" }}
           command:
             - sh
@@ -608,9 +597,7 @@ spec:
             {{- range .Values.beacon.extraFlags }}
               {{ . }}
             {{- end }}
-          {{/*
-          Configuration for Lodestar beacon client
-          */}}
+          {{/* Configuration for Lodestar beacon client */}}
           {{- else if eq .Values.beacon.client "lodestar" }}
           command:
             - sh
