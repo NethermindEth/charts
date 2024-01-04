@@ -121,7 +121,12 @@ spec:
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 10000
+            capabilities:
+              drop:
+              - ALL
           {{- if .Values.global.externalSecrets.enabled }}
           envFrom:
             - secretRef:
