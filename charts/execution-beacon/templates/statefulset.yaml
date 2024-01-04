@@ -578,7 +578,7 @@ spec:
             {{- if .Values.beacon.suggestedFeeRecipient }}
               --suggested-fee-recipient={{ .Values.beacon.suggestedFeeRecipient }}
             {{- end }}
-              --web3-url=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}
+              --el=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}
               --max-peers={{ .Values.beacon.targetPeers }}
               --enr-auto-update=true
             {{- if .Values.global.p2pNodePort.enabled }}
