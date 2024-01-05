@@ -64,10 +64,8 @@ spec:
       nodeSelector:
         {{ toYaml . | nindent 8 | trim }}
       {{- end }}
-      {{- with $root.Values.securityContext }}
       securityContext:
-        {{ toYaml . | nindent 8 | trim }}
-      {{- end }}
+        {{- toYaml $root.Values.global.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ template "validators.serviceAccountName" $root }}
       priorityClassName: {{ $root.Values.priorityClassName | quote }}
       initContainers:
@@ -75,7 +73,7 @@ spec:
           image: "{{ $root.Values.cliImage.repository }}:{{ $root.Values.cliImage.tag }}"
           imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
           securityContext:
-            runAsUser: 0
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           env:
             - name: WEB3SIGNER_URL
               value: {{ include "web3signer" $root }}
@@ -111,7 +109,7 @@ spec:
           image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
           imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
           securityContext:
-            runAsUser: 0
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           command:
             - sh
             - -c
@@ -139,6 +137,8 @@ spec:
         - name: watcher
           image: "{{ $root.Values.cliImage.repository }}:{{ $root.Values.cliImage.tag }}"
           imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
+          securityContext:
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           env:
             - name: WEB3SIGNER_URL
               value: {{ include "web3signer" $root }}
@@ -164,6 +164,8 @@ spec:
         - name: validator
           image: "{{ (pluck $root.Values.type $root.Values.image | first ).repository }}:{{ (pluck $root.Values.type $root.Values.image | first ).tag }}"
           imagePullPolicy: {{ $root.Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           {{- if eq $root.Values.type "lodestar" }}
           command:
             - sh
