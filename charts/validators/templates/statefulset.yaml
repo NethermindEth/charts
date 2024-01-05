@@ -122,10 +122,8 @@ spec:
               cat /data/proposerConfig.json;
               cat /data/proposerConfig.yaml;
               formatted_content=$(cat /data/signer_keys.yml | grep -o '".*"' | sed -e 's/"//g' | tr ',' '\n');
-              echo $formatted_content;
-              cat /data/signer_keys.yml;
               echo "$formatted_content" > /data/pubkeys.txt;
-              echo '{"externalSigner.pubkeys": ['"$(awk '{printf "%s\"%s\"", (NR==1 ? "" : ", "), $0}' pubkeys.txt)"']}' > /data/rcconfig.json;
+              echo '{"externalSigner.pubkeys": ['"$(awk '{printf "%s\"%s\"", (NR==1 ? "" : ", "), $0}' /data/pubkeys.txt)"']}' > /data/rcconfig.json;
               cat /data/rcconfig.json;
            {{- if eq $root.Values.type "nimbus" }}	
               find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;	
