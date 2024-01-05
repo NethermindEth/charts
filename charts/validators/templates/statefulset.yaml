@@ -125,7 +125,7 @@ spec:
               echo "$formatted_content" > /data/pubkeys.txt;
               echo '{"externalSigner.pubkeys": ['"$(awk '{printf "%s\"%s\"", (NR==1 ? "" : ", "), $0}' pubkeys.txt)"']}' > /data/rcconfig.json;
               cat /data/pubkeys.txt;
-              chown -R {{ $root.Values.podSecurityContext.runAsUser }}:{{ $root.Values.podSecurityContext.runAsUser }} /data;
+              chown -R {{ $root.Values.global.podSecurityContext.runAsUser }}:{{ $root.Values.global.podSecurityContext.runAsUser }} /data;
            {{- if eq $root.Values.type "nimbus" }}	
               find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;	
             {{- end }}
