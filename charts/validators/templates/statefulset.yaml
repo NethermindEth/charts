@@ -114,7 +114,6 @@ spec:
             - sh
             - -c
             - >
-              ls -lha /data;
               mkdir -p /data/lighthouse/validators;
               cp /data/validator_definitions.yml /data/lighthouse/validators/validator_definitions.yml;
               cat /data/signer_keys.yml > /data/config;
@@ -125,6 +124,7 @@ spec:
               echo "$formatted_content" > /data/pubkeys.txt;
               echo '{"externalSigner.pubkeys": ['"$(awk '{printf "%s\"%s\"", (NR==1 ? "" : ", "), $0}' /data/pubkeys.txt)"']}' > /data/rcconfig.json;
               cat /data/rcconfig.json;
+              ls -lha /data;
            {{- if eq $root.Values.type "nimbus" }}	
               find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;	
             {{- end }}
@@ -164,7 +164,12 @@ spec:
           image: "{{ (pluck $root.Values.type $root.Values.image | first ).repository }}:{{ (pluck $root.Values.type $root.Values.image | first ).tag }}"
           imagePullPolicy: {{ $root.Values.image.pullPolicy }}
           securityContext:
-            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 10000
+            capabilities:
+              drop:
+              - ALL
           {{- if eq $root.Values.type "lodestar" }}
           command:
             - sh
