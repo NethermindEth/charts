@@ -24,6 +24,9 @@ spec:
       timeoutSeconds: {{ .Values.global.sessionAffinity.timeoutSeconds }}
 {{- end }}
   type: {{ .Values.global.service.type }} # ClusterIP, NodePort, LoadBalancer, or ExternalName
+{{- if .Values.global.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.global.service.externalTrafficPolicy }}
+{{- end }}
 {{- if .Values.global.service.svcHeadless}}
   clusterIP: None
 {{- end }}
