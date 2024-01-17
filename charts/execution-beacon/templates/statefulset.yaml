@@ -278,13 +278,10 @@ spec:
               --ws
             {{- end }}
             {{- end }}
-            {{- range .Values.extraFlags }}
-                {{ . }}
-            {{- end }}
             {{- if .Values.global.metrics.enabled }}
-                --metrics
-                --metrics.addr={{ .Values.execution.metrics.host }}
-                --metrics.port={{ .Values.execution.metrics.port }}
+              --metrics
+              --metrics.addr={{ .Values.execution.metrics.host }}
+              --metrics.port={{ .Values.execution.metrics.port }}
             {{- end }}
             {{- end }}
             {{- end}}
