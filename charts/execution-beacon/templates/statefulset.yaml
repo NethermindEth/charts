@@ -160,7 +160,7 @@ spec:
             - --Merge.TerminalTotalDifficulty={{ .Values.execution.terminalTotalDifficulty }}
           {{- end }}
           {{- range .Values.execution.extraFlags }}
-            - {{ . | quote }}
+            - {{ . }}
           {{- end }}
           {{- else }}
           command:
