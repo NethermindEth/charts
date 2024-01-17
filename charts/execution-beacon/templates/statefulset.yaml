@@ -284,10 +284,10 @@ spec:
               --metrics.port={{ .Values.execution.metrics.port }}
             {{- end }}
             {{- end }}
-            {{- end}}
             {{- range .Values.execution.extraFlags }}
-              {{ .  }}
+              {{ . }}
             {{- end }}
+            {{- end}}
           env:
             - name: POD_IP
               valueFrom:
