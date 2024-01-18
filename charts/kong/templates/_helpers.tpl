@@ -219,6 +219,19 @@ spec:
     protocol: TCP
   {{- end }}
   {{- end }}
+
+  {{- if .monitoring }}
+  {{- if .monitoring.enabled }}
+  - name: status-{{ .serviceName }}
+    port: {{ .monitoring.servicePort }}
+    targetPort: {{ .monitoring.containerPort }}
+  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .monitoring.nodePort))) }}
+    nodePort: {{ .monitoring.nodePort }}
+  {{- end }}
+    protocol: TCP
+  {{- end }}
+  {{- end }}
+
   {{- if .tls.enabled }}
   - name: kong-{{ .serviceName }}-tls
     port: {{ .tls.servicePort }}
