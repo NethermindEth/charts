@@ -274,7 +274,7 @@ cluster:
 proxy:
   # Enable creating a Kubernetes service for the proxy
   enabled: true
-  type: LoadBalancer
+  type: NodePort
   loadBalancerClass:
   # Override proxy Service name
   nameOverride: ""
@@ -300,9 +300,16 @@ proxy:
     # Additional listen parameters, e.g. "reuseport", "backlog=16384"
     parameters: []
 
+  monitoring:
+    enabled: true
+    servicePort: 8100
+    containerPort: 8100
+    # Set a nodePort which is available if service type is NodePort
+    # nodePort: 32080
+
   tls:
     # Enable HTTPS listen for the proxy
-    enabled: true
+    enabled: false
     servicePort: 443
     containerPort: 8443
     # Set a target port for the TLS port in proxy service
@@ -340,6 +347,29 @@ proxy:
   ingress:
     # Enable/disable exposure using ingress.
     enabled: false
+    # ingressClassName: gce
+    # backendConfig: {}
+    #     timeoutSec: 400
+    #     sessionAffinity:
+    #       affinityType: "GENERATED_COOKIE"
+    #       affinityCookieTtlSec: 100
+    #     connectionDraining:
+    #       drainingTimeoutSec: 30
+    #     healthCheck:
+    #       checkIntervalSec: 15
+    #       timeoutSec: 15
+    #       healthyThreshold: 1
+    #       unhealthyThreshold: 2 
+    #       port: 6060
+    #       type: HTTP
+    #       requestPath: /
+    #     customResponseHeaders:
+    #       headers:
+    #         - "X-Frame-Options: SAMEORIGIN"
+    #         - "X-Content-Type-Options: nosniff"
+    #         - "X-XSS-Protection: 1; mode=block"
+    #         - "Referrer-Policy: no-referrer-when-downgrade"
+    #         - "Strict-Transport-Security: max-age=63072000; includeSubDomains; preload"
     ingressClassName:
     # To specify annotations or labels for the ingress, add them to the respective
     # "annotations" or "labels" dictionaries below.
@@ -776,13 +806,8 @@ certificates:
 # -----------------------------------------------------------------------------
 
 declarativeSetup:
-   enabled: true
+   enabled: false
    filename: kong.yaml
-   kongConf: |
-     pluginserver_names = header-validation
-     pluginserver_header_validation_socket = /usr/local/kong/header-validation.socket
-     pluginserver_header_validation_start_cmd = /usr/local/bin/header-validation
-     pluginserver_header_validation_query_cmd = /usr/local/bin/header-validation --dump
      
 waitImage:
   # Wait for the database to come online before starting Kong or running migrations
@@ -959,12 +984,24 @@ priorityClassName: ""
 # securityContext for Kong pods.
 securityContext: {}
 
-# securityContext for containers.
 containerSecurityContext:
   readOnlyRootFilesystem: false
-  allowPrivilegeEscalation: true
-  runAsUser: 0
-  runAsNonRoot: false
+  allowPrivilegeEscalation: false
+  runAsUser: 1000
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+  capabilities:
+    drop:
+    - ALL
+
+# securityContext for containers.
+#
+# containerSecurityContext:
+#   readOnlyRootFilesystem: false
+#   allowPrivilegeEscalation: true
+#   runAsUser: 0
+#   runAsNonRoot: false
 #  seccompProfile:
 #    type: RuntimeDefault
 #  capabilities:
@@ -1055,7 +1092,7 @@ enterprise:
 manager:
   # Enable creating a Kubernetes service for Kong Manager
   enabled: true
-  type: NodePort
+  type: ClusterIP
   loadBalancerClass:
   # To specify annotations or labels for the Manager service, add them to the respective
   # "annotations" or "labels" dictionaries below.
