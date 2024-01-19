@@ -254,7 +254,26 @@ global:
     runAsUser: 10000
     capabilities:
       drop:
-      - ALL
+        - ALL
+
+  ## Dedicated security context for init container
+  initContainersSecurityContext:
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 10000
+    capabilities:
+      drop:
+        - ALL
+    ## Use this to run it with root access
+    # runAsUser: 0
+    # runAsGroup: 0
+    # runAsNonRoot: false
+    # readOnlyRootFilesystem: false
+    # capabilities:
+    #   add: 
+    #     - CHOWN  # Add the CHOWN capability to change ownership of files
+    #     - SETUID # Optionally, add SETUID for operations that require changing user IDs
+    #     - SETGID # Optionally, add SETGID for operations that require changing group IDs
 
   ingress:
     enabled: false

@@ -50,7 +50,7 @@ spec:
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            {{- toYaml .Values.global.initContainersSecurityContext | nindent 12 }}
           env:
             - name: POD_IP
               valueFrom:
