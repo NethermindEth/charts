@@ -1,5 +1,5 @@
 {{- if .Values.global.ingress.enabled -}}
-  {{- $serviceName := include "common.names.fullname" . -}}
+  {{- $baseServiceName := include "common.names.fullname" . -}}
   {{- $routePrefix := .Values.global.ingress.routePrefix | default "/" -}}
   {{- $defaultPath := list (dict "path" $routePrefix "port" 8545 "pathType" "ImplementationSpecific") -}}
   {{- $paths := .Values.global.ingress.paths | default $defaultPath -}} 
@@ -31,7 +31,7 @@ spec:
             pathType: {{ $p.pathType }}
             backend:
               service:
-                name: {{ $serviceName }}
+                name: {{ $p.serviceName | default $baseServiceName }}
                 port:
                   number: {{ $p.port }}
   {{- end }}
@@ -44,7 +44,7 @@ spec:
             pathType: {{ $p.pathType }}
             backend:
               service:
-                name: {{ $serviceName }}
+                name: {{ $p.serviceName | default $baseServiceName }}
                 port:
                   number: {{ $p.port }}
   {{- end }}
