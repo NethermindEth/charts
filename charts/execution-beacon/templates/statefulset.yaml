@@ -177,9 +177,9 @@ spec:
               --datadir=/data/execution
               --ipcdisable
               --{{ .Values.global.network }}
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
-            {{- else }}
+            {{- else if .Values.global.JWTSecret}}
               --authrpc.jwtsecret=/secret/jwtsecret
             {{- end }}
               --authrpc.addr={{ .Values.execution.jsonrpc.host }}
@@ -223,9 +223,9 @@ spec:
               --data-path=/data/execution
               --sync-mode=X_SNAP
               --p2p-enabled=true
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if or .Values.global.externalSecrets.enabled }}
               --engine-jwt-secret=/external-secrets/JWT_SECRET
-            {{- else }}
+            {{- else if .Values.global.JWTSecret}}
               --engine-jwt-secret=/secret/jwtsecret
             {{- end }}
               --engine-rpc-enabled=true
@@ -259,9 +259,9 @@ spec:
             {{- if .Values.execution.terminalTotalDifficulty }}
               --override.terminaltotaldifficulty={{ .Values.execution.terminalTotalDifficulty }}
             {{- end }}
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
-            {{- else }}
+            {{- else if .Values.global.JWTSecret}}
               --authrpc.jwtsecret=/secret/jwtsecret
             {{- end }}
               --authrpc.addr={{ .Values.execution.jsonrpc.host }}
