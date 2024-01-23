@@ -18,6 +18,7 @@ global:
     readOnlyRootFilesystem: true
     runAsNonRoot: true
     runAsUser: 10000
+    allowPrivilegeEscalation: false
     capabilities:
       drop:
       - ALL
