@@ -51,13 +51,13 @@ spec:
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
             runAsUser: 0
-          capabilities:
-            add:
-             - CHOWN
-             - FOWNER
-             - DAC_OVERRIDE
-            drop:
-            - ALL
+            capabilities:
+              add:
+              - CHOWN
+              - FOWNER
+              - DAC_OVERRIDE
+              drop:
+              - ALL
           allowPrivilegeEscalation: true
           env:
             - name: POD_IP
