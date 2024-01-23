@@ -21,3 +21,7 @@ dependencies:
   version: 13.2.23
   repository: https://charts.bitnami.com/bitnami/
   condition: postgresql.enabled
+  
+maintainers:
+  - name: matilote
+  - name: aivarasko
