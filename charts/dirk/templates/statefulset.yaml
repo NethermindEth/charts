@@ -20,6 +20,7 @@ spec:
       labels:
         {{- include "common.labels.matchLabels" . | nindent 8 }}
     spec:
+      automountServiceAccountToken: false
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -84,6 +85,7 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            allowPrivilegeEscalation: {{ .Values.global.securityContext.allowPrivilegeEscalation | default false }}
             capabilities:
               drop:
                 - ALL
@@ -115,6 +117,7 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            allowPrivilegeEscalation: {{ .Values.global.securityContext.allowPrivilegeEscalation | default false }}
             capabilities:
               drop:
                 - ALL
@@ -166,6 +169,7 @@ spec:
             runAsUser: {{ .Values.global.securityContext.runAsUser | default 10000 }}
             fsGroup: {{ .Values.global.securityContext.fsGroup | default 10000 }}
             readOnlyRootFilesystem: {{ .Values.global.securityContext.readOnlyRootFilesystem | default true }}
+            allowPrivilegeEscalation: {{ .Values.global.securityContext.allowPrivilegeEscalation | default false }}
             capabilities:
               drop:
                 - ALL

@@ -21,6 +21,7 @@ spec:
       annotations:
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: false
     {{- with (concat .Values.global.imagePullSecrets .Values.global.imagePullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -118,6 +119,7 @@ spec:
             readOnlyRootFilesystem: false
             runAsNonRoot: true
             runAsUser: 10000
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
               - ALL
@@ -380,6 +382,7 @@ spec:
             readOnlyRootFilesystem: false
             runAsNonRoot: true
             runAsUser: 10000
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
               - ALL

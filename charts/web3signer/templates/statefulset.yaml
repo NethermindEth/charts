@@ -19,6 +19,7 @@ spec:
       labels:
         {{- include "common.labels.matchLabels" . | nindent 8 }}
     spec:
+      automountServiceAccountToken: false
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -90,6 +91,7 @@ spec:
             readOnlyRootFilesystem: false
             runAsNonRoot: true
             runAsUser: 10000
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
               - ALL
