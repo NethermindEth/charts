@@ -59,7 +59,6 @@ spec:
               - DAC_OVERRIDE
               drop:
               - ALL
-          allowPrivilegeEscalation: true
           env:
             - name: POD_IP
               valueFrom:
