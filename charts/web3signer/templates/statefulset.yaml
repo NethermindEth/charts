@@ -88,13 +88,7 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
