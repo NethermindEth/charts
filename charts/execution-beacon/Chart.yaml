@@ -3,7 +3,7 @@ name: execution-beacon
 version: 1.0.0
 appVersion: 0.0.1
 kubeVersion: "^1.23.0-0"
-description: Execution and Beacon
+description: A Helm chart that combines Kubernetes manifests and scripts to deploy Ethereum full-nodes without validators with top-notch performance as the goal.
 type: application
 keywords:
   - ethereum
