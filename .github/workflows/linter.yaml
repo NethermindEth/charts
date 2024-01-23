@@ -1,0 +1,19 @@
+name: Lint Codebase
+
+on: pull_request
+
+jobs:
+  build:
+    name: Lint Codebase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Lint Codebase
+        uses: super-linter/super-linter@v5.7.2 
+        env:
+          FILTER_REGEX_EXCLUDE: .*(README\.md|Chart\.yaml).*
+          VALIDATE_ALL_CODEBASE: false # Only new or modified files will be parsed for validation
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
