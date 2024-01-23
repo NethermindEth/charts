@@ -374,13 +374,6 @@ spec:
         - name: beacon
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
-          securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
           {{/* Configuration for Prysm beacon client */}}
           {{- if eq .Values.beacon.client "prysm" }}
           args: 
