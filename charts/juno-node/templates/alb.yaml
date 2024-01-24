@@ -1,0 +1,32 @@
+{{- if $.Values.svc.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.deployment.projectName }}-alb
+  namespace: {{ .Values.deployment.namespace }}
+  annotations:
+    cert-manager.io/issue-temporary-certificate: "true"
+    acme.cert-manager.io/http01-edit-in-place: "true"
+    kubernetes.io/ingress.class: "gce"
+    cert-manager.io/acme-challenge-type: http01
+    cert-manager.io/cluster-issuer: letsencrypt-gce
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    kubernetes.io/tls-acme: "true"
+    {{- if .Values.svc.globalStaticIpName }}
+    kubernetes.io/ingress.global-static-ip-name: "{{ $.Values.svc.globalStaticIpName }}"
+    {{- end }}
+spec:
+  rules:
+{{ toYaml .Values.svc.ingress.rules | indent 2 }}
+  tls:
+  - hosts:
+    - {{ .Values.svc.ingress.host }}
+    secretName: {{ .Values.deployment.projectName }}-alb-tls-cert
+{{- if $.Values.svc.ingress.extraHost.enabled }}
+{{- range .Values.svc.ingress.extraHost.hosts }}
+  - hosts:
+    - "{{ . }}"
+    secretName: {{ . }}-cert
+{{- end -}}
+{{- end -}}
+{{- end -}}

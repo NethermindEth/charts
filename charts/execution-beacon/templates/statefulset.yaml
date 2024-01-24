@@ -114,18 +114,6 @@ spec:
         - name: execution
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
-          securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
-          {{- if .Values.global.externalSecrets.enabled }}
-          envFrom:
-            - secretRef:
-                name: eso-{{ include "common.names.fullname" . }}
-          {{- end }}
           command:
             - sh
             - -ac
@@ -184,14 +172,16 @@ spec:
             {{- end }}
             {{- /* Configuration for Geth execution client */}}
             {{- else if eq .Values.execution.client "geth" }}
+            {{/* Configuration for Geth execution client */}}
+            {{- if eq .Values.execution.client "geth" }}
               exec geth
               --syncmode=snap
               --datadir=/data/execution
               --ipcdisable
               --{{ .Values.global.network }}
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
-            {{- else }}
+            {{- else if .Values.global.JWTSecret}}
               --authrpc.jwtsecret=/secret/jwtsecret
             {{- end }}
               --authrpc.addr={{ .Values.execution.jsonrpc.host }}
@@ -235,9 +225,9 @@ spec:
               --data-path=/data/execution
               --sync-mode=X_SNAP
               --p2p-enabled=true
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if or .Values.global.externalSecrets.enabled }}
               --engine-jwt-secret=/external-secrets/JWT_SECRET
-            {{- else }}
+            {{- else if .Values.global.JWTSecret}}
               --engine-jwt-secret=/secret/jwtsecret
             {{- end }}
               --engine-rpc-enabled=true
@@ -271,9 +261,9 @@ spec:
             {{- if .Values.execution.terminalTotalDifficulty }}
               --override.terminaltotaldifficulty={{ .Values.execution.terminalTotalDifficulty }}
             {{- end }}
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
-            {{- else }}
+            {{- else if .Values.global.JWTSecret}}
               --authrpc.jwtsecret=/secret/jwtsecret
             {{- end }}
               --authrpc.addr={{ .Values.execution.jsonrpc.host }}
@@ -290,18 +280,16 @@ spec:
               --ws
             {{- end }}
             {{- end }}
-            {{- range .Values.extraFlags }}
-                {{ . }}
-            {{- end }}
             {{- if .Values.global.metrics.enabled }}
-                --metrics
-                --metrics.addr={{ .Values.execution.metrics.host }}
-                --metrics.port={{ .Values.execution.metrics.port }}
+              --metrics
+              --metrics.addr={{ .Values.execution.metrics.host }}
+              --metrics.port={{ .Values.execution.metrics.port }}
             {{- end }}
             {{- end }}
             {{- range .Values.execution.extraFlags }}
-              {{ .  }}
+              {{ . }}
             {{- end }}
+            {{- end}}
           env:
             - name: POD_IP
               valueFrom:
@@ -311,6 +299,18 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+          {{- if and (eq .Values.execution.client "nethermind") (.Values.global.p2pNodePort.enabled) }}
+            {{- range $i, $e := until (int .Values.global.replicaCount) }}
+            {{- $portExecution := add $.Values.global.p2pNodePort.startAtExecution $i }}
+            {{- if hasKey $.Values.global.p2pNodePort.replicaToNodePort ($i | toString) }}
+              {{- $portExecution = index $.Values.global.p2pNodePort.replicaToNodePort ($i | toString) }}
+            {{- end }}
+            - name: NETHERMIND_NETWORKCONFIG_DISCOVERYPORT
+              value: "{{ $portExecution }}"
+            - name: NETHERMIND_NETWORKCONFIG_P2PPORT
+              value: "{{ $portExecution }}"
+            {{- end }}
+          {{- end }}
           {{- if .Values.execution.javaOpts.enabled }}
             - name: BESU_OPTS
               value: {{ .Values.execution.javaOpts.maxHeapSize }}
@@ -376,13 +376,6 @@ spec:
         - name: beacon
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
-          securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
           {{/* Configuration for Prysm beacon client */}}
           {{- if eq .Values.beacon.client "prysm" }}
           args: 

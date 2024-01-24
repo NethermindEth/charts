@@ -1,0 +1,187 @@
+### Basic
+deployment:
+  projectName: goerli-test
+  namespace: test
+  replicas: 1
+  imagename: nethermind/juno
+  imagetag: v0.6.2
+  snapshotUrl: "" # if Value is Null sync start from 0 block
+  resources:
+    limits:
+      cpu: "4"
+      memory: 14Gi
+    requests:
+      cpu: "2"
+      memory: 8Gi
+  port:
+  - 6060
+  - 6061
+  healthCheck:
+   enabled: false
+   livenessProbe: 
+     initialDelaySeconds: 9600
+     failureThreshold: 6
+     periodSeconds: 600
+   readinessProbe:
+     initialDelaySeconds: 9600
+     failureThreshold: 6
+     periodSeconds: 600
+
+### Container Arguments
+args:
+  --http-port: "6060"
+  --http-host: "0.0.0.0"
+  --db-path: "/var/lib/juno"
+  --network: "goerli"
+  --metrics-host: "0.0.0.0"
+  --metrics-port: "9090"
+  --http: "true"
+  --metrics: "true"
+  --pending-poll-interval: "2s"
+  --ws: "true"
+  --ws-port: "6061"
+  --ws-host: "0.0.0.0" 
+
+### Node selector and Tanits
+nodeSelector:
+  enabled: false
+  label:
+    network: juno
+
+taintsToleration:
+  enabled: false
+  tolerations:
+      network: juno
+
+  ### Configmap
+
+
+  ### PGO Container 
+pgo:
+  enabled: false
+  image: "gcr.io/juno-dev-nth/node-pgo-monitor:4.0"
+  port: 3000
+  resources:
+    limits:
+      cpu: "2"
+      memory: 4Gi
+    requests:
+      cpu: "1"
+      memory: 2Gi
+  config:
+    BUCKET: "gs://juno-prod-pgo-bucket"
+    DURATION: "30"
+    ITERATION: "10"
+    ENV: "juno-integration"
+    URL: "http://localhost:6062/debug/pprof/profile"
+
+  ### Service account
+serviceAccount: 
+  enabled: false
+  name: "juno-pgo"
+  gcpServiceAccount: "monitoring-sa-euw1@juno-prod-nth.iam.gserviceaccount.com"
+
+### Networking Service
+svc:
+  globalStaticIpName: ""
+  rpc:
+    clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
+    port: "6060"
+    backendConfig:
+      timeoutSec: 400
+      sessionAffinity:
+        affinityType: "CLIENT_IP"
+      connectionDraining:
+        drainingTimeoutSec: 300
+      healthCheck:
+        checkIntervalSec: 15
+        timeoutSec: 15
+        healthyThreshold: 1
+        unhealthyThreshold: 2 
+        port: 6060
+        type: HTTP
+        requestPath: /
+      customResponseHeaders:
+        headers:
+        - "X-Frame-Options: SAMEORIGIN"
+        - "X-Content-Type-Options: nosniff"
+        - "X-XSS-Protection: 1; mode=block"
+        - "Referrer-Policy: no-referrer-when-downgrade"
+        - "Strict-Transport-Security: max-age=63072000; includeSubDomains; preload"
+        
+  wss:
+    clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
+    port: "6061"
+    backendConfig:
+      timeoutSec: 400
+      sessionAffinity:
+        affinityType: "CLIENT_IP"
+      connectionDraining:
+        drainingTimeoutSec: 300
+      healthCheck:
+        checkIntervalSec: 15
+        timeoutSec: 15
+        healthyThreshold: 1
+        unhealthyThreshold: 2 
+        port: 6060
+        type: HTTP
+    ## ALB Ingress Rules
+    # Ingress
+  ingress:
+    enabled: true
+    host: "test.juno.rpc.nethermind.dev"
+    extraHost:
+      enabled: false
+      hosts:
+       - ""
+    rules:
+      - host: "test.juno.rpc.nethermind.dev"
+        http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+            service:
+              name: goerli-test
+              port:
+                number: 6060
+          - path: /ws
+            pathType: ImplementationSpecific
+            backend:
+            service:
+              name: goerli-test-wss
+              port:
+                number: 6061
+
+svc_lb:
+  enabled: false
+  clustertype: LoadBalancer
+  hostname: integration.juno.prod
+  wss_hostname: integration-wss.juno.prod
+
+### Horizontal pod scaling
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  cpuUtilization: 80
+
+batchjob:
+   enabled: false
+   schedule: "* */1 * * *"
+### Persistant Volume
+pvc:
+  enabled: true
+  storageClassName: standard
+  datasource: ""
+  mount:
+  - pvName: pv
+    mountPath: /var/lib/juno
+    storageSize: 250Gi
+
+### ENVIRONMENT VARIABLES 
+env:
+  enabled: false
+  data:
+  - name: NETWORK
+    value: "juno"
