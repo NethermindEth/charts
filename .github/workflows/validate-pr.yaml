@@ -26,3 +26,4 @@ jobs:
           scripts/validate-pr.sh
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
+          TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
