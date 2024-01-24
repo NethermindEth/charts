@@ -32,6 +32,14 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
             fi
 
+      - name: Helm Dependencies
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          for dir in charts/*; do
+            helm dependency update "$dir";
+          done
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
         run: ct lint --target-branch ${{ github.event.repository.default_branch }}
