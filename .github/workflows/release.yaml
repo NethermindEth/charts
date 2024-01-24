@@ -32,6 +32,9 @@ jobs:
             helm dependency update "$dir";
           done
           helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-charts https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0

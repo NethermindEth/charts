@@ -39,6 +39,8 @@ jobs:
             helm dependency update "$dir";
           done
           helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-charts https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
 
       - name: Run chart-testing (lint)
         if: steps.list-changed.outputs.changed == 'true'
