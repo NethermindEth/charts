@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 cat <<EOF
 # See https://github.com/scottrigby/prometheus-helm-charts/issues/12
@@ -17,6 +17,9 @@ for DIR in ./charts/*
 do
   FILE="$DIR/Chart.yaml"
   DIR="${DIR/#.\///}"
-  MAINTAINERS=($(yq e '.maintainers.[].name' "$FILE"| sed 's/^/@/' | sort --ignore-case))
+  MAINTAINERS=()
+  while IFS='' read -r line; do
+    MAINTAINERS+=("$line")
+  done < <(yq e '.maintainers.[].name' "$FILE"| sed 's/^/@/' | sort --ignore-case)
   echo "$DIR"/ "${MAINTAINERS[@]}"
 done
