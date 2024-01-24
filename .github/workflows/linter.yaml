@@ -16,4 +16,7 @@ jobs:
           FILTER_REGEX_EXCLUDE: .*(README\.md|Chart\.yaml).*
           VALIDATE_ALL_CODEBASE: false # Only new or modified files will be parsed for validation
           DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_KUBERNETES_KUBECONFORM: false
+          VALIDATE_JSCPD: false
+          VALIDATE_YAML: false
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}

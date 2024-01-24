@@ -28,8 +28,8 @@ jobs:
 
       - name: Helm Dependencies
         run: |
-          for dir in $(ls -d charts/*); do
-            helm dependency update $dir;
+          for dir in charts/*; do
+            helm dependency update "$dir";
           done
           helm repo add bitnami https://charts.bitnami.com/bitnami
 
