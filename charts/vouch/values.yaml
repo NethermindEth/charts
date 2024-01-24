@@ -133,14 +133,14 @@ podSecurityContext:
   fsGroup: 1000
   runAsUser: 1000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10000
+  fsGroup: 10000
 service:
   type: ClusterIP
   httpPort: 8881
