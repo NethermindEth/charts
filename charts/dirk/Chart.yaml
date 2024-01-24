@@ -18,7 +18,7 @@ home: https://stakewise.io/
 dependencies:
 - name: common
   repository: file://../common
-  version: 1.0.0
+  version: 1.0.1
 
 maintainers:
   - name: matilote
