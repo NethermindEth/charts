@@ -8,8 +8,7 @@ set -o pipefail
 : "${TARGET_BRANCH:?Environment variable must be set}"
 
 main() {
-    local repo_root
-    repo_root=$(git rev-parse --show-toplevel)
+    export repo_root=$(git rev-parse --show-toplevel)
 
     local changed
     changed=$(ct list-changed --target-branch "$TARGET_BRANCH")
