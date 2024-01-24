@@ -12,7 +12,7 @@ main() {
     repo_root=$(git rev-parse --show-toplevel)
 
     local changed
-    changed=$(ct list-changed --target-branch $TARGET_BRANCH)
+    changed=$(ct list-changed --target-branch "$TARGET_BRANCH")
 
     if [[ -z "$changed" ]]; then
         exit 0
