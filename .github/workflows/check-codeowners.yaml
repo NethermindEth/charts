@@ -15,6 +15,7 @@ jobs:
 
       - name: Generate CODEOWNERS
         run: |
+          chmod +x ./scripts/check-codeowners.sh
           ./scripts/check-codeowners.sh > .github/CODEOWNERS
 
       - name: Check CODEOWNERS for modifications
