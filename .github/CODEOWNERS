@@ -8,12 +8,23 @@
 
 /.github/workflows/ @NethermindEth/Angkor/angkor-validator-operators @AntiD2ta @aivarasko @matilote
 
+/charts/cert-manager/ @Anish @Manjeet
 /charts/common/ @aivarasko @matilote
 /charts/dirk/ @aivarasko @matilote
+/charts/ethereum-node/ @Anish @Manjeet
 /charts/execution-beacon/ @aivarasko @AntiD2ta @matilote
+/charts/external-dns/ @Anish @Manjeet
+/charts/external-secrets/ @Anish @Manjeet
+/charts/juno-node/ @Anish @Manjeet
+/charts/kong/ @Anish @Manjeet
+/charts/kube-prometheus-stack/ @Anish @Manjeet
 /charts/lodestar/ @aivarasko @matilote
+/charts/loki/ @Anish @Manjeet
 /charts/mev-boost/ @aivarasko @matilote
+/charts/mysql/ @Anish @Manjeet
 /charts/posmoni/ @aivarasko @matilote
+/charts/promtail/ @Anish @Manjeet
+/charts/rpc-saas-secretStore/ @Anish @Manjeet
 /charts/validator-ejector/ @aivarasko @matilote
 /charts/validator-kapi/ @aivarasko @matilote
 /charts/validators/ @aivarasko @matilote

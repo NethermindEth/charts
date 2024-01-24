@@ -15,9 +15,10 @@ keywords:
 - tls
 kubeVersion: '>= 1.22.0-0'
 maintainers:
-- email: cert-manager-maintainers@googlegroups.com
-  name: cert-manager-maintainers
-  url: https://cert-manager.io
+  - name: Manjeet
+    email: manjeet@nethermind.io
+  - name: Anish
+    email: anish@nethermind.io
 name: cert-manager
 sources:
 - https://github.com/cert-manager/cert-manager

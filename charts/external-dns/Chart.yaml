@@ -16,8 +16,10 @@ icon: https://github.com/kubernetes-sigs/external-dns/raw/master/docs/img/extern
 sources:
   - https://github.com/kubernetes-sigs/external-dns/
 maintainers:
-  - name: stevehipwell
-    email: steve.hipwell@gmail.com
+  - name: Manjeet
+    email: manjeet@nethermind.io
+  - name: Anish
+    email: anish@nethermind.io
 annotations:
   artifacthub.io/changes: |
     - kind: changed

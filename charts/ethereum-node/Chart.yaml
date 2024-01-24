@@ -4,3 +4,8 @@ description: 'This chart acts as an umbrella chart and allows to run a ethereum 
 name: ethereum-node
 type: application
 version: 0.0.19
+maintainers:
+  - name: Manjeet
+    email: manjeet@nethermind.io
+  - name: Anish
+    email: anish@nethermind.io

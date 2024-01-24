@@ -4,3 +4,8 @@ name: my-mysql-chart
 description: A Helm chart for deploying MySQL with StatefulSet, Service, Secret, and PVC.
 version: 1.0.0
 appVersion: 5.7
+maintainers:
+  - name: Manjeet
+    email: manjeet@nethermind.io
+  - name: Anish
+    email: anish@nethermind.io

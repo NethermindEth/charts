@@ -11,6 +11,7 @@ sources:
   - https://grafana.com/docs/loki/latest/
 icon: https://raw.githubusercontent.com/grafana/loki/master/docs/sources/logo.png
 maintainers:
-  - name: Loki Maintainers
-    email: lokiproject@googlegroups.com
-  - name: unguiculus
+  - name: Manjeet
+    email: manjeet@nethermind.io
+  - name: Anish
+    email: anish@nethermind.io
