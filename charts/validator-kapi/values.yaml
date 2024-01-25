@@ -146,8 +146,8 @@ postgresql:
       accessModes:
         - ReadWriteOnce
       size: 20Gi
-      annotations: { }
-      selector: { }
+      annotations: {}
+      selector: {}
     resources:
       requests:
         memory: 384Mi

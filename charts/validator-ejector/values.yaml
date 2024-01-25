@@ -68,7 +68,7 @@ ejector:
   operatorId: "123"
   ## Folder to load json exit message files from
   messagesLocation: "messages"
-  ## POST validator info to an endpoint instead of sending out an exit message in order to initiate an exit. 
+  ## POST validator info to an endpoint instead of sending out an exit message in order to initiate an exit.
   ## Required if you are using webhook mode
   validatorExitWebhook: ""
   ## Amount of blocks to load events from on start.

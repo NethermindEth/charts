@@ -4,7 +4,6 @@ description: A Helm chart for installing and configuring Web3signer
 type: application
 version: 1.0.1
 appVersion: "23.11.0"
-
 keywords:
   - web3signer
   - ethereum
@@ -12,12 +11,10 @@ keywords:
   - lighthouse
   - prysm
   - teku
-
 dependencies:
 - name: common
   repository: file://../common
   version: 1.0.1
-
 maintainers:
   - name: matilote
   - name: aivarasko

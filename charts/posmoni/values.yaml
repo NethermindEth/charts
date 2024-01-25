@@ -16,7 +16,7 @@ image:
 posmoni:
   logs:
     logLevel: INFO
-  validators: [1,2,3]
+  validators: [1, 2, 3]
   consensus: http://localhost:4000
   execution: http://localhost:8545
 

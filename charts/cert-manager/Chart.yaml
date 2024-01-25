@@ -22,4 +22,4 @@ maintainers:
 name: cert-manager
 sources:
 - https://github.com/cert-manager/cert-manager
-version: v1.12.3
+version: v1.12.4

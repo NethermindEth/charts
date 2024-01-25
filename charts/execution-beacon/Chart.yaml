@@ -12,12 +12,10 @@ keywords:
   - prysm
   - p2p
 home: https://www.ethereum.org/
-
 dependencies:
   - name: common
     repository: file://../common
     version: 1.0.1
-    
 maintainers:
   - name: matilote
   - name: aivarasko

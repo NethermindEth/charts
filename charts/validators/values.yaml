@@ -36,15 +36,15 @@ fullnameOverride: ""
 ##
 rbac:
   create: true
-  name: ""	
-  rules:	
-    - apiGroups: [""]	
-      resources:	
-      - "services"	
-      - "pods"	
-      verbs:	
-      - "list"	
-      - "get"	
+  name: ""
+  rules:
+    - apiGroups: [""]
+      resources:
+      - "services"
+      - "pods"
+      verbs:
+      - "list"
+      - "get"
       - "patch"
 
 ## Init image is used to chown data volume, initialise genesis, etc.
@@ -123,19 +123,19 @@ enableBuilder: false
 ## ref: https://hub.docker.com/r/sigp/lighthouse
 image:
   pullPolicy: IfNotPresent
-  prysm: 
+  prysm:
     repository: "gcr.io/prylabs-dev/prysm/validator"
     tag: "v4.1.1"
-  teku: 
+  teku:
     repository: "consensys/teku"
     tag: "23.11.0"
-  lighthouse: 
+  lighthouse:
     repository: "sigp/lighthouse"
     tag: "v4.5.0"
-  nimbus: 
+  nimbus:
     repository: "statusim/nimbus-validator-client"
     tag: "multiarch-v23.11.0"
-  lodestar: 
+  lodestar:
     repository: "chainsafe/lodestar"
     tag: "v1.12.0"
 
@@ -207,7 +207,7 @@ flags:
     - "--non-interactive"
     - "--log-level=INFO"
     - "--doppelganger-detection=off"
-  lodestar: 
+  lodestar:
     - "validator"
     - "--dataDir=/data/lodestar"
     - "--logLevel=info"
@@ -218,7 +218,7 @@ extraFlags:
   prysm: []
   lighthouse: []
   teku: []
-  nimbus: []	
+  nimbus: []
   lodestar: []
 
 ## Web3Signer Endpoint
@@ -237,7 +237,7 @@ beaconChainRpcEndpoints: []
 beaconChainRpcEndpointsRandomized: []
 
 ## if using beaconChainRpcEndpointsRandomized
-## fallbackRpcEndpoints will be appended to the list 
+## fallbackRpcEndpoints will be appended to the list
 ## always serving as the last, failover endpoint
 ##
 fallbackRpcEndpoints: []
@@ -250,8 +250,8 @@ graffiti: ""
 
 enableWatcher: false
 
-## Lodestar specific setting	
-## Enables strict checking of the validator's feeRecipient with the one returned by engine	
+## Lodestar specific setting
+## Enables strict checking of the validator's feeRecipient with the one returned by engine
 strictFeeRecipientCheck: false
 
 ## Monitoring

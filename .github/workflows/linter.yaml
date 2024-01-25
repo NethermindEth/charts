@@ -13,7 +13,7 @@ jobs:
       - name: Lint Codebase
         uses: super-linter/super-linter@v5.7.2 
         env:
-          FILTER_REGEX_EXCLUDE: .*(README\.md|Chart\.yaml).*
+          FILTER_REGEX_EXCLUDE: .*(README\.md|Chart\.yaml|NOTES\.txt).*
           VALIDATE_ALL_CODEBASE: false # Only new or modified files will be parsed for validation
           DEFAULT_BRANCH: main
           VALIDATE_KUBERNETES_KUBECONFORM: false

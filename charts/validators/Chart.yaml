@@ -4,7 +4,6 @@ description: A Helm chart for installing validators with the web3signer.
 type: application
 version: 1.0.1
 appVersion: "v1.0.0"
-
 keywords:
   - ethereum
   - blockchain
@@ -12,8 +11,6 @@ keywords:
   - prysm
   - teku
   - validators
-
 maintainers:
   - name: matilote
   - name: aivarasko
-  

@@ -1,9 +1,6 @@
 dependencies:
-- name: common
-  repository: file://../common
-  version: 1.0.1
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami/
   version: 13.2.23
-digest: sha256:eb9d73d3c8ac82af7a5bb3d1f8320f5669e7835e5713b8e67f78556bed5bcd46
-generated: "2024-01-24T14:38:18.052644+01:00"
+digest: sha256:78596ff0e7a91ecaacca80ba3f79fe32bce3e00c61de9c66f8fef8c79cc01beb
+generated: "2024-01-25T09:29:40.695952+01:00"

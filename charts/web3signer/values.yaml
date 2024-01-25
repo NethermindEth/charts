@@ -24,7 +24,7 @@ global:
 
 replicaCount: 3
 
-idleTimeout: 30	
+idleTimeout: 30
 
 tmpfsSize: 128Mi
 
