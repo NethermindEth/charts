@@ -127,13 +127,11 @@ postgresql:
     logHostname: true
   auth:
     username: "postgres"
-    password: "kapi"
     database: "kapi"
-    postgresPassword: "kapi-admin"
-    existingSecret: ""
+    existingSecret: "eso-validator-kapi"
     secretKeys:
-      adminPasswordKey: ""
-      userPasswordKey: ""
+      adminPasswordKey: "DB_PASSWORD"
+      userPasswordKey: "DB_PASSWORD"
       replicationPasswordKey: ""
   service:
     ports:
