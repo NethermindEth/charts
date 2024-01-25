@@ -21,6 +21,7 @@ spec:
       annotations:
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
+      automountServiceAccountToken: false
     {{- with (concat .Values.global.imagePullSecrets .Values.global.imagePullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -115,12 +116,7 @@ spec:
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           {{- if .Values.global.externalSecrets.enabled }}
           envFrom:
             - secretRef:
@@ -377,12 +373,7 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           {{/* Configuration for Prysm beacon client */}}
           {{- if eq .Values.beacon.client "prysm" }}
           args: 

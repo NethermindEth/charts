@@ -45,6 +45,7 @@ spec:
       annotations:
         checksum/configmap: {{ include (print $root.Template.BasePath "/configmap.yaml") $root | sha256sum }}
     spec:
+      automountServiceAccountToken: false
       {{- with (concat $root.Values.imagePullSecrets $root.Values.global.imagePullSecrets) }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -164,12 +165,7 @@ spec:
           image: "{{ (pluck $root.Values.type $root.Values.image | first ).repository }}:{{ (pluck $root.Values.type $root.Values.image | first ).tag }}"
           imagePullPolicy: {{ $root.Values.image.pullPolicy }}
           securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           {{- if eq $root.Values.type "lodestar" }}
           command:
             - sh

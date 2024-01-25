@@ -38,6 +38,23 @@ global:
     pullPolicy: IfNotPresent
     tag: "0.10.1"
 
+  ## Pod Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10000
+    fsGroup: 10000
+
+  securityContext:
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 10000
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+
 kapi:
   env: "production"
   # Application port
@@ -95,6 +112,7 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
+  # allowPrivilegeEscalation: false
 
 service:
   type: ClusterIP
