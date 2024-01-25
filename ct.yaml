@@ -8,3 +8,4 @@ chart-repos:
   - prometheus-charts=https://prometheus-community.github.io/helm-charts
   - grafana=https://grafana.github.io/helm-charts
   - ethereum-helm-charts=https://ethpandaops.github.io/ethereum-helm-charts
+  - external-secrets=https://charts.external-secrets.io
