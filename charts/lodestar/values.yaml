@@ -40,19 +40,22 @@ serviceAccount:
 
 podAnnotations: {}
 
+## Pod Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+##
 podSecurityContext:
-  {}
-  # fsGroup: 2000
-
+  runAsNonRoot: true
+  runAsUser: 10000
+  fsGroup: 10000
+  
 securityContext:
-  {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-  # allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10000
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
 
 service:
   type: ClusterIP
