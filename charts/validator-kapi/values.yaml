@@ -130,8 +130,8 @@ postgresql:
     database: "kapi"
     existingSecret: "eso-validator-kapi"
     secretKeys:
-      adminPasswordKey: "DB_PASSWORD"
-      userPasswordKey: "DB_PASSWORD"
+      adminPasswordKey: "DB_PASSWORD"  # gitleaks:allow
+      userPasswordKey: "DB_PASSWORD"  # gitleaks:allow
       replicationPasswordKey: ""
   service:
     ports:
