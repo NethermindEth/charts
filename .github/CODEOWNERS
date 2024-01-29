@@ -18,7 +18,7 @@
 /charts/juno-node/ @Anish @Manjeet
 /charts/kong/ @Anish @Manjeet
 /charts/kube-prometheus-stack/ @Anish @Manjeet
-/charts/lodestar/ @aivarasko @matilote
+/charts/lodestar/ @aivarasko @matilote @refl3ction @stdevMac
 /charts/loki/ @Anish @Manjeet
 /charts/mev-boost/ @aivarasko @matilote
 /charts/mysql/ @Anish @Manjeet
