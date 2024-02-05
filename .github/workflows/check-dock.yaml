@@ -14,9 +14,8 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
-      - name: Run helm-docs to update docs
-        run: |
-          "docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest"
+      - name: Run helm-docs
+        run: docker run --rm --volume "$(pwd):/helm-docs" -u "$(id -u)" jnorwood/helm-docs:latest   
 
       - name: Check for unstaged changes
         run: |
