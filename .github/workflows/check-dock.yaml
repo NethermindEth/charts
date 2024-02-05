@@ -16,7 +16,7 @@ jobs:
 
       - name: Run helm-docs to update docs
         run: |
-          docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest
+          "docker run --rm --volume "$(pwd):/helm-docs" -u $(id -u) jnorwood/helm-docs:latest"
 
       - name: Check for unstaged changes
         run: |
