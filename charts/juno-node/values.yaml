@@ -84,6 +84,7 @@ serviceAccount:
 ### Networking Service
 svc:
   globalStaticIpName: ""
+  globalStaticInternalIpName: ""
   rpc:
     clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
     port: "6060"
@@ -129,6 +130,7 @@ svc:
     # Ingress
   ingress:
     enabled: true
+    internal: false
     host: "test.juno.rpc.nethermind.dev"
     extraHost:
       enabled: false
@@ -181,3 +183,4 @@ env:
   data:
   - name: NETWORK
     value: "juno"
+
