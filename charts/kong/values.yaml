@@ -344,6 +344,9 @@ proxy:
   # Kong proxy ingress settings.
   # Note: You need this only if you are using another Ingress Controller
   # to expose Kong outside the k8s cluster.
+  multiClusterIngress:
+    enabled: false
+    
   ingress:
     # Enable/disable exposure using ingress.
     enabled: false

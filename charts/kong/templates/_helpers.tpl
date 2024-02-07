@@ -166,6 +166,102 @@ spec:
 {{- end -}}
 
 {{/*
+Create Multi Cluster Ingress resource for a Kong service
+*/}}
+
+{{- define "kong.multiClusterIngress" -}}
+{{- $servicePort := include "kong.ingress.servicePort" . }}
+{{- $path := .multiClusterIngress.path -}}
+{{- $hostname := .multiClusterIngress.hostname -}}
+{{- $pathType := .multiClusterIngress.pathType -}}
+apiVersion: networking.k8s.io/v1
+kind: MultiClusterIngress
+metadata:
+  name: {{ .fullName }}-{{ .serviceName }}
+  namespace: {{ .namespace }}
+  labels:
+  {{- .metaLabels | nindent 4 }}
+  {{- range $key, $value := .multiClusterIngress.labels }}
+    {{- $key | nindent 4 }}: {{ $value | quote }}
+  {{- end }}
+  {{- if .multiClusterIngress.annotations }}
+  annotations:
+    {{- range $key, $value := .multiClusterIngress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+{{- if .multiClusterIngress.ingressClassName }}
+  ingressClassName: {{ .multiClusterIngress.ingressClassName }}
+{{- end }}
+  rules:
+  {{- if ( not (or $hostname .multiClusterIngress.hosts)) }}
+  - http:
+      paths:
+        - backend:
+            service:
+              name: {{ .fullName }}-{{ .serviceName }}
+              port:
+                number: {{ $servicePort }}
+          path: {{ $path }}
+          pathType: {{ $pathType }}
+  {{- else if $hostname }}
+  - host: {{ $hostname | quote }}
+    http:
+      paths:
+        - backend:
+            service:
+              name: {{ .fullName }}-{{ .serviceName }}
+              port:
+                number: {{ $servicePort }}
+          path: {{ $path }}
+          pathType: {{ $pathType }}
+  {{- end }}
+  {{- range .multiClusterIngress.hosts }}
+  - host: {{ .host | quote }}
+    http:
+      paths:
+        {{- range .paths }}
+        - backend:
+          {{- if .backend -}}
+            {{ .backend | toYaml | nindent 12 }}
+          {{- else }}
+            service:
+              name: {{ $.fullName }}-{{ $.serviceName }}
+              port:
+                number: {{ $servicePort }}
+          {{- end }}
+          {{- if (and $hostname (and (eq $path .path))) }}
+          {{- fail "duplication of specified ingress path" }}
+          {{- end }}
+          path: {{ .path }}
+          pathType: {{ .pathType }}
+        {{- end }}
+  {{- end }}
+  {{- if (hasKey .multiClusterIngress "tls") }}
+  tls:
+  {{- if (kindIs "string" .multiClusterIngress.tls) }}
+    - hosts:
+      {{- range .multiClusterIngress.hosts }}
+        - {{ .host | quote }}
+      {{- end }}
+      {{- if $hostname }}
+        - {{ $hostname | quote }}
+      {{- end }}
+      secretName: {{ .multiClusterIngress.tls }}
+  {{- else if (kindIs "slice" .multiClusterIngress.tls) }}
+    {{- range .multiClusterIngress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end -}}
+
+{{/*
 Create Service resource for a Kong service
 */}}
 {{- define "kong.service" -}}
@@ -273,6 +369,114 @@ spec:
     {{- .selectorLabels | nindent 4 }}
 {{- end -}}
 
+
+{{/*
+Create Service resource for a Kong service
+*/}}
+{{- define "kong.mciservice" -}}
+apiVersion: v1
+kind: MultiClusterService
+metadata:
+  name: {{ .fullName }}-{{ .serviceName }}
+  namespace: {{ .namespace }}
+  {{- if .annotations }}
+  annotations:
+  {{- range $key, $value := .annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
+  labels:
+    {{- .metaLabels | nindent 4 }}
+  {{- range $key, $value := .labels }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+spec:
+  type: {{ .type }}
+  {{- if eq .type "LoadBalancer" }}
+  {{- if .loadBalancerIP }}
+  loadBalancerIP: {{ .loadBalancerIP }}
+  {{- end }}
+  {{- if .loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+  {{- range $cidr := .loadBalancerSourceRanges }}
+  - {{ $cidr }}
+  {{- end }}
+  {{- end }}
+  {{- if .loadBalancerClass }}
+  loadBalancerClass: {{ .loadBalancerClass }}
+  {{- end }}
+  {{- end }}
+  {{- if .externalIPs }}
+  externalIPs:
+  {{- range $ip := .externalIPs }}
+  - {{ $ip }}
+  {{- end -}}
+  {{- end }}
+  ports:
+  {{- if .http }}
+  {{- if .http.enabled }}
+  - name: kong-{{ .serviceName }}
+    port: {{ .http.servicePort }}
+    targetPort: {{ .http.containerPort }}
+  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .http.nodePort))) }}
+    nodePort: {{ .http.nodePort }}
+  {{- end }}
+    protocol: TCP
+  {{- end }}
+  {{- end }}
+
+  {{- if .monitoring }}
+  {{- if .monitoring.enabled }}
+  - name: status-{{ .serviceName }}
+    port: {{ .monitoring.servicePort }}
+    targetPort: {{ .monitoring.containerPort }}
+  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .monitoring.nodePort))) }}
+    nodePort: {{ .monitoring.nodePort }}
+  {{- end }}
+    protocol: TCP
+  {{- end }}
+  {{- end }}
+
+  {{- if .tls.enabled }}
+  - name: kong-{{ .serviceName }}-tls
+    port: {{ .tls.servicePort }}
+    targetPort: {{ .tls.overrideServiceTargetPort | default .tls.containerPort }}
+  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .tls.nodePort))) }}
+    nodePort: {{ .tls.nodePort }}
+  {{- end }}
+    protocol: TCP
+  {{- end }}
+  {{- if (hasKey . "stream") }}
+    {{- $defaultProtocol := "TCP" }}
+    {{- if (hasSuffix "udp-proxy" .serviceName) }}
+      {{- $defaultProtocol = "UDP" }}
+    {{- end }}
+    {{- range $index, $streamEntry := .stream }}
+      {{- if (not (hasKey $streamEntry "protocol")) }}
+        {{- $_ := set $streamEntry "protocol" $defaultProtocol }}
+      {{- end }}
+    {{- end }}
+  {{- range .stream }}
+  - name: stream{{ if (eq (default "TCP" .protocol) "UDP") }}udp{{ end }}-{{ .containerPort }}
+    port: {{ .servicePort }}
+    targetPort: {{ .containerPort }}
+    {{- if (and (or (eq $.type "LoadBalancer") (eq $.type "NodePort")) (not (empty .nodePort))) }}
+    nodePort: {{ .nodePort }}
+    {{- end }}
+    protocol: {{ .protocol | default "TCP" }}
+  {{- end }}
+  {{- end }}
+  {{- if .externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .externalTrafficPolicy }}
+  {{- end }}
+  {{- if .clusterIP }}
+  {{- if (or (not (eq .clusterIP "None")) (and (eq .type "ClusterIP") (eq .clusterIP "None"))) }}
+  clusterIP: {{ .clusterIP }}
+  {{- end }}
+  {{- end }}
+  selector:
+    {{- .selectorLabels | nindent 4 }}
+{{- end -}}
 
 {{/*
 Create KONG_SERVICE_LISTEN strings
