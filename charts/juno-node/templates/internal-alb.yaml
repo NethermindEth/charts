@@ -1,0 +1,28 @@
+{{- if and $.Values.svc.ingress.enabled (or .Values.svc.ingress.internal ) -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.deployment.projectName }}-internal-alb
+  namespace: {{ .Values.deployment.namespace }}
+  annotations:
+    kubernetes.io/ingress.class: "gce-internal"
+    {{- if .Values.svc.globalStaticInternalIpName }}
+    kubernetes.io/ingress.global-static-ip-name: "{{ $.Values.svc.globalStaticInternalIpName }}"
+    {{- end }}
+spec:
+  defaultBackend:
+    service:
+      name: {{ .Values.deployment.projectName }}
+      port:
+        number: {{ .Values.svc.rpc.port }}
+  rules:
+  - http:
+      paths:
+       - path: /ws
+         pathType: ImplementationSpecific
+         backend:
+           service:
+             name: {{ .Values.deployment.projectName }}-wss
+             port:
+               number: {{ .Values.svc.wss.port }}
+{{- end -}}
