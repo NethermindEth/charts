@@ -18,6 +18,7 @@ spec:
     protocol: TCP
   selector:
     app: {{ .Values.deployment.projectName }}
+    
 ---
 apiVersion: v1
 kind: Service
@@ -38,8 +39,8 @@ spec:
     protocol: TCP
   selector:
     app: {{ .Values.deployment.projectName }}
+
 ---
-{{- if $.Values.svc.ingress.internal -}}
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
@@ -47,9 +48,8 @@ metadata:
   namespace: {{ .Values.deployment.namespace }}
 spec:
 {{ toYaml .Values.svc.rpc.internalBackendConfig | indent 2 }}
-{{- end -}}
+
 ---
-{{- if $.Values.svc.ingress.internal -}}
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
@@ -57,7 +57,7 @@ metadata:
   namespace: {{ .Values.deployment.namespace }}
 spec:
 {{ toYaml .Values.svc.wss.internalBackendConfig | indent 2 }}
-{{- end -}}
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
