@@ -374,7 +374,7 @@ spec:
 Create Service resource for a Kong service
 */}}
 {{- define "kong.mciservice" -}}
-apiVersion: v1
+apiVersion: networking.gke.io/v1
 kind: MultiClusterService
 metadata:
   name: {{ .fullName }}-{{ .serviceName }}
