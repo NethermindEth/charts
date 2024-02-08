@@ -203,10 +203,8 @@ spec:
             {{- if .backend -}}
               {{ .backend | toYaml | nindent 12 }}
             {{- else }}
-              service:
-                name: {{ $.fullName }}-{{ $.serviceName }}
-                port:
-                  number: {{ $servicePort }}
+              serviceName: {{ $.fullName }}-{{ $.serviceName }}
+              servicePort: {{ $servicePort }}
             {{- end }}
             {{- if (and $hostname (and (eq $path .path))) }}
             {{- fail "duplication of specified ingress path" }}
