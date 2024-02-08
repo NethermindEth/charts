@@ -174,7 +174,7 @@ Create Multi Cluster Ingress resource for a Kong service
 {{- $path := .multiClusterIngress.path -}}
 {{- $hostname := .multiClusterIngress.hostname -}}
 {{- $pathType := .multiClusterIngress.pathType -}}
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.gke.io/v1
 kind: MultiClusterIngress
 metadata:
   name: {{ .fullName }}-{{ .serviceName }}
