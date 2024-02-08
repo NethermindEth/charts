@@ -281,6 +281,7 @@ proxy:
   # To specify annotations or labels for the proxy service, add them to the respective
   # "annotations" or "labels" dictionaries below.
   annotations: {}
+  annotationsMci: {}
   # If terminating TLS at the ELB, the following annotations can be used
   # "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "*",
   # "service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled": "true",
@@ -346,12 +347,12 @@ proxy:
   # to expose Kong outside the k8s cluster.
   multiClusterIngress:
     enabled: false
-    
+    backendConfig: {}
   ingress:
     # Enable/disable exposure using ingress.
     enabled: false
-    # ingressClassName: gce
-    # backendConfig: {}
+    ingressClassName: {}
+    backendConfig: {}
     #     timeoutSec: 400
     #     sessionAffinity:
     #       affinityType: "GENERATED_COOKIE"
@@ -373,7 +374,7 @@ proxy:
     #         - "X-XSS-Protection: 1; mode=block"
     #         - "Referrer-Policy: no-referrer-when-downgrade"
     #         - "Strict-Transport-Security: max-age=63072000; includeSubDomains; preload"
-    ingressClassName:
+    # ingressClassName: 
     # To specify annotations or labels for the ingress, add them to the respective
     # "annotations" or "labels" dictionaries below.
     annotations: {}
