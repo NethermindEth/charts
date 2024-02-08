@@ -191,74 +191,53 @@ metadata:
     {{- end }}
   {{- end }}
 spec:
-{{- if .multiClusterIngress.ingressClassName }}
-  ingressClassName: {{ .multiClusterIngress.ingressClassName }}
-{{- end }}
-  rules:
-  {{- if ( not (or $hostname .multiClusterIngress.hosts)) }}
-  - http:
-      paths:
-        - backend:
-            service:
-              name: {{ .fullName }}-{{ .serviceName }}
-              port:
-                number: {{ $servicePort }}
-          path: {{ $path }}
-          pathType: {{ $pathType }}
-  {{- else if $hostname }}
-  - host: {{ $hostname | quote }}
-    http:
-      paths:
-        - backend:
-            service:
-              name: {{ .fullName }}-{{ .serviceName }}
-              port:
-                number: {{ $servicePort }}
-          path: {{ $path }}
-          pathType: {{ $pathType }}
-  {{- end }}
-  {{- range .multiClusterIngress.hosts }}
-  - host: {{ .host | quote }}
-    http:
-      paths:
-        {{- range .paths }}
-        - backend:
-          {{- if .backend -}}
-            {{ .backend | toYaml | nindent 12 }}
-          {{- else }}
-            service:
-              name: {{ $.fullName }}-{{ $.serviceName }}
-              port:
-                number: {{ $servicePort }}
+ template:
+  spec:
+    backend:
+        serviceName: {{ .multiClusterIngress.selector }}
+        servicePort: {{ .multiClusterIngress.selectorPort }}
+    rules:
+    {{- range .multiClusterIngress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - backend:
+            {{- if .backend -}}
+              {{ .backend | toYaml | nindent 12 }}
+            {{- else }}
+              service:
+                name: {{ $.fullName }}-{{ $.serviceName }}
+                port:
+                  number: {{ $servicePort }}
+            {{- end }}
+            {{- if (and $hostname (and (eq $path .path))) }}
+            {{- fail "duplication of specified ingress path" }}
+            {{- end }}
+            path: {{ .path }}
           {{- end }}
-          {{- if (and $hostname (and (eq $path .path))) }}
-          {{- fail "duplication of specified ingress path" }}
-          {{- end }}
-          path: {{ .path }}
-          pathType: {{ .pathType }}
-        {{- end }}
-  {{- end }}
-  {{- if (hasKey .multiClusterIngress "tls") }}
-  tls:
-  {{- if (kindIs "string" .multiClusterIngress.tls) }}
-    - hosts:
-      {{- range .multiClusterIngress.hosts }}
-        - {{ .host | quote }}
-      {{- end }}
-      {{- if $hostname }}
-        - {{ $hostname | quote }}
-      {{- end }}
-      secretName: {{ .multiClusterIngress.tls }}
-  {{- else if (kindIs "slice" .multiClusterIngress.tls) }}
-    {{- range .multiClusterIngress.tls }}
-    - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
     {{- end }}
-  {{- end }}
-  {{- end }}
+    {{- if (hasKey .multiClusterIngress "tls") }}
+    tls:
+    {{- if (kindIs "string" .multiClusterIngress.tls) }}
+      - hosts:
+        {{- range .multiClusterIngress.hosts }}
+          - {{ .host | quote }}
+        {{- end }}
+        {{- if $hostname }}
+          - {{ $hostname | quote }}
+        {{- end }}
+        secretName: {{ .multiClusterIngress.tls }}
+    {{- else if (kindIs "slice" .multiClusterIngress.tls) }}
+      {{- range .multiClusterIngress.tls }}
+      - hosts:
+          {{- range .hosts }}
+          - {{ . | quote }}
+          {{- end }}
+        secretName: {{ .secretName }}
+      {{- end }}
+    {{- end }}
+    {{- end }}
 {{- end -}}
 
 {{/*

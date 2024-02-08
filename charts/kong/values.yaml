@@ -348,12 +348,12 @@ proxy:
   multiClusterIngress:
     enabled: false
     backendConfig: {}
-    selectorPort: {}
-    selector: {}
+    selectorPort: ""
+    selector: ""
   ingress:
     # Enable/disable exposure using ingress.
     enabled: false
-    ingressClassName: {}
+    ingressClassName: ""
     backendConfig: {}
     #     timeoutSec: 400
     #     sessionAffinity:
