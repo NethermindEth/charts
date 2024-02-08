@@ -379,9 +379,9 @@ kind: MultiClusterService
 metadata:
   name: {{ .fullName }}-{{ .serviceName }}
   namespace: {{ .namespace }}
-  {{- if .annotations }}
+  {{- if .annotationsMci }}
   annotations:
-  {{- range $key, $value := .annotations }}
+  {{- range $key, $value := .annotationsMci }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
   {{- end }}
