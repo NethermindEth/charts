@@ -349,7 +349,6 @@ proxy:
     enabled: false
     backendConfig: {}
     selectorPort: ""
-    selector: ""
   ingress:
     # Enable/disable exposure using ingress.
     enabled: false

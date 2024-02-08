@@ -193,9 +193,6 @@ metadata:
 spec:
  template:
   spec:
-    backend:
-        serviceName: {{ .multiClusterIngress.selector }}
-        servicePort: {{ .multiClusterIngress.selectorPort }}
     rules:
     {{- range .multiClusterIngress.hosts }}
     - host: {{ .host | quote }}
@@ -373,7 +370,7 @@ spec:
   template:
     spec:
       selector:
-        app: {{ .multiClusterIngress.selector }}
+      {{- .selectorLabels | nindent 8 }}
       ports:
       - name: port
         port: {{ .multiClusterIngress.selectorPort }}
