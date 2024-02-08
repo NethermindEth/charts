@@ -391,91 +391,15 @@ metadata:
     {{ $key }}: {{ $value | quote }}
   {{- end }}
 spec:
-  type: {{ .type }}
-  {{- if eq .type "LoadBalancer" }}
-  {{- if .loadBalancerIP }}
-  loadBalancerIP: {{ .loadBalancerIP }}
-  {{- end }}
-  {{- if .loadBalancerSourceRanges }}
-  loadBalancerSourceRanges:
-  {{- range $cidr := .loadBalancerSourceRanges }}
-  - {{ $cidr }}
-  {{- end }}
-  {{- end }}
-  {{- if .loadBalancerClass }}
-  loadBalancerClass: {{ .loadBalancerClass }}
-  {{- end }}
-  {{- end }}
-  {{- if .externalIPs }}
-  externalIPs:
-  {{- range $ip := .externalIPs }}
-  - {{ $ip }}
-  {{- end -}}
-  {{- end }}
-  ports:
-  {{- if .http }}
-  {{- if .http.enabled }}
-  - name: kong-{{ .serviceName }}
-    port: {{ .http.servicePort }}
-    targetPort: {{ .http.containerPort }}
-  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .http.nodePort))) }}
-    nodePort: {{ .http.nodePort }}
-  {{- end }}
-    protocol: TCP
-  {{- end }}
-  {{- end }}
-
-  {{- if .monitoring }}
-  {{- if .monitoring.enabled }}
-  - name: status-{{ .serviceName }}
-    port: {{ .monitoring.servicePort }}
-    targetPort: {{ .monitoring.containerPort }}
-  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .monitoring.nodePort))) }}
-    nodePort: {{ .monitoring.nodePort }}
-  {{- end }}
-    protocol: TCP
-  {{- end }}
-  {{- end }}
-
-  {{- if .tls.enabled }}
-  - name: kong-{{ .serviceName }}-tls
-    port: {{ .tls.servicePort }}
-    targetPort: {{ .tls.overrideServiceTargetPort | default .tls.containerPort }}
-  {{- if (and (or (eq .type "LoadBalancer") (eq .type "NodePort")) (not (empty .tls.nodePort))) }}
-    nodePort: {{ .tls.nodePort }}
-  {{- end }}
-    protocol: TCP
-  {{- end }}
-  {{- if (hasKey . "stream") }}
-    {{- $defaultProtocol := "TCP" }}
-    {{- if (hasSuffix "udp-proxy" .serviceName) }}
-      {{- $defaultProtocol = "UDP" }}
-    {{- end }}
-    {{- range $index, $streamEntry := .stream }}
-      {{- if (not (hasKey $streamEntry "protocol")) }}
-        {{- $_ := set $streamEntry "protocol" $defaultProtocol }}
-      {{- end }}
-    {{- end }}
-  {{- range .stream }}
-  - name: stream{{ if (eq (default "TCP" .protocol) "UDP") }}udp{{ end }}-{{ .containerPort }}
-    port: {{ .servicePort }}
-    targetPort: {{ .containerPort }}
-    {{- if (and (or (eq $.type "LoadBalancer") (eq $.type "NodePort")) (not (empty .nodePort))) }}
-    nodePort: {{ .nodePort }}
-    {{- end }}
-    protocol: {{ .protocol | default "TCP" }}
-  {{- end }}
-  {{- end }}
-  {{- if .externalTrafficPolicy }}
-  externalTrafficPolicy: {{ .externalTrafficPolicy }}
-  {{- end }}
-  {{- if .clusterIP }}
-  {{- if (or (not (eq .clusterIP "None")) (and (eq .type "ClusterIP") (eq .clusterIP "None"))) }}
-  clusterIP: {{ .clusterIP }}
-  {{- end }}
-  {{- end }}
-  selector:
-    {{- .selectorLabels | nindent 4 }}
+  template:
+    spec:
+      selector:
+        app: {{ .multiClusterIngress.selector }}
+      ports:
+      - name: port
+        port: {{ .multiClusterIngress.selectorPort }}
+        protocol: TCP
+        targetPort: {{ .multiClusterIngress.selectorPort }}
 {{- end -}}
 
 {{/*
