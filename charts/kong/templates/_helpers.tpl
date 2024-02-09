@@ -216,17 +216,17 @@ spec:
           {{- end }}
     {{- end }}
     {{- if (hasKey .multiClusterIngress "tls") }}
-  tls:
-  {{- if (kindIs "string" .multiClusterIngress.tls) }}
-    - secretName: {{ .multiClusterIngress.tls }}
-  {{- else if (kindIs "slice" .multiClusterIngress.tls) }}
-    {{- range .multiClusterIngress.tls }}
-    - secretName: {{ .secretName }}
+    tls:
+    {{- if (kindIs "string" .multiClusterIngress.tls) }}
+      - secretName: {{ .multiClusterIngress.tls }}
+    {{- else if (kindIs "slice" .multiClusterIngress.tls) }}
+      {{- range .multiClusterIngress.tls }}
+      - secretName: {{ .secretName }}
+      {{- end }}
     {{- end }}
-  {{- end }}
 
-  {{- end }}
-{{- end -}}
+    {{- end }}
+  {{- end -}}
 
 {{/*
 Create Service resource for a Kong service
