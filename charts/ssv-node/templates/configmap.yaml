@@ -6,10 +6,6 @@ metadata:
   labels:
     {{- include "ssv-node.labels" . | nindent 4 }}
 data:
-  {{- if .Values.config.overrideConfigFile }}
-  config.yaml: |
-    {{ .Values.config.configFile | nindent 4 }}
-  {{- else }}
   config.yaml: |
     ssv:
       Network: {{ .Values.config.network }}
@@ -34,4 +30,3 @@ data:
       LogLevelFormat: lowercase
       LogLevel: {{ .Values.config.logLevel }}
       LogFilePath: /data/debug.log
-  {{- end }}

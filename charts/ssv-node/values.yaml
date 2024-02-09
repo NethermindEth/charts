@@ -16,37 +16,12 @@ image:
 config:
   args:
     - make BUILD_PATH=/go/bin/ssvnode start-node
-  overrideConfigFile: false
   network: holesky
   privateKeyFile: /etc/ssv-node/encrypted_private_key.json
   passwordFile: /etc/ssv-node/password
   executionAddress: "ws://geth:8546"
   beaconAddress: "http://lighthouse:5062"
   logLevel: info
-  # configFile: |
-  #   ssv:
-  #     Network: holesky
-  #     ValidatorOptions:
-  #       BuilderProposals: true
-  #   KeyStore:
-  #     PrivateKeyFile: /etc/ssv-node/encrypted_private_key.json
-  #     PasswordFile: /etc/ssv-node/password
-  #   p2p:
-  #     DiscoveryType: discv5
-  #     TcpPort: 13001
-  #     UdpPort: 12001
-  #   db:
-  #     Path: /data/db
-  #   eth2:
-  #     BeaconNodeAddr: http://lighthouse:5052
-  #   eth1:
-  #     ETH1Addr: ws://geth:8546
-  #   MetricsAPIPort: 15001
-  #   global:
-  #     LogFormat: json
-  #     LogLevelFormat: lowercase
-  #     LogLevel: info
-  #     LogFilePath: /data/debug.log
 
 env_vars:
   - name: CONFIG_PATH
