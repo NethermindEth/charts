@@ -174,6 +174,7 @@ Create Multi Cluster Ingress resource for a Kong service
 {{- $path := .multiClusterIngress.path -}}
 {{- $hostname := .multiClusterIngress.hostname -}}
 {{- $pathType := .multiClusterIngress.pathType -}}
+{{- $selectorPort := .multiClusterIngress.selectorPort -}}
 apiVersion: networking.gke.io/v1
 kind: MultiClusterIngress
 metadata:
@@ -195,7 +196,7 @@ spec:
   spec:
     backend:
       serviceName: {{ $.fullName }}-{{ $.serviceName }}
-      servicePort: {{ $servicePort }}
+      servicePort: {{ $selectorPort }}
     rules:
     {{- range .multiClusterIngress.hosts }}
     - host: {{ .host | quote }}
@@ -207,7 +208,7 @@ spec:
               {{ .backend | toYaml | nindent 12 }}
             {{- else }}
               serviceName: {{ $.fullName }}-{{ $.serviceName }}
-              servicePort: {{ $servicePort }}
+              servicePort: {{ $selectorPort }}
             {{- end }}
             {{- if (and $hostname (and (eq $path .path))) }}
             {{- fail "duplication of specified ingress path" }}
