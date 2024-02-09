@@ -193,6 +193,9 @@ metadata:
 spec:
  template:
   spec:
+    backend:
+      serviceName: {{ $.fullName }}-{{ $.serviceName }}
+      servicePort: {{ $servicePort }}
     rules:
     {{- range .multiClusterIngress.hosts }}
     - host: {{ .host | quote }}
@@ -213,26 +216,16 @@ spec:
           {{- end }}
     {{- end }}
     {{- if (hasKey .multiClusterIngress "tls") }}
-    tls:
-    {{- if (kindIs "string" .multiClusterIngress.tls) }}
-      - hosts:
-        {{- range .multiClusterIngress.hosts }}
-          - {{ .host | quote }}
-        {{- end }}
-        {{- if $hostname }}
-          - {{ $hostname | quote }}
-        {{- end }}
-        secretName: {{ .multiClusterIngress.tls }}
-    {{- else if (kindIs "slice" .multiClusterIngress.tls) }}
-      {{- range .multiClusterIngress.tls }}
-      - hosts:
-          {{- range .hosts }}
-          - {{ . | quote }}
-          {{- end }}
-        secretName: {{ .secretName }}
-      {{- end }}
+  tls:
+  {{- if (kindIs "string" .multiClusterIngress.tls) }}
+    - secretName: {{ .multiClusterIngress.tls }}
+  {{- else if (kindIs "slice" .multiClusterIngress.tls) }}
+    {{- range .multiClusterIngress.tls }}
+    - secretName: {{ .secretName }}
     {{- end }}
-    {{- end }}
+  {{- end }}
+
+  {{- end }}
 {{- end -}}
 
 {{/*
