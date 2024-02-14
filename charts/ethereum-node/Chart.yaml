@@ -12,7 +12,7 @@ dependencies:
     version: 1.1.1
     repository: https://ethpandaops.github.io/ethereum-helm-charts
 maintainers:
-  - name: Manjeet
+  - name: Manjeet-Nethermind
     email: manjeet@nethermind.io
-  - name: Anish
+  - name: gehlotanish
     email: anish@nethermind.io

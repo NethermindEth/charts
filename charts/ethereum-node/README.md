@@ -8,8 +8,8 @@ This chart acts as an umbrella chart and allows to run a ethereum execution and 
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Manjeet | <manjeet@nethermind.io> |  |
-| Anish | <anish@nethermind.io> |  |
+| Manjeet-Nethermind | <manjeet@nethermind.io> |  |
+| gehlotanish | <anish@nethermind.io> |  |
 
 ## Requirements
 

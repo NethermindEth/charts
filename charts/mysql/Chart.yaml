@@ -5,7 +5,7 @@ description: A Helm chart for deploying MySQL with StatefulSet, Service, Secret,
 version: 1.0.1
 appVersion: "5.7"
 maintainers:
-  - name: Manjeet
+  - name: Manjeet-Nethermind
     email: manjeet@nethermind.io
-  - name: Anish
+  - name: gehlotanish
     email: anish@nethermind.io

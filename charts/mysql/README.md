@@ -8,8 +8,8 @@ A Helm chart for deploying MySQL with StatefulSet, Service, Secret, and PVC.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Manjeet | <manjeet@nethermind.io> |  |
-| Anish | <anish@nethermind.io> |  |
+| Manjeet-Nethermind | <manjeet@nethermind.io> |  |
+| gehlotanish | <anish@nethermind.io> |  |
 
 ## Values
 

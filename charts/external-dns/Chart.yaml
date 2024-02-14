@@ -16,9 +16,9 @@ icon: https://github.com/kubernetes-sigs/external-dns/raw/master/docs/img/extern
 sources:
   - https://github.com/kubernetes-sigs/external-dns/
 maintainers:
-  - name: Manjeet
+  - name: Manjeet-Nethermind
     email: manjeet@nethermind.io
-  - name: Anish
+  - name: gehlotanish
     email: anish@nethermind.io
 annotations:
   artifacthub.io/changes: |

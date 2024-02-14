@@ -15,9 +15,9 @@ keywords:
 - tls
 kubeVersion: '>= 1.22.0-0'
 maintainers:
-  - name: Manjeet
+  - name: Manjeet-Nethermind
     email: manjeet@nethermind.io
-  - name: Anish
+  - name: gehlotanish
     email: anish@nethermind.io
 name: cert-manager
 sources:

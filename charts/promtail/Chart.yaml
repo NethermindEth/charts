@@ -11,7 +11,7 @@ sources:
   - https://grafana.com/docs/loki/latest/
 icon: https://raw.githubusercontent.com/grafana/loki/master/docs/sources/logo.png
 maintainers:
-  - name: Manjeet
+  - name: Manjeet-Nethermind
     email: manjeet@nethermind.io
-  - name: Anish
+  - name: gehlotanish
     email: anish@nethermind.io

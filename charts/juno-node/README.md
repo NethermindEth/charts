@@ -8,8 +8,8 @@ A Helm chart for deploying Juno service
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Manjeet | <manjeet@nethermind.io> |  |
-| Anish | <anish@nethermind.io> |  |
+| Manjeet-Nethermind | <manjeet@nethermind.io> |  |
+| gehlotanish | <anish@nethermind.io> |  |
 
 ## Values
 
