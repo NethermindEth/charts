@@ -27,7 +27,7 @@ Commits must follow the `<type>(<scope>): <subject>` pattern, as stated in the [
 The following is the list of types that can be used:
 
 - `feat:` for new features
-- `fix:` for bug fixes
+- `fix:` for bugfixes
 - `improvement:` for enhancements
 - `docs:` for documentation and examples
 - `refactor:` for code refactoring
