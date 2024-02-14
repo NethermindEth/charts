@@ -30,3 +30,4 @@ data:
       LogLevelFormat: lowercase
       LogLevel: {{ .Values.config.logLevel }}
       LogFilePath: /data/debug.log
+      LogFileBackups: 28
