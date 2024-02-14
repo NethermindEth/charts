@@ -4,9 +4,9 @@
 
 # The repo admins team will be the default owners for everything in the repo.
 # Unless a later match takes precedence, they will be requested for review when someone opens a pull request.
-* @NethermindEth/Angkor/angkor-validator-operators
+* @NethermindEth/angkor-validator-operators
 
-/.github/workflows/ @NethermindEth/Angkor/angkor-validator-operators @AntiD2ta @aivarasko @matilote
+/.github/workflows/ @NethermindEth/angkor-validator-operators @AntiD2ta @aivarasko @matilote
 
 /charts/cert-manager/ @gehlotanish @Manjeet-Nethermind
 /charts/common/ @aivarasko @matilote
