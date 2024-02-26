@@ -10,7 +10,7 @@ metadata:
     cloud.google.com/neg: '{"ingress": true}'
 spec:
   type: {{ .Values.svc.wss.clustertype }}
-  externalTrafficPolicy: Local
+  externalTrafficPolicy: {{ default "Cluster" .Values.svc.externalTrafficPolicy }}
   ports:
   - port: {{ .Values.svc.wss.port }}
     name: port-{{ .Values.svc.wss.port }}
