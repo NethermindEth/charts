@@ -13,6 +13,6 @@ data:
       sleep 2
     done
     if [ -f /run-nethgate-migrate.sh ]; then
-        sh /run-nethgate-migrate.sh
+        /bin/sh /run-nethgate-migrate.sh
     fi
 {{ end }}
