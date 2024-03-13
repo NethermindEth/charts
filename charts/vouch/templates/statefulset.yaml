@@ -135,6 +135,26 @@ spec:
               port: {{ .Values.readinessProbe.httpGet.port }}
               scheme: {{ .Values.readinessProbe.httpGet.scheme }}
           {{- end }}
+        - name: fetch-keys-syncer
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            runAsUser: 0
+          envFrom:
+            - secretRef:
+                name: eso-{{ include "common.names.fullname" . }}
+          args:
+          - "--base-dir"
+          - "{{ .Values.vouchDataDir }}"
+          - "--refresh-frequency"
+          - "1800"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: config
+              mountPath: /config
+            - name: scripts
+              mountPath: /scripts
       volumes:
         - name: config
           configMap:
