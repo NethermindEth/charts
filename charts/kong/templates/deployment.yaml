@@ -146,6 +146,11 @@ spec:
         {{- include "kong.no_daemon_env" . | nindent 8 }}
         lifecycle:
           {{- toYaml .Values.lifecycle | nindent 10 }}
+        {{- if .Values.admin.enabled }}
+        command: ["/bin/bash", "/run-control-plane.sh"]
+        {{- else }}
+        command: ["/bin/bash", "/run-data-node.sh"]
+        {{- end }}
         ports:
         {{- if (and .Values.admin.http.enabled .Values.admin.enabled) }}
         - name: admin
