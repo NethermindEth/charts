@@ -154,7 +154,7 @@ spec:
         ports:
         {{- if .Values.deployment.nethgate.enabled }}
         - name: nethgate
-          containetPort: {{ .Values.deployment.nethgate.port }}
+          containerPort: {{ .Values.deployment.nethgate.port }}
           protocol: TCP
         {{- end }}
         {{- if (and .Values.admin.http.enabled .Values.admin.enabled) }}
