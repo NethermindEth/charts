@@ -136,16 +136,21 @@ spec:
               scheme: {{ .Values.readinessProbe.httpGet.scheme }}
           {{- end }}
         - name: fetch-keys-syncer
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.cliImage.repository }}:{{ .Values.cliImage.tag }}"
+          imagePullPolicy: {{ .Values.cliImage.pullPolicy }}
           securityContext:
             runAsUser: 0
           envFrom:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}
           args:
-          - "--base-dir"
+          - "sync-vouch-config"
+          - "--db-url-env"
+          - "ESO_DB_KEYSTORE_URL"
+          - "--vouch-dir"
           - "{{ .Values.vouchDataDir }}"
+          - "--relays"
+          - '{{ join "," .Values.relays }}'
           - "--refresh-frequency"
           - "1800"
           volumeMounts:
