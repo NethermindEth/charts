@@ -1,0 +1,503 @@
+---
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
+kind: StatefulSet
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  labels:
+    {{- include "common.labels.statefulset" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.global.replicaCount }}
+  podManagementPolicy: "Parallel"
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+  serviceName: {{ include "common.names.fullname" . }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.matchLabels" . | nindent 8 }}
+        execution: {{ .Values.execution.client }}
+        beacon: {{ .Values.beacon.client }}
+    spec:
+    {{- with (concat .Values.global.imagePullSecrets .Values.global.imagePullSecrets) }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.global.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.global.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+    {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 | trim }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
+    {{- if .Values.global.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.global.terminationGracePeriodSeconds }}
+    {{- end }}
+      serviceAccountName: {{ include "common.names.fullname" . }}
+      priorityClassName: {{ .Values.global.priorityClassName | quote }}
+      containers:
+        {{/* Container used for Execution clients: Nethermind, Geth, Besu, Erigon */}}
+        - name: execution
+          image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
+          imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
+          {{/* Configuration for Nethermind execution client */}}
+          {{- if eq .Values.execution.client "nethermind" }}
+          args:
+            - --config={{ .Values.global.network }}
+            - --datadir=/data/execution
+          {{- if .Values.execution.jsonrpc.enabled }}
+            - --JsonRpc.Enabled={{ .Values.execution.jsonrpc.enabled }}
+            - --JsonRpc.EnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
+            - --JsonRpc.Host={{ .Values.execution.jsonrpc.host }}
+            - --JsonRpc.Port={{ .Values.execution.jsonrpc.http.port }}
+          {{- if .Values.execution.healthchecks.enabled }}
+            - --HealthChecks.Enabled={{ .Values.execution.healthchecks.enabled }}
+            - --HealthChecks.Slug={{ .Values.execution.healthchecks.slug }}
+            - --HealthChecks.PollingInterval={{ .Values.execution.healthchecks.pollingInterval }}
+            - --HealthChecks.LowStorageSpaceShutdownThreshold={{ .Values.execution.healthchecks.lowStorageSpaceShutdownThreshold }}
+            - --HealthChecks.LowStorageSpaceWarningThreshold={{ .Values.execution.healthchecks.lowStorageSpaceWarningThreshold }}
+          {{- if .Values.execution.jsonrpc.websocket.enabled }}
+            - --JsonRpc.WebSocketsPort={{ .Values.execution.jsonrpc.websocket.port }}
+          {{- end }}
+          {{- end }} 
+          {{- end }}
+          {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+          {{- if .Values.global.externalSecrets.enabled }}
+            - --JsonRpc.JwtSecretFile=/external-secrets/JWT_SECRET
+          {{- else }}
+            - --JsonRpc.JwtSecretFile=/secret/jwtsecret
+          {{- end }}
+          {{- if .Values.execution.snapshot.enabled }}
+            - --Snapshot.Enabled=true
+            - --Snapshot.DownloadUrl={{ .Values.execution.snapshot.DownloadUrl }}
+            - --Snapshot.Checksum={{ .Values.execution.snapshot.checksum }}
+          {{- end }}          
+            - --JsonRpc.EnginePort={{ .Values.execution.jsonrpc.engine.port }}
+            - --JsonRpc.EngineHost={{ .Values.execution.jsonrpc.host }}
+            - --JsonRpc.EngineEnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
+          {{- end }}
+          {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
+            - --Metrics.Enabled={{ .Values.execution.metrics.enabled }}
+            - --Metrics.ExposePort={{ .Values.execution.metrics.port }}
+            - --Metrics.NodeName=$POD_NAME
+          {{- end }}
+            - --Network.MaxActivePeers={{ .Values.execution.targetPeers }}
+          {{- if not .Values.global.p2pNodePort.enabled }}
+            - --Network.ExternalIp=$POD_IP
+            - --Network.P2PPort={{ include "execution.p2pPort" . }}
+            - --Network.DiscoveryPort={{ include "execution.p2pPort" . }}
+          {{- end }}
+          {{- if .Values.execution.terminalTotalDifficulty }}
+            - --Merge.TerminalTotalDifficulty={{ .Values.execution.terminalTotalDifficulty }}
+          {{- end }}
+          {{- range .Values.execution.extraFlags }}
+            - {{ . }}
+          {{- end }}
+          {{- else }}
+          command:
+            - sh
+            - -ac
+            - >
+              {{- if .Values.global.p2pNodePort.enabled }}
+              . /env/init-nodeport;
+              {{- end }}
+            {{/* Configuration for Geth execution client */}}
+            {{- if eq .Values.execution.client "geth" }}
+              exec geth
+              --syncmode=snap
+              --datadir=/data/execution
+              --ipcdisable
+              --{{ .Values.global.network }}
+            {{- if .Values.global.externalSecrets.enabled }}
+              --authrpc.jwtsecret=/external-secrets/JWT_SECRET
+            {{- else if .Values.global.JWTSecret}}
+              --authrpc.jwtsecret=/secret/jwtsecret
+            {{- end }}
+              --authrpc.addr={{ .Values.execution.jsonrpc.host }}
+              --authrpc.port={{ .Values.execution.jsonrpc.engine.port }}
+              --authrpc.vhosts={{ .Values.execution.jsonrpc.engine.hostAllowList | join "," }}
+            {{- if .Values.execution.jsonrpc.enabled }}
+              --http
+              --http.addr={{ .Values.execution.jsonrpc.host }}
+              --http.port={{ .Values.execution.jsonrpc.http.port }}
+              --http.corsdomain={{ .Values.execution.jsonrpc.http.corsOrigins | join "," }}
+              --http.vhosts={{ .Values.execution.jsonrpc.http.hostAllowList | join "," }}
+              --http.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
+            {{- if .Values.execution.jsonrpc.websocket.enabled }}
+              --ws
+              --ws.addr={{ .Values.execution.jsonrpc.host }}
+              --ws.port={{ .Values.execution.jsonrpc.websocket.port }}
+              --ws.origins={{ .Values.execution.jsonrpc.websocket.origins }}
+              --ws.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
+            {{- end }}
+            {{- end }}
+              --maxpeers={{ .Values.execution.targetPeers }}
+            {{- if .Values.global.p2pNodePort.enabled }}
+              --nat=extip:$EXTERNAL_IP
+              --port=$EXTERNAL_EXECUTION_PORT
+            {{- else }}
+              --nat=extip:$POD_IP
+              --port={{ include "execution.p2pPort" . }}
+            {{- end }}
+            {{- if .Values.execution.terminalTotalDifficulty }}
+              --override.geth.terminaltotaldifficulty={{ .Values.execution.terminalTotalDifficulty }}
+            {{- end }}
+            {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
+              --metrics
+              --metrics.port={{ .Values.execution.metrics.port }}
+              --metrics.addr={{ .Values.execution.metrics.host }}  
+            {{- end }}
+            {{- /* Configuration for Besu execution client */}}
+            {{- else if eq .Values.execution.client "besu" }}
+              exec /opt/besu/bin/besu
+              --network={{ .Values.global.network }}
+              --data-path=/data/execution
+              --sync-mode=X_SNAP
+              --p2p-enabled=true
+            {{- if or .Values.global.externalSecrets.enabled }}
+              --engine-jwt-secret=/external-secrets/JWT_SECRET
+            {{- else if .Values.global.JWTSecret}}
+              --engine-jwt-secret=/secret/jwtsecret
+            {{- end }}
+              --engine-rpc-enabled=true
+              --engine-host-allowlist={{ .Values.execution.jsonrpc.engine.hostAllowList | join "," }}
+              --engine-rpc-port={{ .Values.execution.jsonrpc.engine.port | join "," }}
+            {{- if .Values.execution.jsonrpc.enabled }}
+              --rpc-http-enabled=true
+              --rpc-http-host={{ .Values.execution.jsonrpc.host }}
+              --rpc-http-port={{ .Values.execution.jsonrpc.http.port }}
+              --rpc-http-cors-origins={{ .Values.execution.jsonrpc.http.corsOrigins | join "," }}
+              --host-allowlist={{ .Values.execution.jsonrpc.http.hostAllowList | join "," }}
+            {{- end }}
+            {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
+              --metrics-enabled=true
+              --metrics.port={{ .Values.execution.metrics.port }}
+              --metrics.addr={{ .Values.execution.metrics.host }}  
+            {{- end }}
+            {{- /* Configuration for Erigon execution client */}}
+            {{- else if eq .Values.execution.client "erigon" }}
+              exec erigon
+              --datadir=/data/execution
+              --private.api.addr={{ .Values.execution.privateApiAddr }}
+              --chain={{ .Values.global.network }}
+            {{- if .Values.global.p2pNodePort.enabled }}
+              --nat=extip:$EXTERNAL_IP
+              --port=$EXTERNAL_EXECUTION_PORT
+            {{- else }}
+              --nat=extip:$POD_IP
+              --port={{ include "execution.p2pPort" . }}
+            {{- end }}
+            {{- if .Values.execution.terminalTotalDifficulty }}
+              --override.terminaltotaldifficulty={{ .Values.execution.terminalTotalDifficulty }}
+            {{- end }}
+            {{- if .Values.global.externalSecrets.enabled }}
+              --authrpc.jwtsecret=/external-secrets/JWT_SECRET
+            {{- else if .Values.global.JWTSecret}}
+              --authrpc.jwtsecret=/secret/jwtsecret
+            {{- end }}
+              --authrpc.addr={{ .Values.execution.jsonrpc.host }}
+              --authrpc.port={{ .Values.execution.jsonrpc.engine.port }}
+              --authrpc.vhosts={{ .Values.execution.jsonrpc.engine.hostAllowList | join "," }}
+            {{- if .Values.execution.jsonrpc.enabled }}
+              --http
+              --http.addr={{ .Values.execution.jsonrpc.host }}
+              --http.port={{ .Values.execution.jsonrpc.http.port }}
+              --http.corsdomain={{ .Values.execution.jsonrpc.http.corsOrigins | join "," }}
+              --http.vhosts={{ .Values.execution.jsonrpc.http.hostAllowList | join "," }}
+              --http.api={{ .Values.execution.jsonrpc.namespaces.erigon | join "," }}
+            {{- if .Values.execution.jsonrpc.websocket.enabled }}
+              --ws
+            {{- end }}
+            {{- end }}
+            {{- if .Values.global.metrics.enabled }}
+              --metrics
+              --metrics.addr={{ .Values.execution.metrics.host }}
+              --metrics.port={{ .Values.execution.metrics.port }}
+            {{- end }}
+            {{- end }}
+            {{- range .Values.execution.extraFlags }}
+              {{ . }}
+            {{- end }}
+            {{- end}}
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          {{- if and (eq .Values.execution.client "nethermind") (.Values.global.p2pNodePort.enabled) }}
+            {{- range $i, $e := until (int .Values.global.replicaCount) }}
+            {{- $portExecution := add $.Values.global.p2pNodePort.startAtExecution $i }}
+            {{- if hasKey $.Values.global.p2pNodePort.replicaToNodePort ($i | toString) }}
+              {{- $portExecution = index $.Values.global.p2pNodePort.replicaToNodePort ($i | toString) }}
+            {{- end }}
+            - name: NETHERMIND_NETWORKCONFIG_DISCOVERYPORT
+              value: "{{ $portExecution }}"
+            - name: NETHERMIND_NETWORKCONFIG_P2PPORT
+              value: "{{ $portExecution }}"
+            {{- end }}
+          {{- end }}
+          {{- if .Values.execution.javaOpts.enabled }}
+            - name: BESU_OPTS
+              value: {{ .Values.execution.javaOpts.maxHeapSize }}
+          {{- end }}
+          {{- if .Values.global.externalSecrets.enabled }}
+          envFrom:
+            - secretRef:
+                name: eso-{{ include "common.names.fullname" . }}
+          {{- end }}
+          ports:
+            {{- if eq .Values.execution.client "erigon" }}
+            - name: grpc-exec
+              protocol: TCP
+              containerPort: {{ .Values.execution.jsonrpc.grpc.port }}
+            {{- end }}
+            {{- if .Values.execution.jsonrpc.enabled }}
+            - name: engine-exec
+              containerPort: {{ .Values.execution.jsonrpc.engine.port }}
+            - name: jsonrpc-exec
+              containerPort: {{ .Values.execution.jsonrpc.http.port }}
+            {{- if .Values.execution.jsonrpc.websocket.enabled }}
+            - name: ws-exec
+              containerPort: {{ .Values.execution.jsonrpc.websocket.port }}
+            {{- end }}
+            {{- end }}
+            {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
+            - name: metrics-exec
+              containerPort: {{ .Values.execution.metrics.port }}
+            {{- end }}
+            {{- if .Values.global.p2pNodePort.enabled }}
+            - name: p2p-tcp-exec
+              containerPort: {{ include "execution.p2pPort" . }}
+              protocol: TCP
+            - name: p2p-udp-exec
+              containerPort: {{ include "execution.p2pPort" . }}
+              protocol: UDP
+            {{- end }}
+          volumeMounts:
+          {{- if .Values.global.sharedPersistence.enabled }}
+            - name: data
+              mountPath: /data
+          {{- else }}
+            - name: data-execution
+              mountPath: /data/execution
+          {{- end }}
+            {{- if .Values.global.externalSecrets.enabled }}
+            - name: external-secrets
+              mountPath: /external-secrets
+              readOnly: true
+            {{- end }}
+            {{- if .Values.global.JWTSecret }}
+            - name: jwtsecret
+              mountPath: /secret
+              readOnly: true
+            {{- end }}
+            - name: env-nodeport
+              mountPath: /env
+          {{- with .Values.execution.resources }}
+          resources:
+            {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+        {{/* Container used for Beacon clients: Prysm, Teku, Lighthouse, Nimbus, Lodestar */}}
+        - name: beacon
+          image: "{{ .Values.global.image.beacon.op_node.repository }}:{{ .Values.global.image.beacon.op_node.tag }}"
+          imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
+          args: 
+            - "op-node"
+            - "--l2=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}"
+            - "--network={{ .Values.global.network }}"
+            - "--l1={{ .Values.beacon.l1.host }}"
+            - "--l1.beacon={{ .Values.beacon.l1.beacon.host }}"  
+          {{- if .Values.global.externalSecrets.enabled }}
+            - "--l2.jwt-secret=/external-secrets/JWT_SECRET"
+          {{- else }}
+            - "--l2.jwt-secret=/secret/jwtsecret"
+          {{- end }}
+            - "--p2p.disable=true"
+          {{- if .Values.beacon.grpc.enabled }}
+            - "--rpc.addr={{ .Values.beacon.grpc.host }}"
+            - "--rpc.port={{ .Values.beacon.grpc.port }}" 
+          {{- end }}
+
+          {{- if and .Values.global.metrics.enabled .Values.beacon.metrics.enabled }}
+            - "--metrics.enabled=true"
+            - "--metrics.port={{ .Values.beacon.metrics.port }}"
+            - "--metrics.addr={{ .Values.beacon.metrics.host }}"
+          {{- else }}
+            - "--disable-monitoring"
+          {{- end }}
+          {{- range .Values.beacon.extraFlags }}
+            - {{ . | quote }}
+          {{- end }}
+         
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          {{- if and (eq .Values.beacon.client "teku") .Values.beacon.javaOpts.enabled }}
+            - name: JAVA_OPTS
+              value: {{ .Values.beacon.javaOpts.maxHeapSize }}
+          {{- end }}
+          ports:
+          {{- if and (eq .Values.beacon.client "op_node") .Values.beacon.grpc.enabled }}
+            - containerPort: {{ .Values.beacon.grpc.port }}
+              name: {{ .Values.beacon.grpc.portName }}-beacon
+              protocol: TCP
+          {{- end }}
+          {{- if .Values.global.p2pNodePort.enabled }}
+            - name: p2p-tcp-beacon
+              containerPort: {{ include "beacon.p2pPort" . }}
+              protocol: TCP
+            - name: p2p-udp-beacon
+              containerPort: {{ include "beacon.p2pPort" . }}
+              protocol: UDP
+          {{- end }}
+          {{- if .Values.beacon.restApi.enabled }}
+            - containerPort: {{ index .Values.beacon.restApi.portMap .Values.beacon.client }}
+              name: http-beacon
+              protocol: TCP
+          {{- end }}
+          {{- if and .Values.global.metrics.enabled .Values.beacon.metrics.enabled }}
+            - containerPort: {{ .Values.beacon.metrics.port }}
+              name: metrics-beacon
+              protocol: TCP
+          {{- end }}
+          volumeMounts:
+          {{- if .Values.global.sharedPersistence.enabled }}
+            - name: data
+              mountPath: /data
+          {{- else }}
+            - name: data-beacon
+              mountPath: /data/beacon
+          {{- end }}
+          {{- if .Values.global.externalSecrets.enabled }}
+            - name: external-secrets
+              mountPath: /external-secrets
+              readOnly: true
+          {{- end }}
+          {{- if .Values.global.JWTSecret }}
+            - name: jwtsecret
+              mountPath: /secret
+              readOnly: true
+          {{- end }}
+            - name: env-nodeport
+              mountPath: /env
+        {{- with .Values.beacon.resources }}
+          resources:
+            {{ toYaml . | nindent 12 | trim }}
+        {{- end }}
+        {{- if and .Values.global.ethsider.enabled .Values.beacon.restApi.enabled .Values.execution.jsonrpc.enabled }}
+        - name: ethsider
+          image: "{{ .Values.global.ethsider.repository }}:{{ .Values.global.ethsider.tag }}"
+          imagePullPolicy: {{ .Values.global.ethsider.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
+          env:
+            - name: EXECUTION_ENDPOINT
+              value: "http://localhost:{{ .Values.execution.jsonrpc.http.port }}"
+            - name: BEACON_ENDPOINT
+              value: "http://localhost:{{ index .Values.beacon.restApi.portMap .Values.beacon.client }}"
+            - name: BIND_ADDR
+              value: "{{ .Values.global.ethsider.bindAddr }}"
+          ports:
+            - containerPort: {{ .Values.global.ethsider.bindAddr }}
+              name: sidecar
+              protocol: TCP
+        {{- if .Values.global.ethsider.livenessProbe.enabled }}
+          livenessProbe:
+            initialDelaySeconds: {{ .Values.global.ethsider.livenessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.global.ethsider.livenessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.global.ethsider.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.global.ethsider.livenessProbe.failureThreshold }}
+            successThreshold: {{ .Values.global.ethsider.livenessProbe.successThreshold }}
+            httpGet:
+              path: {{ .Values.global.ethsider.livenessProbe.httpGet.path }}
+              port: {{ .Values.global.ethsider.livenessProbe.httpGet.port }}
+              scheme: {{ .Values.global.ethsider.livenessProbe.httpGet.scheme }}
+        {{- end }}
+        {{- if .Values.global.ethsider.readinessProbe.enabled }}
+          readinessProbe:
+            initialDelaySeconds: {{ .Values.global.ethsider.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.global.ethsider.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.global.ethsider.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.global.ethsider.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.global.ethsider.readinessProbe.successThreshold }}
+            httpGet:
+              path: {{ .Values.global.ethsider.readinessProbe.httpGet.path }}
+              port: {{ .Values.global.ethsider.readinessProbe.httpGet.port }}
+              scheme: {{ .Values.global.ethsider.readinessProbe.httpGet.scheme }}
+        {{- end }}
+      {{- end }}
+      volumes:
+        - name: scripts-init
+          configMap:
+            name: {{ include "common.names.fullname" . }}-init
+      {{- if .Values.global.JWTSecret }}
+        - name: jwtsecret
+          secret:
+            secretName: {{ include "common.names.fullname" . }}
+      {{- end }}
+      {{- if .Values.global.externalSecrets.enabled }}
+        - name: external-secrets
+          secret:
+            secretName: eso-{{ include "common.names.fullname" . }}
+      {{- end }}
+        - name: env-nodeport
+          emptyDir: {}
+  volumeClaimTemplates:
+    {{- if .Values.global.sharedPersistence.enabled }}
+    - metadata:
+        name: data
+        labels:
+          {{- include "common.labels.statefulset" . | nindent 10 }}
+      {{- with .Values.global.sharedPersistence.annotations }}
+        annotations:
+          {{ toYaml . | nindent 10 | trim }}
+      {{- end }}
+      spec:
+        accessModes: {{ .Values.global.sharedPersistence.accessModes }}
+        storageClassName: {{ .Values.global.sharedPersistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.global.sharedPersistence.size | quote }}
+    {{- else }}
+    - metadata:
+        name: data-execution
+        labels:
+          {{- include "common.labels.statefulset" . | nindent 10 }}
+      {{- with .Values.execution.persistence.annotations }}
+        annotations:
+          {{ toYaml . | nindent 10 | trim }}
+      {{- end }}
+      spec:
+        accessModes: {{ .Values.execution.persistence.accessModes }}
+        storageClassName: {{ .Values.execution.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.execution.persistence.size | quote }}
+    - metadata:
+        name: data-beacon
+        labels:
+          {{- include "common.labels.statefulset" . | nindent 10 }}
+      {{- with .Values.beacon.persistence.annotations }}
+        annotations:
+          {{ toYaml . | nindent 10 | trim }}
+      {{- end }}
+      spec:
+        accessModes: {{ .Values.beacon.persistence.accessModes }}
+        storageClassName: {{ .Values.beacon.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.beacon.persistence.size | quote }}
+    {{- end }}

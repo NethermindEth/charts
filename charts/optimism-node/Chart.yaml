@@ -1,0 +1,17 @@
+apiVersion: v2
+name: optimism-node
+version: 1.0.0
+appVersion: 0.0.1
+kubeVersion: "^1.23.0-0"
+description: Execution and Beacon for Optimism Node
+type: application
+keywords:
+  - blockchain
+  - nethermind
+  - op_node
+home: https://www.ethereum.org/
+
+dependencies:
+  - name: common
+    repository: file://../common
+    version: 1.0.0
