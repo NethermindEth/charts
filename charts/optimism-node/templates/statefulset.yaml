@@ -74,6 +74,9 @@ spec:
           {{- else }}
             - --JsonRpc.JwtSecretFile=/secret/jwtsecret
           {{- end }}
+          {{- if .Values.execution.snapshot.enabled }}
+            - --Snapshot.Enabled=true
+          {{- end }}          
             - --JsonRpc.EnginePort={{ .Values.execution.jsonrpc.engine.port }}
             - --JsonRpc.EngineHost={{ .Values.execution.jsonrpc.host }}
             - --JsonRpc.EngineEnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
