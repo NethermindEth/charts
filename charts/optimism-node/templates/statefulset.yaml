@@ -76,6 +76,8 @@ spec:
           {{- end }}
           {{- if .Values.execution.snapshot.enabled }}
             - --Snapshot.Enabled=true
+            - --Snapshot.DownloadUrl={{ .Values.execution.snapshot.DownloadUrl }}
+            - --Snapshot.Checksum={{ .Values.execution.snapshot.checksum }}
           {{- end }}          
             - --JsonRpc.EnginePort={{ .Values.execution.jsonrpc.engine.port }}
             - --JsonRpc.EngineHost={{ .Values.execution.jsonrpc.host }}
