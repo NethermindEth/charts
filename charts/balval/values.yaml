@@ -56,7 +56,7 @@ balval:
   dbMinBackoffSec: 1
   dbMaxBackoffSec: 120
   startEpoch: 270292
-  network: mainnet
+  network: 1
   validatorRegistrySource: file
   validatorRegistryFileSourcePath: /data/custom_mainnet.yaml
   validatorRegistryLidoSourceSqliteCachePath: /data/lido_mainnet.db
