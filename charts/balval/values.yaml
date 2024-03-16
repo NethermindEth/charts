@@ -106,7 +106,7 @@ clickhouse:
     repository: bitnami/clickhouse
     tag: 24.2.2-debian-12-r0
     pullPolicy: IfNotPresent
-  hostname: localhost
+  hostname: clickhouse
   auth:
     username: default
     password: ""
