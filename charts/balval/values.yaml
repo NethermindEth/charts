@@ -6,6 +6,21 @@ global:
   serviceAccount:
     create: true
   imagePullSecrets: []
+  ## Pod Security Context
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  ##
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 10000
+    fsGroup: 10000
+
+  securityContext:
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 10000
+    capabilities:
+      drop:
+      - ALL
 
   replicaCount: 1
 
@@ -58,8 +73,9 @@ balval:
   startEpoch: 270292
   network: 1
   validatorRegistrySource: file
-  validatorRegistryFileSourcePath: /data/custom_mainnet.yaml
-  validatorRegistryLidoSourceSqliteCachePath: /data/lido_mainnet.db
+  dataDir: /data/balval
+  validatorRegistryFileSourcePath: /data/balval/custom_mainnet.yaml
+  validatorRegistryLidoSourceSqliteCachePath: /data/balval/lido_mainnet.db
   elRpcUrls: http://localhost:8545
   clRpcUrls: http://localhost:5052
   clApiRetryDelayMs: 500
@@ -85,19 +101,6 @@ serviceAccount:
   name: ""
 
 podAnnotations: {}
-
-## Pod Security Context
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
-##
-podSecurityContext: {}
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 clickhouse:
   enabled: true
