@@ -3,7 +3,7 @@ name: validator-balval
 description: A Helm chart for installing and configuring Lido's validator-balval
 type: application
 version: 1.0.0
-appVersion: "v0.0.1"
+appVersion: "v4.6.0"
 
 keywords:
   - ethereum
@@ -19,6 +19,6 @@ dependencies:
   repository: file://../common
   version: 1.0.0
 - name: clickhouse
-  version: 1.0.0
+  version: 5.3.1
   repository: https://charts.bitnami.com/bitnami/
   condition: clickhouse.enabled
