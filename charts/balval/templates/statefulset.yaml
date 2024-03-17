@@ -131,9 +131,7 @@ spec:
             - name: CRITICAL_ALERTS_ALERTMANAGER_URL
               value: "{{ .Values.balval.alertmanagerUrl }}"
             - name: CRITICAL_ALERTS_MIN_VAL_COUNT
-              value: "{{ .Values.balval.minValCount }}"                
-            - name: CRITICAL_ALERTS_ALERTMANAGER_LABELS
-              value: "{{ .Values.balval.alertmanagerLabels }}"   
+              value: "{{ .Values.balval.minValCount }}"
           {{- if .Values.global.externalSecrets.enabled }}
           envFrom:
             - secretRef:
@@ -150,8 +148,6 @@ spec:
               mountPath: /data
             - name: config
               mountPath: /config
-            - name: yarn-cache
-              mountPath: /tmp
       volumes:
         - name: config
           configMap:
@@ -160,5 +156,3 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 128Mi
-        - name: yarn-cache
-          emptyDir: {}

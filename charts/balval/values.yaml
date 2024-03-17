@@ -93,7 +93,6 @@ balval:
   badAttestationEpochs: 3
   alertmanagerUrl: "http://localhost:9093"
   minValCount: 100
-  alertmanagerLabels: {}
 
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
