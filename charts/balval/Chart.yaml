@@ -18,7 +18,3 @@ dependencies:
 - name: common
   repository: file://../common
   version: 1.0.0
-- name: clickhouse
-  version: 5.3.1
-  repository: https://charts.bitnami.com/bitnami/
-  condition: clickhouse.enabled

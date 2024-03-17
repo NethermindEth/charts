@@ -104,11 +104,6 @@ podAnnotations: {}
 
 clickhouse:
   enabled: true
-  image:
-    registry: docker.io
-    repository: bitnami/clickhouse
-    tag: 24.2.2-debian-12-r0
-    pullPolicy: IfNotPresent
   hostname: clickhouse
   auth:
     username: default
@@ -116,10 +111,6 @@ clickhouse:
     database: default
     existingSecret: ""
     existingSecretKey: ""
-  persistence:
-    enabled: true
-    storageClass: ""
-    size: 50Gi
   service:
     ports:
       http: 8123

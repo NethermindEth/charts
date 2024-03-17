@@ -2,8 +2,5 @@ dependencies:
 - name: common
   repository: file://../common
   version: 1.0.0
-- name: clickhouse
-  repository: https://charts.bitnami.com/bitnami/
-  version: 5.3.1
 digest: sha256:d7d195d1424450ce39621aa71daa15eb2113cb966da3cfb6345443c35cfa577a
 generated: "2024-03-16T23:21:02.755297492+01:00"
