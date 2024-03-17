@@ -60,8 +60,8 @@ fullnameOverride: ""
 ## Init image is used to chown data volume, etc.
 ##
 initImage:
-  repository: nethermindeth/bash
-  tag: "5.2-alpine3.19"
+  repository: busybox
+  tag: "1.36"
   pullPolicy: IfNotPresent
 
 balval:
