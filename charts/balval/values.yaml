@@ -65,26 +65,23 @@ initImage:
   pullPolicy: IfNotPresent
 
 balval:
-  env: production
-  workingMode: head
+  env: "production"
+  workingMode: "head"
   dryRun: false
-  # Log level: debug, info, notice, warning or error
-  logLevel: debug
-  # Log format: simple or json
-  logFormat: json
-  # Application port
+  logLevel: "debug"
+  logFormat: "json"
   httpPort: 8080
   dbMaxRetries: 10
   dbMinBackoffSec: 1
   dbMaxBackoffSec: 120
   startEpoch: 270292
   network: 1
-  validatorRegistrySource: file
-  dataDir: /data/balval
-  validatorRegistryFileSourcePath: /data/balval/custom_mainnet.yaml
-  validatorRegistryLidoSourceSqliteCachePath: /data/balval/lido_mainnet.db
-  elRpcUrls: http://localhost:8545
-  clRpcUrls: http://localhost:5052
+  validatorRegistrySource: "file"
+  dataDir: "/data/balval"
+  validatorRegistryFileSourcePath: "/data/balval/custom_mainnet.yaml"
+  validatorRegistryLidoSourceSqliteCachePath: "/data/balval/lido_mainnet.db"
+  elRpcUrls: "http://localhost:8545"
+  clRpcUrls: "http://localhost:5052"
   clApiRetryDelayMs: 500
   clApiGetResponseTimeout: 30000
   clApiMaxRetries: 2
@@ -94,7 +91,7 @@ balval:
   syncParticipationDistanceDownFromChainAvg: 0
   syncParticipationEpochsLessThanChainAvg: 3
   badAttestationEpochs: 3
-  alertmanagerUrl: http://localhost:9093
+  alertmanagerUrl: "http://localhost:9093"
   minValCount: 100
   alertmanagerLabels: {}
 
