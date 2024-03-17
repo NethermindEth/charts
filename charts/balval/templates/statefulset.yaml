@@ -51,9 +51,6 @@ spec:
               mkdir -p {{ .Values.balval.dataDir }};
               cp /config/custom_mainnet.yaml {{ .Values.balval.dataDir }}/;
               chown -R {{ .Values.global.podSecurityContext.runAsUser }}:{{ .Values.global.podSecurityContext.fsGroup }} {{ .Values.balval.dataDir }};
-          envFrom:
-            - secretRef:
-                name: eso-{{ include "common.names.fullname" . }}
           volumeMounts:
             - name: data
               mountPath: /data
