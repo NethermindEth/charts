@@ -150,6 +150,8 @@ spec:
               mountPath: /data
             - name: config
               mountPath: /config
+            - name: yarn-cache
+              mountPath: /tmp
       volumes:
         - name: config
           configMap:
@@ -158,3 +160,5 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 128Mi
+        - name: yarn-cache
+          emptyDir: {}
