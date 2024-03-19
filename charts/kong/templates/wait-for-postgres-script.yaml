@@ -12,7 +12,4 @@ data:
       do echo "waiting for db - trying ${KONG_PG_HOST}:${KONG_PG_PORT}"
       sleep 2
     done
-    if [ -f /run-nethgate-migrate.sh ]; then
-        /bin/sh /run-nethgate-migrate.sh
-    fi
 {{ end }}
