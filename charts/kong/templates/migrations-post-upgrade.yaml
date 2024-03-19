@@ -73,7 +73,7 @@ spec:
         - "-c"
         - |
            set -ex
-           kong migration finish
+           kong migrations finish
            /run-nethgate-migrate.sh
             
         volumeMounts:
