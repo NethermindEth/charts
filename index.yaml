@@ -3,6 +3,20 @@ entries:
   juno-chart:
   - apiVersion: v2
     appVersion: "1"
+    created: "2024-03-22T07:05:32.557415305Z"
+    description: A Helm chart for deploying Juno service
+    digest: 2a491f6593d68c40ea9da67f109f732c20e4df0e23b9ccf0e75fe20724b63390
+    maintainers:
+    - email: manjeet@nethermind.io
+      name: Manjeet-Nethermind
+    - email: anish@nethermind.io
+      name: gehlotanish
+    name: juno-chart
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/juno-chart-0.1.4/juno-chart-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v2
+    appVersion: "1"
     created: "2024-02-26T14:23:59.056852951Z"
     description: A Helm chart for deploying Juno service
     digest: c52c5669d973e88b6be56a44ae99349ade585a35815223e936d559972d205a9c
@@ -15,4 +29,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/juno-chart-0.1.3/juno-chart-0.1.3.tgz
     version: 0.1.3
-generated: "2024-02-26T14:23:59.056860305Z"
+generated: "2024-03-22T07:05:32.557424682Z"
