@@ -124,6 +124,23 @@ svc:
         port: 6060
         type: HTTP
         requestPath: /
+  grpc:
+    enabled: false
+    clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
+    port: "6064"
+    backendConfig:
+      timeoutSec: 400
+      sessionAffinity:
+        affinityType: "NONE"
+      connectionDraining:
+        drainingTimeoutSec: 300
+      healthCheck:
+        checkIntervalSec: 15
+        timeoutSec: 15
+        healthyThreshold: 1
+        unhealthyThreshold: 2
+        port: 6064
+        type: HTTP2
   wss:
     clustertype: ClusterIP     # Support: LoadBalancer, NodePort, ClusterIP
     port: "6061"
