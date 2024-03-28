@@ -42,6 +42,30 @@ spec:
     {{- end }}
       serviceAccountName: {{ include "common.names.fullname" . }}
       priorityClassName: {{ .Values.global.priorityClassName | quote }}
+    {{- if eq .Values.execution.client "geth" }}
+    {{- if  .Values.execution.snapshot.enabled }}
+      initContainers:
+      - args:
+        - if [ ! -f /data/execution/geth/chaindata/CURRENT ]; then  apt-get update;  apt-get install -y wget;  apt-get install -y curl;
+          wget https://datadirs.optimism.io/mainnet-bedrock.tar.zst
+          -O /data/execution/geth/chaindata/file.tar; tar -xvf /data/execution/geth/chaindata/file.tar -C /data/execution/geth/chaindata
+          --strip-components 1; rm -r /data/execution/geth/chaindata/file.tar; else echo "Node Synced";
+          fi
+        command:
+        - /bin/sh
+        - -c
+        image: ubuntu:latest
+        imagePullPolicy: Always
+        name: init
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+          - name: data-execution
+            mountPath: /data/execution      
+      
+    {{- end }}  
+    {{- end }}       
       containers:
         {{/* Container used for Execution clients: Nethermind, Geth, Besu, Erigon */}}
         - name: execution
@@ -112,7 +136,7 @@ spec:
               --syncmode=snap
               --datadir=/data/execution
               --ipcdisable
-              --{{ .Values.global.network }}
+              --op-network={{ .Values.execution.network }}
             {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
             {{- else if .Values.global.JWTSecret}}
