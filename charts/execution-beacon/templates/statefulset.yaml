@@ -368,7 +368,7 @@ spec:
               path: {{ .Values.execution.readinessProbe.httpGet.path }}
               port: {{ include "execution.p2pPort" . }}
           {{- range $i, $e := until (int .Values.global.replicaCount) }}
-              host: {{ include "common.names.fullname" $ }}-execution-{{ $i }}.{{ metadata.namespace }}.svc.cluster.local
+              host: {{ include "common.names.fullname" $ }}-execution-{{ $i }}.{{ $.Release.Namespace | quote }}.svc.cluster.local
           {{- end }}
               scheme: {{ .Values.execution.readinessProbe.httpGet.scheme }}
           {{- end }}
