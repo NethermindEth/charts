@@ -358,15 +358,6 @@ spec:
             - name: p2p-udp-exec
               containerPort: {{ include "execution.p2pPort" . }}
               protocol: UDP
-          readinessProbe:
-            initialDelaySeconds: {{ .Values.execution.readinessProbe.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.execution.readinessProbe.timeoutSeconds }}
-            periodSeconds: {{ .Values.execution.readinessProbe.periodSeconds }}
-            failureThreshold: {{ .Values.execution.readinessProbe.failureThreshold }}
-            successThreshold: {{ .Values.execution.readinessProbe.successThreshold }}
-            httpGet:
-              path: /
-              port: p2p-tcp-exec
           {{- end }}
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
