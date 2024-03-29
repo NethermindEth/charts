@@ -169,7 +169,7 @@ global:
 
   enodeCollectorImage:
     repository: "nethermindeth/enode-collector"
-    tag: "0.0.6"
+    tag: "1.0.0"
     pullPolicy: IfNotPresent
 
   ## Monitoring
