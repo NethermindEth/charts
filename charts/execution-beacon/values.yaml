@@ -167,6 +167,11 @@ global:
     tag: "1.28"
     pullPolicy: IfNotPresent
 
+  enodeCollectorImage:
+    repository: "nethermindeth/enode-collector"
+    tag: "1.0.0"
+    pullPolicy: IfNotPresent
+
   ## Monitoring
   ## 
   metrics:
@@ -321,17 +326,20 @@ execution:
         - Net
         - Subscribe
         - Health
+        - Admin
       geth:
         - web3
         - eth
         - net
         - engine
+        - admin
       erigon:
         - eth
         - erigon
         - web3
         - net
         - engine
+        - admin
     host: "0.0.0.0"
     grpc:
       port: 9090
@@ -555,6 +563,7 @@ rbac:
     - apiGroups: [""]
       resources:
       - "services"
+      - "endpoints"
       verbs:
       - "get"
       - "list"
