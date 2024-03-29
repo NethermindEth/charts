@@ -384,6 +384,19 @@ execution:
   extraFlags: []
   resources: {}
 
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    timeoutSeconds: 3
+    periodSeconds: 1
+    failureThreshold: 3
+    successThreshold: 3
+    httpGet:
+      path: /
+      port: 30303
+      scheme: TCP
+
+
 beacon:
   client: nimbus
 

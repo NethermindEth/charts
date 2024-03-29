@@ -351,14 +351,24 @@ spec:
             - name: metrics-exec
               containerPort: {{ .Values.execution.metrics.port }}
             {{- end }}
-            {{- if .Values.global.p2pNodePort.enabled }}
+          {{- if .Values.global.p2pNodePort.enabled }}
             - name: p2p-tcp-exec
               containerPort: {{ include "execution.p2pPort" . }}
               protocol: TCP
             - name: p2p-udp-exec
               containerPort: {{ include "execution.p2pPort" . }}
               protocol: UDP
-            {{- end }}
+          readinessProbe:
+            initialDelaySeconds: {{ .Values.execution.readinessProbe.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.execution.readinessProbe.timeoutSeconds }}
+            periodSeconds: {{ .Values.execution.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.execution.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.execution.readinessProbe.successThreshold }}
+            httpGet:
+              path: {{ .Values.execution.readinessProbe.httpGet.path }}
+              port: {{ .Values.execution.readinessProbe.httpGet.port }}
+              scheme: {{ .Values.execution.readinessProbe.httpGet.scheme }}
+          {{- end }}
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
             - name: data
