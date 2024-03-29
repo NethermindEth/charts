@@ -10,7 +10,7 @@ metadata:
     cloud.google.com/backend-config:  '{"ports": {"{{ $.Values.svc.grpc.port }}":"{{ .Values.deployment.projectName }}-grpc"}}'
     cloud.google.com/neg: '{"ingress": true}'
 spec:
-  type: {{ .Values.svc.rpc.clustertype }}
+  type: {{ .Values.svc.grpc.clustertype }}
   externalTrafficPolicy: {{ default "Cluster" .Values.svc.externalTrafficPolicy }}
   ports:
   - port: {{ .Values.svc.grpc.port }}
