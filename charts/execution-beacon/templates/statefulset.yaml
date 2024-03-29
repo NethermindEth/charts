@@ -364,15 +364,9 @@ spec:
             periodSeconds: {{ .Values.execution.readinessProbe.periodSeconds }}
             failureThreshold: {{ .Values.execution.readinessProbe.failureThreshold }}
             successThreshold: {{ .Values.execution.readinessProbe.successThreshold }}
-            exec:
-              command: ["nc", "-z", "127.0.0.1", "{{ include "execution.p2pPort" . }}"]
-          #   httpGet:
-          #     path: {{ .Values.execution.readinessProbe.httpGet.path }}
-          #     port: {{ include "execution.p2pPort" . }}
-          # {{- range $i, $e := until (int .Values.global.replicaCount) }}
-          #     host: {{ include "common.names.fullname" $ }}-execution-{{ $i }}.{{ $.Release.Namespace }}.svc.cluster.local
-          # {{- end }}
-          #     scheme: {{ .Values.execution.readinessProbe.httpGet.scheme }}
+            httpGet:
+              path: /
+              port: p2p-tcp-exec
           {{- end }}
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
