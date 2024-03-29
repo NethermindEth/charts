@@ -167,6 +167,11 @@ global:
     tag: "1.28"
     pullPolicy: IfNotPresent
 
+  enodeCollectorImage:
+    repository: "nethermindeth/enode-collector"
+    tag: "0.0.6"
+    pullPolicy: IfNotPresent
+
   ## Monitoring
   ## 
   metrics:

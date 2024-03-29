@@ -83,6 +83,18 @@ spec:
               mountPath: /env
             - name: scripts-init
               mountPath: /scripts
+        {{/* Container used for collecting enodes needed for bootnodes */}}
+        - name: enode-collector
+          image: "{{ .Values.global.enodeCollectorImage.repository }}:{{ .Values.global.enodeCollectorImage.tag }}"
+          imagePullPolicy: {{ .Values.global.enodeCollectorImage.pullPolicy }}
+          env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          volumeMounts:
+          - name: env-nodeport
+            mountPath: /env
         {{/* Container used for initialising nimbus checkpoint sync */}}
         {{- if and (eq .Values.beacon.client "nimbus") .Values.beacon.checkPointSync.enabled }}
         - name: init-nimbus
@@ -186,6 +198,7 @@ spec:
             {{- else if eq .Values.execution.client "geth" }}
               exec geth
               --syncmode=snap
+              --bootnodes=$BOOTNODES
               --datadir=/data/execution
               --ipcdisable
               --{{ .Values.global.network }}
