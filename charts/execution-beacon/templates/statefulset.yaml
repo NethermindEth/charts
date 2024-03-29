@@ -366,7 +366,7 @@ spec:
             successThreshold: {{ .Values.execution.readinessProbe.successThreshold }}
             httpGet:
               path: {{ .Values.execution.readinessProbe.httpGet.path }}
-              port: {{ .Values.execution.readinessProbe.httpGet.port }}
+              port: {{ include "execution.p2pPort" . }}
               scheme: {{ .Values.execution.readinessProbe.httpGet.scheme }}
           {{- end }}
           volumeMounts:

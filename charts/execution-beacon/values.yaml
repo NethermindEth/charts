@@ -394,7 +394,7 @@ execution:
     httpGet:
       path: /
       port: 30303
-      scheme: TCP
+      scheme: HTTP
 
 
 beacon:
