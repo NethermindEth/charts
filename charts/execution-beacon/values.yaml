@@ -560,6 +560,7 @@ rbac:
     - apiGroups: [""]
       resources:
       - "services"
+      - "endpoints"
       verbs:
       - "get"
       - "list"
