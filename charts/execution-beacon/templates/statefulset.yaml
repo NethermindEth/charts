@@ -174,7 +174,6 @@ spec:
               --JsonRpc.EnginePort={{ .Values.execution.jsonrpc.engine.port }}
               --JsonRpc.EngineHost={{ .Values.execution.jsonrpc.host }}
               --JsonRpc.EngineEnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
-            {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --Metrics.Enabled={{ .Values.execution.metrics.enabled }}
               --Metrics.ExposePort={{ .Values.execution.metrics.port }}
