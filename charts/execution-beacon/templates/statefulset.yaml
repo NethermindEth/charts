@@ -358,6 +358,7 @@ spec:
             - name: p2p-udp-exec
               containerPort: {{ include "execution.p2pPort" . }}
               protocol: UDP
+          {{- range $i, $e := until (int .Values.global.replicaCount) }}
           readinessProbe:
             initialDelaySeconds: {{ .Values.execution.readinessProbe.initialDelaySeconds }}
             timeoutSeconds: {{ .Values.execution.readinessProbe.timeoutSeconds }}
@@ -367,7 +368,9 @@ spec:
             httpGet:
               path: {{ .Values.execution.readinessProbe.httpGet.path }}
               port: {{ include "execution.p2pPort" . }}
+              host: {{ include "common.names.fullname" $ }}-execution-{{ $i }}
               scheme: {{ .Values.execution.readinessProbe.httpGet.scheme }}
+          {{- end }}
           {{- end }}
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
