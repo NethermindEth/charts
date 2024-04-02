@@ -45,12 +45,21 @@ spec:
     {{- if eq .Values.execution.client "geth" }}
     {{- if  .Values.execution.snapshot.enabled }}
       initContainers:
+    {{- if eq .Values.execution.network "op-mainnet" }}
       - args:
         - if [ ! -f /data/execution/geth/chaindata/CURRENT ]; then  apt-get update;  apt-get install -y wget; apt-get install -y zstd; echo "package installed";
           wget {{ .Values.execution.snapshot.DownloadUrl }}
           -O /data/execution/file.tar.zst; tar -xvf /data/execution/file.tar.zst -C /data/execution/;
           rm -r /data/execution/file.tar.zst; else echo "Node Synced";
           fi
+    {{- else }}
+      - args:
+        - if [ ! -f /data/execution/geth/chaindata/CURRENT ]; then  apt-get update;  apt-get install -y wget; apt-get install -y curl; echo "package installed";
+          wget {{ .Values.execution.snapshot.DownloadUrl }}
+          -O /data/execution/file.tar.gz; tar -xvf /data/execution/file.tar.gz -C /data/execution/ --strip-components 3;
+          rm -r /data/execution/file.tar.gz; else echo "Node Synced";
+          fi
+    {{- end }}  
         command:
         - /bin/sh
         - -c
