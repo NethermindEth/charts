@@ -126,6 +126,15 @@ env:
 # This section can be used to configure some extra labels that will be added to each Kubernetes object generated.
 extraLabels: {}
 
+voyager_migrator:
+  enabled: false
+  image:
+    repository: nethermindeth/nethgate
+    tag: 0.0.1-dev102
+    pullSecrets:
+    - "regcred"
+    
+
 # Specify Kong's Docker image and repository details here
 image:
   repository: kong
@@ -807,10 +816,6 @@ certificates:
 # -----------------------------------------------------------------------------
 # Miscellaneous parameters
 # -----------------------------------------------------------------------------
-
-declarativeSetup:
-   enabled: false
-   filename: kong.yaml
      
 waitImage:
   # Wait for the database to come online before starting Kong or running migrations

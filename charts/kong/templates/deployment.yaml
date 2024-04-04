@@ -100,16 +100,9 @@ spec:
         - "-c"
         - |
           rm -vrf $KONG_PREFIX/pids
-          {{- if .Values.declarativeSetup.enabled }}
-          #deck gateway sync /mnt/declarative/{{ .Values.declarativeSetup.filename }}
-          {{- end }}
         env:
         {{- include "kong.env" . | nindent 8 }}
         volumeMounts:
-        {{- if .Values.declarativeSetup.enabled }}
-        - name: {{ template "kong.fullname" . }}-declarative-setup
-          mountPath: /mnt/declarative
-        {{- end }}
         {{- include "kong.volumeMounts" . | nindent 8 }}
         {{- if .Values.deployment.initContainers }}
         {{- toYaml .Values.deployment.initContainers | nindent 6 }}
@@ -288,10 +281,6 @@ spec:
         {{- end }}
         {{- end }}
         volumeMounts:
-        {{- if .Values.declarativeSetup.enabled }}
-          - name: {{ template "kong.fullname" . }}-declarative-setup
-            mountPath: /mnt/declarative
-        {{- end }}
         {{- include "kong.volumeMounts" . | nindent 10 }}
         {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 10 }}
         readinessProbe:
@@ -325,12 +314,6 @@ spec:
 {{ toYaml .Values.tolerations | indent 8 }}
     {{- end }}
       volumes:
-      {{- if .Values.declarativeSetup.enabled }}
-        - name: {{ template "kong.fullname" . }}-declarative-setup
-          configMap:
-            name: {{ template "kong.fullname" . }}-declarative-setup
-            defaultMode: 0755   
-      {{- end }}
       {{- include "kong.volumes" . | nindent 8 -}}
       {{- include "kong.userDefinedVolumes" . | nindent 8 -}}
 {{- end }}
