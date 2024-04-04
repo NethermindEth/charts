@@ -1,0 +1,77 @@
+{{- if and .Values.deployment.kong.enabled .Values.voyager_migrator.enabled}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "kong.fullname" . }}-migrator
+  namespace:  {{ template "kong.namespace" . }}
+  labels:
+    {{- include "kong.metaLabels" . | nindent 4 }}
+    app.kubernetes.io/component: app
+  {{- if .Values.deploymentAnnotations }}
+  annotations:
+  {{- range $key, $value := .Values.deploymentAnnotations }}
+    {{ $key }}: {{ include "kong.renderTpl" (dict "value" $value "context" $) | quote }}
+  {{- end }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "kong.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- if .Values.podAnnotations }}
+        {{- range $key, $value := .Values.podAnnotations }}
+        {{ $key }}: {{ include "kong.renderTpl" (dict "value" $value "context" $) | quote }}
+        {{- end }}
+        {{- end }}
+      labels:
+        {{- include "kong.metaLabels" . | nindent 8 }}
+        app.kubernetes.io/component: app
+        app: {{ template "kong.fullname" . }}
+        version: {{ .Chart.AppVersion | quote }}
+        {{- if .Values.podLabels }}
+        {{ include "kong.renderTpl" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.voyager_migrator.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.voyager_migrator.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.deployment.kong.enabled }}
+      containers:
+      - name: {{ template "kong.fullname" . }}-migrator
+        image: {{ .Values.voyager_migrator.image.repository }}:{{ .Values.voyager_migrator.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        securityContext:
+        {{ toYaml .Values.containerSecurityContext | nindent 10 }}
+        env:
+        {{- include "kong.no_daemon_env" . | nindent 8 }}
+        {{- if .Values.admin.enabled }}
+        command: ["/bin/bash", "/run-control-plane.sh"]
+        {{- else }}
+        command: ["/bin/bash", "/run-data-node.sh"]
+        {{- end }}
+        volumeMounts:
+        {{- include "kong.volumeMounts" . | nindent 10 }}
+        {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 10 }}
+      {{- end }}
+      securityContext:
+      {{- include "kong.podsecuritycontext" . | nindent 8 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+    {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+    {{- end }}
+      volumes:
+      {{- include "kong.volumes" . | nindent 8 -}}
+      {{- include "kong.userDefinedVolumes" . | nindent 8 -}}
+{{- end }}
+
