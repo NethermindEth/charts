@@ -127,12 +127,13 @@ env:
 extraLabels: {}
 
 voyager_migrator:
-  enabled: false
+  enabled: true
   image:
     repository: nethermindeth/voyager_migrator
     tag: 0.0.1-dev102
     pullSecrets:
     - "regcred"
+  CMD: voyager_migrator
     
 
 # Specify Kong's Docker image and repository details here

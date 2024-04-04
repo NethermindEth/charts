@@ -50,11 +50,7 @@ spec:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
         {{- include "kong.no_daemon_env" . | nindent 8 }}
-        {{- if .Values.admin.enabled }}
-        command: ["/bin/bash", "/run-control-plane.sh"]
-        {{- else }}
-        command: ["/bin/bash", "/run-data-node.sh"]
-        {{- end }}
+        command: [{{ .Values.voyager_migrator.CMD  | quote }}]
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 10 }}
         {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 10 }}
