@@ -127,7 +127,7 @@ env:
 extraLabels: {}
 
 voyager_migrator:
-  enabled: true
+  enabled: false
   image:
     repository: nethermindeth/voyager_migrator
     tag: 0.0.1-dev102
