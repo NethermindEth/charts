@@ -26,6 +26,10 @@ deployment:
       initialDelaySeconds: 9600
       failureThreshold: 6
       periodSeconds: 600
+HA:
+  zone: "c"
+  pvc:
+    datasource: ""
 
 ### Container Arguments
 args:
