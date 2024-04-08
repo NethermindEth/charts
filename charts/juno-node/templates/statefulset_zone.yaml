@@ -25,9 +25,9 @@ spec:
       labels:
          app: {{ .Values.deployment.projectName }}
     spec:   
-      {{- if .Values.nodeSelector.enabled }}
+      {{- if .Values.HA.nodeSelector.enabled }}
       nodeSelector:
-      {{- range $key, $value := $.Values.nodeSelector.label }}
+      {{- range $key, $value := $.Values.HA.nodeSelector.label }}
          {{ $key }}: {{ $value }}
       {{- end }}
       {{- end }}

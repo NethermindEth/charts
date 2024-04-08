@@ -196,6 +196,11 @@ HA:
   zone: "c"
   pvc:
     datasource: ""
+  nodeSelector:
+   enabled: true
+   label:
+    node_pool: juno-temp-pool
+    topology.gke.io/zone: us-east1-c
 
 batchjob:
   enabled: false
