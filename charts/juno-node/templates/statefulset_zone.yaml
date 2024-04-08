@@ -74,7 +74,7 @@ spec:
         volumeMounts:
         {{- range $.Values.pvc.mount }}
           - mountPath: {{ .mountPath }}
-            name: {{ $.Values.deployment.projectName }}-{{ .pvName }}
+            name: {{ $.Values.deployment.projectName }}-zone-{{ $.Values.HA.zone }}-{{ .pvName }}
         {{- end }}
         {{- end }}
 
@@ -160,7 +160,7 @@ spec:
         volumeMounts:
         {{- range $.Values.pvc.mount }}
           - mountPath: {{ .mountPath }}
-            name: {{ $.Values.deployment.projectName }}-zone-{{ .Values.HA.zone }}-{{ .pvName }}
+            name: {{ $.Values.deployment.projectName }}-zone-{{ $.Values.HA.zone }}-{{ .pvName }}
         {{- end }}
         {{- end }}
 
@@ -168,11 +168,11 @@ spec:
   volumeClaimTemplates:
   {{- range .Values.pvc.mount }}
   - metadata:
-         name: {{ $.Values.deployment.projectName }}-zone-{{ .Values.HA.zone }}-{{ .pvName }}
+         name: {{ $.Values.deployment.projectName }}-zone-{{ $.Values.HA.zone }}-{{ .pvName }}
     spec:
-        {{- if $.Values.pvc.datasource }}
+        {{- if and $.Values.HA.pvc $.Values.HA.pvc.datasource }}
         dataSource:
-           name: {{ $.Values.HA.pvc.datasource }}
+           name: {{ $.Values.HA.pvc.datasource | default "" }}
            kind: PersistentVolumeClaim
         {{- end }}
         accessModes:
