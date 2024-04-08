@@ -1,3 +1,4 @@
+{{- if .Values.HA.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -182,3 +183,5 @@ spec:
         storageClassName: {{ $.Values.pvc.storageClassName }}
 {{- end }}
 {{- end }}
+{{- end }}
+
