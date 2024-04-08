@@ -1,4 +1,4 @@
-{{- if .Values.HA.enabled }}
+{{- if and .Values.HA.enabled .Values.hpa.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

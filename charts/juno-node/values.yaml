@@ -185,7 +185,7 @@ svc:
 
 ### Horizontal pod scaling
 hpa:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 2
   cpuUtilization: 80
