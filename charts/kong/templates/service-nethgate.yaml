@@ -1,0 +1,27 @@
+{{- if and .Values.deployment.kong.enabled .Values.deployment.nethgate.enabled}}
+apiVersion: v1
+kind: Service
+metadata: 
+  name: {{ template "kong.fullname" . }}-nethgate
+  namespace:  {{ template "kong.namespace" . }}
+  {{- if .Values.deployment.nethgate.svc.annotation }}
+  annotations:
+  {{- range $key, $value := .Values.deployment.nethgate.svc.annotation }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- end }}
+  labels:
+    {{- include "kong.metaLabels" . | nindent 4 }}
+    app.kubernetes.io/component: app
+spec:
+  ports:
+    - name: nethgate
+      protocol: TCP
+      port:  {{ .Values.deployment.nethgate.port }}
+      targetPort:  {{ .Values.deployment.nethgate.port }}
+  selector:
+    app.kubernetes.io/name: {{ template "kong.name" . }}
+    app.kubernetes.io/component: app
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+  type: {{ .Values.deployment.nethgate.svc.type }}
+{{- end -}}
