@@ -19,9 +19,27 @@ deployment:
     # Setting this to false with ingressController.enabled=true will create a
     # controller-only release.
     enabled: true
+  
   nethgate:
-    enabled: true
+    enabled: false
     port: "8080"
+    svc:
+      annotation: 
+        cloud.google.com/load-balancer-type: internal
+        cloud.google.com/neg: '{"ingress":true}'
+        networking.gke.io/internal-load-balancer-allow-global-access: 'true'
+        networking.gke.io/internal-load-balancer-subnet: subnet-staging-us-east-1-vpc
+      type: LoadBalancer
+      
+  voyager_migrator:
+    enabled: false
+    image:
+      repository: nethermindeth/voyager_migrator
+      tag: 0.0.1-dev102
+      pullSecrets:
+      - "regcred"
+    CMD: voyager_migrator
+
   ## Minimum number of seconds for which a newly created pod should be ready without any of its container crashing,
   ## for it to be considered available.
   # minReadySeconds: 60
@@ -125,17 +143,7 @@ env:
 
 # This section can be used to configure some extra labels that will be added to each Kubernetes object generated.
 extraLabels: {}
-
-voyager_migrator:
-  enabled: false
-  image:
-    repository: nethermindeth/voyager_migrator
-    tag: 0.0.1-dev102
-    pullSecrets:
-    - "regcred"
-  CMD: voyager_migrator
     
-
 # Specify Kong's Docker image and repository details here
 image:
   repository: kong
