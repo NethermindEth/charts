@@ -4,9 +4,9 @@ kind: Service
 metadata: 
   name: {{ template "kong.fullname" . }}-nethgate
   namespace:  {{ template "kong.namespace" . }}
-  {{- if .Values.deployment.nethgate.svc.annotation }}
+  {{- if .Values.deployment.nethgate.svc.annotations }}
   annotations:
-  {{- range $key, $value := .Values.deployment.nethgate.svc.annotation }}
+  {{- range $key, $value := .Values.deployment.nethgate.svc.annotations }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
   {{- end }}
@@ -14,6 +14,9 @@ metadata:
     {{- include "kong.metaLabels" . | nindent 4 }}
     app.kubernetes.io/component: app
 spec:
+  {{- if .Values.deployment.nethgate.svc.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.deployment.nethgate.svc.loadBalancerIP }}
+  {{- end }}
   ports:
     - name: nethgate
       protocol: TCP

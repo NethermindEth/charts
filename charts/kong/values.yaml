@@ -24,12 +24,9 @@ deployment:
     enabled: false
     port: "8080"
     svc:
-      annotation: 
-        cloud.google.com/load-balancer-type: internal
-        cloud.google.com/neg: '{"ingress":true}'
-        networking.gke.io/internal-load-balancer-allow-global-access: 'true'
-        networking.gke.io/internal-load-balancer-subnet: subnet-staging-us-east-1-vpc
+      annotations: {}
       type: LoadBalancer
+      #loadBalancerIP: "10.139.0.4"
       
   voyager_migrator:
     enabled: false
