@@ -57,7 +57,7 @@ spec:
             - --ws.addr=0.0.0.0
             - --ws.origins=*
             - --http.addr=0.0.0.0
-            - --http.api=net,web3,eth,arb
+            - --http.api=net,web3,eth,arb,debug
             - --http.corsdomain=*
             - --http.vhosts=*
             - --metrics
