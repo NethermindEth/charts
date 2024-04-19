@@ -1,0 +1,16 @@
+apiVersion: v2
+name: node
+version: 1.0.0
+appVersion: 0.0.1
+kubeVersion: "^1.23.0-0"
+description: nitro client
+type: application
+keywords:
+  - blockchain
+  - nitro
+home: https://www.ethereum.org/
+
+dependencies:
+  - name: common
+    repository: file://../common
+    version: 1.0.0

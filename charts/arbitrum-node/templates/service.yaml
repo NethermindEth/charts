@@ -1,0 +1,52 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+    pod: "{{ include "common.names.fullname" . }}"
+    type: api
+    execution: {{ .Values.execution.client }}
+{{- if and .Values.execution.metrics.enabled .Values.execution.metrics.svcAnnotations }}
+  annotations:
+    {{ toYaml .Values.execution.metrics.svcAnnotations | nindent 4 | trim }}
+{{- else }}
+  annotations:
+      {{ toYaml .Values.beacon.metrics.svcAnnotations | nindent 4 | trim }}
+{{- end }}
+spec:
+{{- if .Values.global.sessionAffinity.enabled }}
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: {{ .Values.global.sessionAffinity.timeoutSeconds }}
+{{- end }}
+  type: {{ .Values.global.service.type }} # ClusterIP, NodePort, LoadBalancer, or ExternalName
+{{- if .Values.global.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.global.service.externalTrafficPolicy }}
+{{- end }}
+{{- if .Values.global.service.svcHeadless}}
+  clusterIP: None
+{{- end }}
+  ports:
+  {{- if .Values.execution.jsonrpc.enabled }}
+    - name: jsonrpc-exec
+      port: {{ .Values.execution.jsonrpc.http.port }}
+      targetPort: jsonrpc-exec
+  {{- end }}
+
+  {{- if .Values.execution.jsonrpc.websocket.enabled }}
+    - name: ws-exec
+      port: {{ .Values.execution.jsonrpc.websocket.port }}
+      targetPort: ws-exec
+      protocol: TCP
+  {{- end }}
+  {{- if .Values.execution.metrics.enabled }}
+    - name: metrics-exec
+      port: {{ .Values.execution.metrics.port }}
+      targetPort: metrics-exec
+      protocol: TCP
+  {{- end }}
+  selector:
+    {{- include "common.labels.matchLabels" . | nindent 4 }}
