@@ -56,6 +56,7 @@ spec:
             - --ws.port=8548
             - --ws.addr=0.0.0.0
             - --ws.origins=*
+            - --ws.api=net,web3,eth,arb,debug
             - --http.addr=0.0.0.0
             - --http.api=net,web3,eth,arb,debug
             - --http.corsdomain=*
