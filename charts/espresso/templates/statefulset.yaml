@@ -1,0 +1,78 @@
+{{- range $type, $specs := .Values.nodes }}
+---
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" $ }}
+kind: StatefulSet
+metadata:
+  name: "{{ include "common.names.fullname" $ }}-{{ $type }}"
+spec:
+  serviceName: "{{ include "common.names.fullname" $ }}-{{ $type }}"
+  replicas: {{ $specs.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" $ | nindent 6 }}
+      type: {{ $type }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.matchLabels" $ | nindent 8 }}
+        type: {{ $type }}
+    spec:
+      serviceAccountName: {{ include "common.names.fullname" $ }}
+      {{- if $.Values.externalSecrets.enabled }}
+      initContainers:
+        - name: init-setenv
+          image: "{{ $.Values.initImage.repository }}:{{ $.Values.initImage.tag }}"
+          imagePullPolicy: {{ $.Values.initImage.pullPolicy }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              index=$(hostname | grep -o -E "[0-9]+$")
+              echo "Detected Pod Index: $index"
+              # Ensure environment variables are fetched and then exported with index suffix
+              ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY=$(echo $ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index)
+              ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY=$(echo $ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index)
+              echo "ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY=${ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY}" >> /etc/espresso/.env
+              echo "ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY=${ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY}" >> /etc/espresso/.env
+          envFrom:
+            - secretRef:
+                name: eso-espresso-sequencer-secrets-{{ $type }}
+          volumeMounts:
+            - name: init-env
+              mountPath: /etc/espresso
+      {{- end }}
+      containers:
+        - name: "sequencer-{{ $type }}"
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command:
+            - >
+              {{ $specs.command }}
+          env:
+            {{- range $key, $value := $.Values.nodes_config }}
+            - name: {{ $key }}
+              value: {{ required (printf "%s is required" $key) $value }}
+            {{- end }}
+          {{- if $.Values.externalSecrets.enabled }}
+            - name: ESPRESSO_SEQUENCER_KEY_FILE
+              value: /etc/espresso/.env
+          envFrom:
+            - secretRef:
+                name: espresso-sequencer-postgres-{{ $type }} 
+          {{- end }}
+          ports:
+            - name: api
+              containerPort: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
+          {{- if $specs.volumeMount }}
+          volumeMounts:
+            - name: consensus-data
+              mountPath: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_STORAGE_PATH }}
+          {{- if $.Values.externalSecrets.enabled }}
+            - name: private-keys
+              mountPath: /etc/espresso
+          {{- end }}
+          {{- end }}
+          {{- with $specs.resources }}
+          resources:
+            {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+{{- end }}

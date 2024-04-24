@@ -1,0 +1,129 @@
+global:
+  # -- Service account
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  #
+  serviceAccount:
+    create: false
+
+nodes:
+  normal:
+    replicaCount: 1
+    command: "sequencer -- http -- catchup -- status"
+    volumeMount: true
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "16Gi"
+      limits:
+        cpu: "400m"
+        memory: "32Gi"
+    externalSecrets:
+      data: []
+  da:
+    replicaCount: 0
+    command: "sequencer -- storage-sql -- http -- catchup -- status -- query"
+    volumeMount: false
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "16Gi"
+      limits:
+        cpu: "400m"
+        memory: "32Gi"
+    externalSecrets:
+      data: []
+
+nodes_config:
+  ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: "https://orchestrator.cappuccino.testnet.espresso.network"
+  ESPRESSO_SEQUENCER_CDN_ENDPOINT: "cdn.cappuccino.testnet.espresso.network:1737"
+  ESPRESSO_STATE_RELAY_SERVER_URL: "https://state-relay.cappuccino.testnet.espresso.network"
+  ESPRESSO_SEQUENCER_BASE_FEE: "0"
+  ESPRESSO_SEQUENCER_MAX_BLOCK_SIZE: "30000000"
+  ESPRESSO_SEQUENCER_CHAIN_ID: "0"
+  RUST_LOG: "warn,libp2p=off"
+  RUST_LOG_FORMAT: "json"
+  ESPRESSO_SEQUENCER_STATE_PEERS: "https://query.cappuccino.testnet.espresso.network"
+  ESPRESSO_SEQUENCER_L1_PROVIDER: ""   # JSON-RPC endpoint for Sepolia testnet
+  ESPRESSO_SEQUENCER_API_PORT: 80      # Port on which to host metrics and healthchecks
+  ESPRESSO_SEQUENCER_STORAGE_PATH: "/mount/sequencer/store/"    # Path in container to store consensus state
+
+image:
+  repository: ghcr.io/espressosystems/espresso-sequencer/sequencer
+  tag: main
+  pullPolicy: IfNotPresent
+
+# -- Init image is used to manage which secrets the pod should use.
+initImage:
+  repository: "busybox"
+  tag: "1.36.1"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  # Port will target ESPRESSO_SEQUENCER_API_PORT
+  svcAnnotations: {}
+
+ingress:
+  enabled: false
+  ingressClassName: ""
+
+  # -- Route Prefix. Can skip it if any item of path has the path defined.
+  routePrefix: /
+
+  annotations: {}
+
+  labels: {}
+
+  # -- Hostnames.
+  # Can be provided if Ingress is enabled.
+  #
+  hosts: []
+  # hosts:
+  #   - prometheus.domain.com
+
+  # -- Paths to use for ingress rules
+  # By default, the Service created by this chart is used as the target
+  # Service for the Ingress.
+  # If not defined the following default object will be used:
+  # - path: "/"
+  #   port: 8000
+  #   pathType: "ImplementationSpecific"
+  #   serviceName: "<common.names.fullname>"
+  #
+  paths: []
+    # paths:
+    #  - path: "/metrics"
+    #    port: 9000
+    #    pathType: "Prefix"
+    #  - path: "/api"
+    #    port: 8080
+    #    pathType: "Exact"
+    #  - path: "/health"
+    #    port: 8085
+    #    pathType: "Prefix"
+    #    serviceName: "alternativeServiceName"
+
+  # -- TLS configuration for Ingress
+  # Secret must be manually created in the namespace
+  #
+  tls: []
+    # - secretName: execution-beacon-general-tls
+    #   hosts:
+    #     - nethermind.example.com
+
+externalSecrets:
+  enabled: false
+
+# -- Provide a name to substitute for the full names of resources
+fullnameOverride: ""
+
+# -- Service account
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+#
+serviceAccount:
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  #
+  name: ""
