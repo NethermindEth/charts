@@ -58,6 +58,15 @@ initImage:
   tag: "1.36.1"
   pullPolicy: IfNotPresent
 
+# -- Keystore-CLI settings. Used to manage keys on Secret Store.
+keystoreCLI:
+  image:
+    repository: "nethermindeth/espresso-keystore-cli"
+    tag: "v0.1.1"
+    pullPolicy: IfNotPresent
+  projectId: ""  # GCP Project ID
+  secretId: ""   # GCP Secret ID without the Sequencer node type suffix
+
 service:
   type: ClusterIP
   # Port will target ESPRESSO_SEQUENCER_API_PORT
