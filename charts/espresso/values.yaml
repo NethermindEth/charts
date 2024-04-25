@@ -4,6 +4,8 @@ global:
   #
   serviceAccount:
     create: false
+  
+  namespaceOverride: ""
 
 nodes:
   normal:

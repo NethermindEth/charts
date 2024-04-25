@@ -4,6 +4,9 @@ apiVersion: {{ include "common.capabilities.statefulset.apiVersion" $ }}
 kind: StatefulSet
 metadata:
   name: "{{ include "common.names.fullname" $ }}-{{ $type }}"
+  {{- if $.Values.global.namespaceOverride }}
+  namespace: {{ $.Values.global.namespaceOverride }}
+  {{- end }}
 spec:
   serviceName: "{{ include "common.names.fullname" $ }}-{{ $type }}"
   replicas: {{ $specs.replicaCount }}

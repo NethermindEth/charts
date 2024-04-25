@@ -12,6 +12,9 @@ metadata:
   annotations:
     {{ toYaml $.Values.service.svcAnnotations | nindent 4 | trim }}
 {{- end }}
+  {{- if $.Values.global.namespaceOverride }}
+  namespace: {{ $.Values.global.namespaceOverride }}
+  {{- end }}
 spec:
   type: {{ $.Values.service.type }} # ClusterIP, NodePort, LoadBalancer, or ExternalName
   ports:

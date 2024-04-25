@@ -14,9 +14,12 @@ metadata:
   name: {{ include "common.names.fullname" . }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
-{{- if .Values.ingress.labels }}
-{{ toYaml .Values.ingress.labels | indent 4 }}
-{{- end }}
+    {{- if .Values.ingress.labels }}
+    {{ toYaml .Values.ingress.labels | indent 4 }}
+    {{- end }}
+  {{- if $.Values.global.namespaceOverride }}
+  namespace: {{ $.Values.global.namespaceOverride }}
+  {{- end }}
 spec:
   {{- if .Values.ingress.ingressClassName }}
   ingressClassName: {{ .Values.ingress.ingressClassName }}
