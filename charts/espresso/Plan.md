@@ -6,7 +6,7 @@
 - [X] Service for Sequencer Node and DA Node
 - [X] Ingress for Sequencer Node and DA Node. This is GCP, so we will use GCP Ingress
 - [ ] Prometheus rules???
-- [ ] Automate keys creation and deployment to Secrets Manager
+- [X] Automate keys creation and deployment to Secrets Manager
 - [ ] Create CloudSQL instances
 
 ## Notes

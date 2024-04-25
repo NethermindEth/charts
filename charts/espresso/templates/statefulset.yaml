@@ -20,7 +20,28 @@ spec:
       serviceAccountName: {{ include "common.names.fullname" $ }}
       {{- if $.Values.externalSecrets.enabled }}
       initContainers:
-        - name: init-setenv
+        - name: keygen  # Generates keys for the sequencer
+          image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command: ["keygen", "-o", "/keys", "-n", "{{ $specs.replicaCount }}"]
+          volumeMounts:
+          - name: keys
+            mountPath: /keys
+        - name: keystore-cli-pv-keys  # Updates Secret Manager with private keys in the proper format
+          image: {{ $.Values.keystoreCLI.image.repository }}:{{ $.Values.keystoreCLI.image.tag }}
+          imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
+          command: ["pv-keys"]
+          env:
+          - name: KEYS_PATH
+            value: /keys
+          - name: PROJECT_ID
+            value: {{ required "Project ID is required" $.Values.keystoreCLI.projectId }}
+          - name: SECRET_ID
+            value: {{ required "Secret ID is required" $.Values.keystoreCLI.pv.secretId }}-{{ $type }}
+          volumeMounts:
+          - name: keys
+            mountPath: /keys
+        - name: init-setenv   # Sets keys environment variables for the sequencer
           image: "{{ $.Values.initImage.repository }}:{{ $.Values.initImage.tag }}"
           imagePullPolicy: {{ $.Values.initImage.pullPolicy }}
           command: ["/bin/sh", "-c"]
@@ -39,6 +60,24 @@ spec:
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso
+        {{- if contains $specs.command "storage-sql" }}
+        - name: keystore-cli-db-keys  # Updates Secret Manager with DB credentials in the proper format
+          image: {{ $.Values.keystoreCLI.image.repository }}:{{ $.Values.keystoreCLI.image.tag }}
+          imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
+          command: ["db-keys"]
+          env:
+          - name: PROJECT_ID
+            value: {{ required "Project ID is required" $.Values.keystoreCLI.projectId }}
+          - name: SECRET_ID
+            value: {{ required "Secret ID is required" $.Values.keystoreCLI.db.secretId }}-{{ $type }}
+          - name: SEQUENCER_POSTGRES_HOST
+            value: {{ required "DB host is required" $.Values.keystoreCLI.db.host }}
+          - name: SEQUENCER_POSTGRES_USER
+            value: {{ required "DB user is required" $.Values.keystoreCLI.db.user }}
+          volumeMounts:
+          - name: keys
+            mountPath: /keys
+        {{- end }}
       {{- end }}
       containers:
         - name: "sequencer-{{ $type }}"
@@ -57,7 +96,7 @@ spec:
               value: /etc/espresso/.env
           envFrom:
             - secretRef:
-                name: espresso-sequencer-postgres-{{ $type }} 
+                name: eso-espresso-sequencer-secrets-{{ $type }}
           {{- end }}
           ports:
             - name: api
@@ -75,4 +114,9 @@ spec:
           resources:
             {{ toYaml . | nindent 12 | trim }}
           {{- end }}
+      volumes:
+        - name: keys
+          emptyDir: {}
+        - name: init-env
+          emptyDir: {}
 {{- end }}

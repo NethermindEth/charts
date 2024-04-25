@@ -65,7 +65,12 @@ keystoreCLI:
     tag: "v0.1.1"
     pullPolicy: IfNotPresent
   projectId: ""  # GCP Project ID
-  secretId: ""   # GCP Secret ID without the Sequencer node type suffix
+  pv:
+    secretId: ""   # GCP Secret ID without the Sequencer node type suffix
+  db:
+    secretId: ""   # GCP Secret ID of the DB credentials
+    host: ""       # DB host
+    user: ""       # DB user
 
 service:
   type: ClusterIP
