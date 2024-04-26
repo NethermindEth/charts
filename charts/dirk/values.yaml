@@ -22,6 +22,7 @@ global:
       - ALL
       
 replicaCount: 3
+clusterIndex: null
 
 image:
   repository: attestant/dirk

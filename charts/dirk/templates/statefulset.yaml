@@ -58,8 +58,12 @@ spec:
             - >
               rm -f /data/dirk/dirty;
               mkdir -p /data/dirk/certs;
+              {{- if .Values.clusterIndex }}
+              echo "{{ .Values.clusterIndex }}" > /data/dirk/index;
+              {{- else }}
               export INDEX=$((${HOSTNAME##*-}+1));
               echo "$INDEX" > /data/dirk/index;
+              {{- end }}
               envsubst < /config/dirk.yaml.tml > /data/dirk/dirk.yaml;
               printenv CA_CRT | base64 -d  > /data/dirk/certs/ca.crt;
               printenv CA_KEY | base64 -d  > /data/dirk/certs/ca.key;
