@@ -123,7 +123,7 @@ spec:
     - metadata:
         name: consensus-data
         labels:
-          {{- include "common.labels.statefulset" . | nindent 10 }}
+          {{- include "common.labels.statefulset" $ | nindent 8 }}
       {{- with .Values.global.persistence.annotations }}
         annotations:
           {{ toYaml . | nindent 10 | trim }}
