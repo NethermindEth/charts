@@ -33,7 +33,7 @@ spec:
         - name: keystore-cli-pv-keys  # Updates Secret Manager with private keys in the proper format
           image: {{ $.Values.keystoreCLI.image.repository }}:{{ $.Values.keystoreCLI.image.tag }}
           imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
-          command: ["pv-keys"]
+          args: ["pv-keys"]
           env:
           - name: KEYS_PATH
             value: /keys
