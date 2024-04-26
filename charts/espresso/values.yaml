@@ -4,6 +4,7 @@ global:
   #
   serviceAccount:
     create: false
+    annotations: {}
   
   namespaceOverride: ""
 
