@@ -139,6 +139,9 @@ ingress:
 
 externalSecrets:
   enabled: false
+  secretStoreRef:
+    name: secretStoreRef
+    kind: SecretStore
 
 # -- Provide a name to substitute for the full names of resources
 fullnameOverride: ""
