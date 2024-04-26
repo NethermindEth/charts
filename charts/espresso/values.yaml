@@ -7,6 +7,16 @@ global:
   
   namespaceOverride: ""
 
+  # -- Whether or not to allocate persistent volume disk for the data directory.
+  # In case of node failure, the node data directory will still persist.
+  #
+  persistence:
+    storageClassName: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 150Gi
+    annotations: {}
+
 nodes:
   normal:
     replicaCount: 1

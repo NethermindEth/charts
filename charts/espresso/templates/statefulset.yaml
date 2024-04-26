@@ -108,10 +108,6 @@ spec:
           volumeMounts:
             - name: consensus-data
               mountPath: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_STORAGE_PATH }}
-          {{- if $.Values.externalSecrets.enabled }}
-            - name: private-keys
-              mountPath: /etc/espresso
-          {{- end }}
           {{- end }}
           {{- with $specs.resources }}
           resources:
@@ -122,4 +118,21 @@ spec:
           emptyDir: {}
         - name: init-env
           emptyDir: {}
+  volumeClaimTemplates:
+    {{- if $specs.volumeMount }}
+    - metadata:
+        name: consensus-data
+        labels:
+          {{- include "common.labels.statefulset" . | nindent 10 }}
+      {{- with .Values.global.persistence.annotations }}
+        annotations:
+          {{ toYaml . | nindent 10 | trim }}
+      {{- end }}
+      spec:
+        accessModes: {{ .Values.global.persistence.accessModes }}
+        storageClassName: {{ .Values.global.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ .Values.global.persistence.size | quote }}
+    {{- end }}
 {{- end }}
