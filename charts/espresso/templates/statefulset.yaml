@@ -72,7 +72,7 @@ spec:
           - name: PROJECT_ID
             value: {{ (required "Project ID is required" $.Values.keystoreCLI.projectId) | quote }}
           - name: SECRET_ID
-            value: {{ required "Secret ID is required" $.Values.keystoreCLI.db.secretId }}-{{ $type }}
+            value: {{ required "Secret ID is required" $.Values.keystoreCLI.db.secretId }}
           - name: SEQUENCER_POSTGRES_HOST
             value: {{ (required "DB host is required" $.Values.keystoreCLI.db.host) | quote }}
           - name: SEQUENCER_POSTGRES_USER
