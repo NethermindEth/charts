@@ -24,9 +24,11 @@ nodes:
     command: 
       - "sequencer"
       - "--"
-      - "-- http"
-      - "-- catchup"
-      - "-- status"
+      - "http"
+      - "--"
+      - "catchup"
+      - "--"
+      - "status"
     sqlStorage: false
     volumeMount: true
     resources:
@@ -43,11 +45,15 @@ nodes:
     command: 
       - "sequencer"
       - "--"
-      - "-- storage-sql"
-      - "-- http"
-      - "-- catchup"
-      - "-- status"
-      - "-- query"
+      - "storage-sql"
+      - "--"
+      - "http"
+      - "--"
+      - "catchup"
+      - "--"
+      - "status"
+      - "--"
+      - "query"
     sqlStorage: true
     volumeMount: false
     resources:
@@ -61,15 +67,15 @@ nodes:
       data: []
 
 nodes_config:
-  ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: "https://orchestrator.cappuccino.testnet.espresso.network"
+  ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: https://orchestrator.cappuccino.testnet.espresso.network
   ESPRESSO_SEQUENCER_CDN_ENDPOINT: "cdn.cappuccino.testnet.espresso.network:1737"
-  ESPRESSO_STATE_RELAY_SERVER_URL: "https://state-relay.cappuccino.testnet.espresso.network"
-  ESPRESSO_SEQUENCER_BASE_FEE: "0"
+  ESPRESSO_STATE_RELAY_SERVER_URL: https://state-relay.cappuccino.testnet.espresso.network
+  ESPRESSO_SEQUENCER_BASE_FEE: 0
   ESPRESSO_SEQUENCER_MAX_BLOCK_SIZE: "30000000"
-  ESPRESSO_SEQUENCER_CHAIN_ID: "0"
+  ESPRESSO_SEQUENCER_CHAIN_ID: 0
   RUST_LOG: "warn,libp2p=off"
   RUST_LOG_FORMAT: "json"
-  ESPRESSO_SEQUENCER_STATE_PEERS: "https://query.cappuccino.testnet.espresso.network"
+  ESPRESSO_SEQUENCER_STATE_PEERS: https://query.cappuccino.testnet.espresso.network
   ESPRESSO_SEQUENCER_L1_PROVIDER: ""   # JSON-RPC endpoint for Sepolia testnet
   ESPRESSO_SEQUENCER_API_PORT: 80      # Port on which to host metrics and healthchecks
   ESPRESSO_SEQUENCER_STORAGE_PATH: "/mount/sequencer/store/"    # Path in container to store consensus state
