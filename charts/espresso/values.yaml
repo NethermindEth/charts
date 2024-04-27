@@ -21,7 +21,12 @@ global:
 nodes:
   normal:
     replicaCount: 1
-    args: "-- http -- catchup -- status"
+    command: 
+      - "sequencer"
+      - "-- http"
+      - "-- catchup"
+      - "-- status"
+    sqlStorage: false
     volumeMount: true
     resources:
       requests:
@@ -34,7 +39,14 @@ nodes:
       data: []
   da:
     replicaCount: 0
-    args: "-- storage-sql -- http -- catchup -- status -- query"
+    command: 
+      - "sequencer"
+      - "-- storage-sql"
+      - "-- http"
+      - "-- catchup"
+      - "-- status"
+      - "-- query"
+    sqlStorage: true
     volumeMount: false
     resources:
       requests:
