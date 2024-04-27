@@ -86,8 +86,10 @@ spec:
         - name: "sequencer-{{ $type }}"
           image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command: ["sequencer"]
           args:
-            - {{ $specs.command }}
+            - >
+            {{ $specs.args }}
           env:
             {{- range $key, $value := $.Values.nodes_config }}
             - name: {{ $key }}
