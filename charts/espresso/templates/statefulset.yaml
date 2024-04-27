@@ -63,7 +63,7 @@ spec:
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso
-        {{- if contains "storage-sql" $specs.command }}
+        {{- if contains "storage-sql" $specs.args }}
         - name: keystore-cli-db-keys  # Updates Secret Manager with DB credentials in the proper format
           image: {{ $.Values.keystoreCLI.image.repository }}:{{ $.Values.keystoreCLI.image.tag }}
           imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
