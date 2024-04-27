@@ -88,8 +88,7 @@ spec:
           imagePullPolicy: {{ $.Values.image.pullPolicy }}
           command: ["sequencer"]
           args:
-            - >
-            {{ $specs.args }}
+            - > {{ $specs.args | trim | nindent 14 }}
           env:
             {{- range $key, $value := $.Values.nodes_config }}
             - name: {{ $key }}
