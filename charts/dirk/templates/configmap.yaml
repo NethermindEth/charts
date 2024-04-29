@@ -34,9 +34,13 @@ data:
       type: filesystem
       location: /data/dirk/wallets
     peers:
+    {{- if .Values.dirk.peers }}
+      {{- toYaml .Values.dirk.peers | nindent 6 }}
+    {{- else }}
       1: {{ include "dirk.fullname" . }}-0.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }}
       2: {{ include "dirk.fullname" . }}-1.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }}
       3: {{ include "dirk.fullname" . }}-2.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }}
+    {{- end }}
     permissions:
       {{ .Values.dirk.clientName }}:
         Validators: All

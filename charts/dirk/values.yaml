@@ -61,6 +61,7 @@ dirk:
   tracing:
 
   fetchKeysExtraFlags: []
+  peers: {}
 
 imagePullSecrets: []
 
