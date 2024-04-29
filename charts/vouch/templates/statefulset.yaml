@@ -53,13 +53,7 @@ spec:
               cp /config/vouch.yaml {{ .Values.vouchDataDir }}/;
               printenv CA_CRT | base64 -d  > {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.crt;
               printenv CA_KEY | base64 -d  > {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.key;
-              cat {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.crt;
-              find {{ .Values.vouchDataDir }};
-              ls -la {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/;
               bash /scripts/generate_cert.sh {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ ca {{ include "common.names.fullname" . }};
-              cat {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.crt;
-              find {{ .Values.vouchDataDir }};
-              ls -la {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/;
               chown -R {{ .Values.global.podSecurityContext.runAsUser }}:{{ .Values.global.podSecurityContext.fsGroup }} {{ .Values.vouchDataDir }};
           envFrom:
             - secretRef:
