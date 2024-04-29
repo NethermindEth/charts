@@ -6,7 +6,15 @@ metadata:
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
 data:
+  {{- if .Values.dirk.peers }}
+  {{- $myVal := "_" -}}
+  {{- range $k, $v := .Values.dirk.peers }}
+  {{- $myVal = printf "%s,%s:%s" $myVal $k $v -}}
+  {{- end }}
+  PEERS: {{ $myVal | replace "_,1" "1" }}
+  {{- else }}
   PEERS: 1:{{ include "dirk.fullname" . }}-0.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }},2:{{ include "dirk.fullname" . }}-1.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }},3:{{ include "dirk.fullname" . }}-2.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }}
+  {{- end }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -35,7 +43,9 @@ data:
       location: /data/dirk/wallets
     peers:
     {{- if .Values.dirk.peers }}
-      {{ .Values.dirk.peers | nindent 6 }}
+      {{- range $k, $v := .Values.dirk.peers }}
+      {{ $k }}: {{ $v }}
+      {{- end }}
     {{- else }}
       1: {{ include "dirk.fullname" . }}-0.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }}
       2: {{ include "dirk.fullname" . }}-1.{{ include "dirk.fullname" . }}:{{ .Values.service.httpPort }}
