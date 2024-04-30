@@ -5,11 +5,17 @@ metadata:
   name: {{ include "common.names.fullname" . }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.clusterIndex }}
+    apps.kubernetes.io/cluster-deployment-type: cluster
+    {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
+      {{- if .Values.clusterIndex }}
+      apps.kubernetes.io/cluster-deployment-type: cluster
+      {{- end }}
   serviceName: {{ include "common.names.fullname" . }}
   template:
     metadata:
@@ -19,6 +25,9 @@ spec:
       {{- end }}
       labels:
         {{- include "common.labels.matchLabels" . | nindent 8 }}
+        {{- if .Values.clusterIndex }}
+        apps.kubernetes.io/cluster-deployment-type: cluster
+        {{- end }}
     spec:
       {{- with .Values.nodeSelector }}
       nodeSelector:
