@@ -50,7 +50,7 @@ spec:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
         {{- include "kong.no_daemon_env" . | nindent 8 }}
-        command: [{{ .Values.deployment.dvoyager_migrator.CMD  | quote }}]
+        command: ["voyager_migrator", "migrate"]
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 10 }}
         {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 10 }}
