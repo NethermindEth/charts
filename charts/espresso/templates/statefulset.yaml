@@ -102,10 +102,12 @@ spec:
           ports:
             - name: api
               containerPort: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
-          {{- if $specs.volumeMount }}
+          {{- if or $specs.volumeMount $.Values.externalSecrets.enabled }}
           volumeMounts:
+            {{- if $specs.volumeMount }}
             - name: consensus-data
               mountPath: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_STORAGE_PATH }}
+            {{- end }}
             {{- if $.Values.externalSecrets.enabled }}
             - name: init-env
               mountPath: /etc/espresso
@@ -115,6 +117,12 @@ spec:
           resources:
             {{ toYaml . | nindent 12 | trim }}
           {{- end }}
+        - name: diagnostic-container
+          image: busybox
+          command: ["sleep", "infinity"]
+          volumeMounts:
+            - name: init-env
+              mountPath: /etc/espresso
       volumes:
         - name: keys
           emptyDir: {}
