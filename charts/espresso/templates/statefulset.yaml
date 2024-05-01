@@ -52,11 +52,39 @@ spec:
             - |
               index=$(hostname | grep -o -E "[0-9]+$")
               echo "Detected Pod Index: $index"
-              key_state="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
-              key_staking="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
-              # Ensure environment variables are fetched and then exported with index suffix
-              env | grep $key_state >> /etc/espresso/.env
-              env | grep $key_staking >> /etc/espresso/.env
+
+              # Construct the variable names
+              state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
+              staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
+
+              # Extract the values for the specific indexed keys from the environment
+              state_key_full=$(env | grep $state_key_var)
+              staking_key_full=$(env | grep $staking_key_var)
+
+              # There is a weird secret key in the env we need to remove
+              prefix="espresso-sequencer-private-keys-{{ $type }}="
+
+              # Check if the string starts with the prefix and remove it
+              if [[ $state_key_full == $prefix* ]]; then
+                  state_key="${state_key_full#$prefix}"
+              else
+                  state_key="$state_key_full"
+              fi
+
+              if [[ $staking_key_full == $prefix* ]]; then
+                  staking_key="${staking_key_full#$prefix}"
+              else
+                  staking_key="$staking_key_full"
+              fi
+
+              # Construct the final key names
+              final_state_key="${state_key//$state_key_var/ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY}"
+              final_staking_key="${staking_key//$staking_key_var/ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY}"
+
+              # Write the key values into the .env file
+              echo $final_state_key > /etc/espresso/.env
+              echo $final_staking_key >> /etc/espresso/.env
+
               echo "Dot env file content:"
               cat /etc/espresso/.env
           envFrom:
