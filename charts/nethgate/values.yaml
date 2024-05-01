@@ -19,15 +19,13 @@ deployment:
     # Setting this to false with ingressController.enabled=true will create a
     # controller-only release.
     enabled: true
-  
   nethgate:
     enabled: false
     port: "8080"
     svc:
       # annotations: {}
       type: ClusterIP
-      # loadBalancerIP: "10.139.0.4"
-      
+      # loadBalancerIP: "10.139.0.4"   
   voyager_migrator:
     enabled: false
     image:
@@ -140,7 +138,6 @@ env:
 
 # This section can be used to configure some extra labels that will be added to each Kubernetes object generated.
 extraLabels: {}
-    
 # Specify Kong's Docker image and repository details here
 image:
   repository: kong
@@ -822,7 +819,6 @@ certificates:
 # -----------------------------------------------------------------------------
 # Miscellaneous parameters
 # -----------------------------------------------------------------------------
-     
 waitImage:
   # Wait for the database to come online before starting Kong or running migrations
   # If Kong is to access the database through a service mesh that injects a sidecar to
