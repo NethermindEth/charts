@@ -33,7 +33,6 @@ deployment:
       tag: 0.0.1-dev102
       pullSecrets:
       - "regcred"
-    CMD: voyager_migrator
 
   ## Minimum number of seconds for which a newly created pod should be ready without any of its container crashing,
   ## for it to be considered available.
