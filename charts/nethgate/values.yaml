@@ -373,7 +373,7 @@ proxy:
     #       checkIntervalSec: 15
     #       timeoutSec: 15
     #       healthyThreshold: 1
-    #       unhealthyThreshold: 2 
+    #       unhealthyThreshold: 2
     #       port: 6060
     #       type: HTTP
     #       requestPath: /
