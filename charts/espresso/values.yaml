@@ -33,7 +33,7 @@ nodes:
     volumeMount: true
     resources:
       requests:
-        memory: "14Gi"
+        memory: "12000Mi"
     externalSecrets:
       data: []
   da:
@@ -54,7 +54,7 @@ nodes:
     volumeMount: false
     resources:
       requests:
-        memory: "14Gi"
+        memory: "12000Mi"
     externalSecrets:
       data: []
 
