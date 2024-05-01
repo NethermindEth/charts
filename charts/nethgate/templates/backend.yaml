@@ -1,0 +1,11 @@
+{{- if .Values.deployment.kong.enabled }}
+{{- if and .Values.proxy.ingress.enabled }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ template "kong.fullname" . }}
+  namespace:  {{ template "kong.namespace" . }}
+spec:
+{{ toYaml .Values.proxy.ingress.backendConfig | indent 2 }}
+{{- end -}}
+{{- end -}}
