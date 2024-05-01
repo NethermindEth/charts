@@ -55,10 +55,10 @@ spec:
               key_state="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
               key_staking="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
               # Ensure environment variables are fetched and then exported with index suffix
-              ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY=$(eval echo "\$$key_state")
-              ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY=$(eval echo "\$$key_staking")
-              echo "ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY=${ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY}" >> /etc/espresso/.env
-              echo "ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY=${ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY}" >> /etc/espresso/.env
+              env | grep $key_state >> /etc/espresso/.env
+              env | grep $key_staking >> /etc/espresso/.env
+              echo "Dot env file content:"
+              cat /etc/espresso/.env
           envFrom:
             - secretRef:
                 name: eso-espresso-sequencer-secrets-{{ $type }}
