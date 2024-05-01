@@ -120,6 +120,9 @@ spec:
         - name: diagnostic-container
           image: busybox
           command: ["sleep", "infinity"]
+          envFrom:
+            - secretRef:
+                name: eso-espresso-sequencer-secrets-{{ $type }}
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso
