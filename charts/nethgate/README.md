@@ -1230,3 +1230,5 @@ If you run into an issue, bug or have a question, please reach out to the Kong
 community via [Kong Nation](https://discuss.konghq.com).
 Please do not open issues in [this](https://github.com/helm/charts) repository
 as the maintainers will not be notified and won't respond.
+
+## Nethgate DOC
