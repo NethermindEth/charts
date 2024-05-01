@@ -68,14 +68,7 @@ spec:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }} 
         env:
         {{- include "kong.no_daemon_env" . | nindent 8 }}
-        command:
-        - bash
-        - "-c"
-        - |
-           set -ex
-           kong migrations finish
-           /run-nethgate-migrate.sh
-            
+        args: [ "kong", "migrations", "finish" ]          
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 8 }}
         {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 8 }}
