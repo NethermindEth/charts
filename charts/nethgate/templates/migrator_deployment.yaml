@@ -70,4 +70,3 @@ spec:
       {{- include "kong.volumes" . | nindent 8 -}}
       {{- include "kong.userDefinedVolumes" . | nindent 8 -}}
 {{- end }}
-

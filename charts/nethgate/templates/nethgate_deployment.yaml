@@ -50,7 +50,7 @@ spec:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
         {{- include "kong.no_daemon_env" . | nindent 8 }}
-        command: ["/bin/bash", "/usr/local/bin/nethgateAPI.sh"]
+        command: ["nethgate", "server"]
         ports:
         - name: nethgate
           containerPort: {{ .Values.deployment.nethgate.port }}
@@ -74,4 +74,3 @@ spec:
       {{- include "kong.volumes" . | nindent 8 -}}
       {{- include "kong.userDefinedVolumes" . | nindent 8 -}}
 {{- end }}
-
