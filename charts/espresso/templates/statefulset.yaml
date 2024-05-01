@@ -106,6 +106,10 @@ spec:
           volumeMounts:
             - name: consensus-data
               mountPath: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_STORAGE_PATH }}
+            {{- if $.Values.externalSecrets.enabled }}
+            - name: init-env
+              mountPath: /etc/espresso
+            {{- end }}
           {{- end }}
           {{- with $specs.resources }}
           resources:
