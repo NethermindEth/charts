@@ -33,11 +33,7 @@ nodes:
     volumeMount: true
     resources:
       requests:
-        cpu: "200m"
-        memory: "16Gi"
-      limits:
-        cpu: "400m"
-        memory: "32Gi"
+        memory: "14Gi"
     externalSecrets:
       data: []
   da:
@@ -58,11 +54,7 @@ nodes:
     volumeMount: false
     resources:
       requests:
-        cpu: "200m"
-        memory: "16Gi"
-      limits:
-        cpu: "400m"
-        memory: "32Gi"
+        memory: "14Gi"
     externalSecrets:
       data: []
 
