@@ -8,8 +8,7 @@ metadata:
     {{- include "common.labels.standard" $ | nindent 4 }}
 data:
   init.sh: |
-    #!/bin/sh
-    process_key() {
+    function process_key() {
         local key_var=$1
         local prefix=$2
         local final_var=$3
@@ -20,14 +19,14 @@ data:
 
         # Check if the string starts with the prefix and remove it
         local key_value
-        if [ "$(echo "$key_full" | grep "^$prefix")" ]; then
+        if [[ $key_full == $prefix* ]]; then
             key_value="${key_full#$prefix}"
         else
             key_value="$key_full"
         fi
 
         # Construct the final key name
-        local final_key="$(echo "$key_value" | sed "s/$key_var/$final_var/")"
+        local final_key="${key_value//$key_var/${final_var}}"
 
         echo "$final_key"
     }

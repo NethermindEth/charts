@@ -65,7 +65,7 @@ spec:
         - name: init-setenv   # Sets keys environment variables for the sequencer
           image: {{ include "espresso.build_image_name" (list $.Values.initImage.repository $.Values.initImage.tag) }}
           imagePullPolicy: {{ $.Values.initImage.pullPolicy }}
-          command: ['/bin/sh', '/scripts/init.sh'] 
+          command: ['/bin/bash', '/scripts/init.sh'] 
           envFrom:
             - secretRef:
                 name: eso-espresso-sequencer-secrets-{{ $type }}
@@ -103,11 +103,11 @@ spec:
             {{ toYaml . | nindent 12 | trim }}
           {{- end }}
         - name: diagnostic-container
-          image: ubuntu:20.04
+          image: bitnami/kubectl:latest
           command: ["sleep", "infinity"]
           envFrom:
             - secretRef:
-                name: sequencer-env-secrets-{{ $type }}
+                name: eso-espresso-sequencer-secrets-{{ $type }} 
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso
