@@ -1,0 +1,63 @@
+{{- range $type, $specs := .Values.nodes }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.names.fullname" $ }}-init-{{ $type }}
+  labels:
+    {{- include "common.labels.standard" $ | nindent 4 }}
+data:
+  init.sh: |
+    #!/bin/sh
+    function process_key() {
+        local key_var=$1
+        local prefix=$2
+        local final_var=$3
+
+        # Extract the value for the specified indexed key from the environment
+        # Using quotes to ensure complete variable names are matched properly
+        local key_full=$(env | grep -e $key_var)
+
+        # Check if the string starts with the prefix and remove it
+        local key_value
+        if [[ $key_full == $prefix* ]]; then
+            key_value="${key_full#$prefix}"
+        else
+            key_value="$key_full"
+        fi
+
+        # Construct the final key name
+        #local final_key="${key_value//${key_var}=${final_var}="}
+        local final_key="${key_value//$key_var/${final_var}}"
+
+        echo "$final_key"
+    }
+    # Get the index from the hostname
+    index=$(hostname | grep -o -E "[0-9]+$")
+    echo "Detected Pod Index: $index"
+
+    # Construct the variable names
+    state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
+    staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
+    key_prefix="espresso-sequencer-private-keys-{{ $type }}="
+{{- if $specs.sqlStorage }}
+    postgres_host_var="ESPRESSO_SEQUENCER_POSTGRES_HOST"
+    postgres_user_var="ESPRESSO_SEQUENCER_POSTGRES_USER"
+    postgres_pass_var="ESPRESSO_SEQUENCER_POSTGRES_PASSWORD"
+    postgres_prefix="espresso-sequencer-postgres-{{ $type }}="
+{{- end }}
+
+    # Process each key and write to the .env file
+    echo "$(process_key $state_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY")" > /etc/espresso/.env
+    echo "$(process_key $staking_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY")" >> /etc/espresso/.env
+{{- if $specs.sqlStorage }}
+    echo "$(process_key $postgres_host_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_HOST")" >> /etc/espresso/.env
+    echo "$(process_key $postgres_user_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_USER")" >> /etc/espresso/.env
+    echo "$(process_key $postgres_pass_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_PASSWORD")" >> /etc/espresso/.env
+{{- end }}
+    echo "Dot env file content:"
+    cat /etc/espresso/.env 
+
+    # Create Secret with .env file
+    kubectl create secret generic sequencer-env-secrets-{{ $type }} --from-env-file=/etc/espresso/.env
+{{- end }}

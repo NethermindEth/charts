@@ -65,63 +65,15 @@ spec:
         - name: init-setenv   # Sets keys environment variables for the sequencer
           image: {{ include "espresso.build_image_name" (list $.Values.initImage.repository $.Values.initImage.tag) }}
           imagePullPolicy: {{ $.Values.initImage.pullPolicy }}
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              function process_key() {
-                local key_var=$1
-                local prefix=$2
-                local final_var=$3
-
-                # Extract the value for the specified indexed key from the environment
-                # Using quotes to ensure complete variable names are matched properly
-                local key_full=$(env | grep -e $key_var)
-
-                # Check if the string starts with the prefix and remove it
-                local key_value
-                if [[ $key_full == $prefix* ]]; then
-                    key_value="${key_full#$prefix}"
-                else
-                    key_value="$key_full"
-                fi
-
-                # Construct the final key name
-                #local final_key="${key_value//${key_var}=${final_var}="}
-                local final_key="${key_value//$key_var/${final_var}}"
-
-                echo "$final_key"
-              }
-              # Get the index from the hostname
-              index=$(hostname | grep -o -E "[0-9]+$")
-              echo "Detected Pod Index: $index"
-
-              # Construct the variable names
-              state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
-              staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
-              key_prefix="espresso-sequencer-private-keys-{{ $type }}="
-              {{- if $specs.sqlStorage }}
-              postgres_host_var="ESPRESSO_SEQUENCER_POSTGRES_HOST"
-              postgres_user_var="ESPRESSO_SEQUENCER_POSTGRES_USER"
-              postgres_pass_var="ESPRESSO_SEQUENCER_POSTGRES_PASSWORD"
-              postgres_prefix="espresso-sequencer-postgres-{{ $type }}="
-              {{- end }}
-
-              # Process each key and write to the .env file
-              echo "$(process_key $state_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY")" > /etc/espresso/.env
-              echo "$(process_key $staking_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY")" >> /etc/espresso/.env
-              {{- if $specs.sqlStorage }}
-              echo "$(process_key $postgres_host_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_HOST")" >> /etc/espresso/.env
-              echo "$(process_key $postgres_user_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_USER")" >> /etc/espresso/.env
-              echo "$(process_key $postgres_pass_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_PASSWORD")" >> /etc/espresso/.env
-              {{- end }}
-              echo "Dot env file content:"
-              cat /etc/espresso/.env 
+          command: ['/bin/sh', '/scripts/init.sh'] 
           envFrom:
             - secretRef:
                 name: eso-espresso-sequencer-secrets-{{ $type }}
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso
+            - name: scripts-init
+              mountPath: /scripts
       {{- end }}
       containers:
         - name: "sequencer-{{ $type }}"
@@ -134,36 +86,28 @@ spec:
               value: {{ required (printf "%s is required" $key) $value | quote }}
             {{- end }}
           {{- if $.Values.externalSecrets.enabled }}
-            - name: ESPRESSO_SEQUENCER_KEY_FILE
-              value: /etc/espresso/.env
           envFrom:
             - secretRef:
-                name: eso-espresso-sequencer-secrets-{{ $type }}
+                name: sequencer-env-secrets-{{ $type }} 
           {{- end }}
           ports:
             - name: api
               containerPort: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
-          {{- if or $specs.volumeMount $.Values.externalSecrets.enabled }}
+          {{- if or $specs.volumeMount }}
           volumeMounts:
-            {{- if $specs.volumeMount }}
             - name: consensus-data
               mountPath: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_STORAGE_PATH }}
-            {{- end }}
-            {{- if $.Values.externalSecrets.enabled }}
-            - name: init-env
-              mountPath: /etc/espresso
-            {{- end }}
           {{- end }}
           {{- with $specs.resources }}
           resources:
             {{ toYaml . | nindent 12 | trim }}
           {{- end }}
         - name: diagnostic-container
-          image: busybox
+          image: ubuntu:20.04
           command: ["sleep", "infinity"]
           envFrom:
             - secretRef:
-                name: eso-espresso-sequencer-secrets-{{ $type }}
+                name: sequencer-env-secrets-{{ $type }}
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso
@@ -172,6 +116,9 @@ spec:
           emptyDir: {}
         - name: init-env
           emptyDir: {}
+        - name: scripts-init
+          configMap:
+            name: {{ include "common.names.fullname" $ }}-init-{{ $type }}
   volumeClaimTemplates:
     {{- if $specs.volumeMount }}
     - metadata:

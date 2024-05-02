@@ -79,8 +79,8 @@ image:
 
 # -- Init image is used to manage which secrets the pod should use.
 initImage:
-  repository: "busybox"
-  tag: "1.36.1"
+  repository: "bitnami/kubectl"
+  tag: "1.28"
   pullPolicy: IfNotPresent
 
 # -- Keystore-CLI settings. Used to manage keys on Secret Store.
