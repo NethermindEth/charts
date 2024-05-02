@@ -5,7 +5,7 @@ global:
   serviceAccount:
     create: false
     annotations: {}
-  
+
   namespaceOverride: ""
 
   # -- Whether or not to allocate persistent volume disk for the data directory.
@@ -21,7 +21,7 @@ global:
 nodes:
   normal:
     replicaCount: 1
-    command: 
+    command:
       - "sequencer"
       - "--"
       - "http"
@@ -38,7 +38,7 @@ nodes:
       data: []
   da:
     replicaCount: 0
-    command: 
+    command:
       - "sequencer"
       - "--"
       - "storage-sql"
