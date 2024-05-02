@@ -53,8 +53,8 @@ data:
     echo "$(process_key $postgres_user_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_USER")" >> /etc/espresso/.env
     echo "$(process_key $postgres_pass_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_PASSWORD")" >> /etc/espresso/.env
 {{- end }}
-    echo "Dot env file content:"
-    cat /etc/espresso/.env 
+    # echo "Dot env file content:"
+    # cat /etc/espresso/.env 
 
     # Create Secret with .env file
     kubectl delete secret sequencer-env-secrets-{{ $type }} --ignore-not-found

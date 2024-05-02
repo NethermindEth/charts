@@ -102,15 +102,6 @@ spec:
           resources:
             {{ toYaml . | nindent 12 | trim }}
           {{- end }}
-        - name: diagnostic-container
-          image: bitnami/kubectl:latest
-          command: ["sleep", "infinity"]
-          envFrom:
-            - secretRef:
-                name: eso-espresso-sequencer-secrets-{{ $type }} 
-          volumeMounts:
-            - name: init-env
-              mountPath: /etc/espresso
       volumes:
         - name: keys
           emptyDir: {}
