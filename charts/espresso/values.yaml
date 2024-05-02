@@ -169,3 +169,22 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   #
   name: ""
+
+rbac:
+  # -- The name of the role to use.
+  # If not set and create is true, a name is generated using the fullname template
+  #
+  name: ""
+  create: true
+  # -- Required Role rules
+  rules:
+    # -- Required to create Sequencer env Secret.
+    #
+    - apiGroups: [""]
+      resources:
+      - "secrets"
+      verbs:
+      - "create"
+      - "get"
+      - "list"
+      - "watch"
