@@ -44,6 +44,24 @@ spec:
           volumeMounts:
           - name: keys
             mountPath: /keys
+        {{- if $specs.sqlStorage }}
+        - name: keystore-cli-db-keys  # Updates Secret Manager with DB credentials in the proper format
+          image:  {{ include "espresso.build_image_name" (list $.Values.keystoreCLI.image.repository $.Values.keystoreCLI.image.tag) }}
+          imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
+          args: ["db-keys"]
+          env:
+          - name: PROJECT_ID
+            value: {{ (required "Project ID is required" $.Values.keystoreCLI.projectId) | quote }}
+          - name: SECRET_ID
+            value: {{ required "Secret ID is required" $.Values.keystoreCLI.db.secretId }}
+          - name: SEQUENCER_POSTGRES_HOST
+            value: {{ (required "DB host is required" $.Values.keystoreCLI.db.host) | quote }}
+          - name: SEQUENCER_POSTGRES_USER
+            value: {{ (required "DB user is required" $.Values.keystoreCLI.db.user) | quote }}
+          volumeMounts:
+          - name: keys
+            mountPath: /keys
+        {{- end }}
         - name: init-setenv   # Sets keys environment variables for the sequencer
           image: {{ include "espresso.build_image_name" (list $.Values.initImage.repository $.Values.initImage.tag) }}
           imagePullPolicy: {{ $.Values.initImage.pullPolicy }}
@@ -104,24 +122,6 @@ spec:
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso
-        {{- if $specs.sqlStorage }}
-        - name: keystore-cli-db-keys  # Updates Secret Manager with DB credentials in the proper format
-          image:  {{ include "espresso.build_image_name" (list $.Values.keystoreCLI.image.repository $.Values.keystoreCLI.image.tag) }}
-          imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
-          args: ["db-keys"]
-          env:
-          - name: PROJECT_ID
-            value: {{ (required "Project ID is required" $.Values.keystoreCLI.projectId) | quote }}
-          - name: SECRET_ID
-            value: {{ required "Secret ID is required" $.Values.keystoreCLI.db.secretId }}
-          - name: SEQUENCER_POSTGRES_HOST
-            value: {{ (required "DB host is required" $.Values.keystoreCLI.db.host) | quote }}
-          - name: SEQUENCER_POSTGRES_USER
-            value: {{ (required "DB user is required" $.Values.keystoreCLI.db.user) | quote }}
-          volumeMounts:
-          - name: keys
-            mountPath: /keys
-        {{- end }}
       {{- end }}
       containers:
         - name: "sequencer-{{ $type }}"
