@@ -8,12 +8,12 @@ metadata:
     {{- include "common.labels.standard" $ | nindent 4 }}
     pod: "{{ include "common.names.fullname" $ }}"
     type: api
-{{- if $.Values.service.svcAnnotations }}
+  {{- with $.Values.service.annotations }}
   annotations:
-    {{ toYaml $.Values.service.svcAnnotations | nindent 4 | trim }}
-{{- end }}
-  {{- if $.Values.global.namespaceOverride }}
-  namespace: {{ $.Values.global.namespaceOverride }}
+    {{ toYaml . | nindent 4 | trim }}
+  {{- end }}
+  {{- with $.Values.global.namespaceOverride }}
+  namespace: {{ . }}
   {{- end }}
 spec:
   type: {{ $.Values.service.type }} # ClusterIP, NodePort, LoadBalancer, or ExternalName

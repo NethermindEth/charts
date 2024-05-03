@@ -36,9 +36,9 @@ Kubernetes: `^1.23.0-0`
 | image.repository | string | `"ghcr.io/espressosystems/espresso-sequencer/sequencer"` |  |
 | image.tag | string | `"main"` |  |
 | ingress.annotations | object | `{}` |  |
+| ingress.className | string | `""` |  |
 | ingress.enabled | bool | `false` |  |
 | ingress.hosts | list | `[]` | Hostnames. Can be provided if Ingress is enabled.  |
-| ingress.ingressClassName | string | `""` |  |
 | ingress.labels | object | `{}` |  |
 | ingress.paths | list | `[]` | Paths to use for ingress rules By default, the Service created by this chart is used as the target Service for the Ingress. If not defined the following default object will be used: - path: "/"   port: 8000   pathType: "ImplementationSpecific"   serviceName: "<common.names.fullname>"  |
 | ingress.routePrefix | string | `"/"` | Route Prefix. Can skip it if any item of path has the path defined. |
@@ -89,7 +89,7 @@ Kubernetes: `^1.23.0-0`
 | rbac.name | string | `""` | The name of the role to use. If not set and create is true, a name is generated using the fullname template  |
 | rbac.rules | list | `[{"apiGroups":[""],"resources":["secrets"],"verbs":["create","get","list","watch","delete"]}]` | Required Role rules |
 | rbac.rules[0] | object | `{"apiGroups":[""],"resources":["secrets"],"verbs":["create","get","list","watch","delete"]}` | Required to create Sequencer env Secret.  |
-| service.svcAnnotations | object | `{}` |  |
+| service.annotations | object | `{}` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount | object | `{"annotations":{},"name":""}` | Service account ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/  |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |

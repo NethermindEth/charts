@@ -14,7 +14,6 @@ data:
         local final_var=$3
 
         # Extract the value for the specified indexed key from the environment
-        # Using quotes to ensure complete variable names are matched properly
         local key_full=$(env | grep -e $key_var)
 
         # Check if the string starts with the prefix and remove it
@@ -38,21 +37,21 @@ data:
     state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
     staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
     key_prefix="espresso-sequencer-private-keys-{{ $type }}="
-{{- if $specs.sqlStorage }}
+    {{- if $specs.sqlStorage }}
     postgres_host_var="ESPRESSO_SEQUENCER_POSTGRES_HOST"
     postgres_user_var="ESPRESSO_SEQUENCER_POSTGRES_USER"
     postgres_pass_var="ESPRESSO_SEQUENCER_POSTGRES_PASSWORD"
     postgres_prefix="espresso-sequencer-postgres-{{ $type }}="
-{{- end }}
+    {{- end }}
 
     # Process each key and write to the .env file
     echo "$(process_key $state_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY")" > /etc/espresso/.env
     echo "$(process_key $staking_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY")" >> /etc/espresso/.env
-{{- if $specs.sqlStorage }}
+    {{- if $specs.sqlStorage }}
     echo "$(process_key $postgres_host_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_HOST")" >> /etc/espresso/.env
     echo "$(process_key $postgres_user_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_USER")" >> /etc/espresso/.env
     echo "$(process_key $postgres_pass_var $postgres_prefix "ESPRESSO_SEQUENCER_POSTGRES_PASSWORD")" >> /etc/espresso/.env
-{{- end }}
+    {{- end }}
     # echo "Dot env file content:"
     # cat /etc/espresso/.env 
 

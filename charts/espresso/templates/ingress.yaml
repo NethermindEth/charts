@@ -1,36 +1,40 @@
----
 {{- if .Values.ingress.enabled -}}
+---
   {{- $baseServiceName := include "common.names.fullname" . -}}
   {{- $routePrefix := .Values.ingress.routePrefix | default "/" -}}
   {{- $defaultPath := list (dict "path" $routePrefix "port" 8000 "pathType" "ImplementationSpecific") -}}
   {{- $paths := .Values.ingress.paths | default $defaultPath -}} 
-apiVersion: networking.k8s.io/v1 
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- end }}
 kind: Ingress
 metadata:
-{{- if .Values.ingress.annotations }}
+  {{- with .Values.ingress.annotations }}
   annotations:
-{{ toYaml .Values.ingress.annotations | indent 4 }}
-{{- end }}
+    {{ toYaml . }}
+  {{- end }}
   name: {{ include "common.names.fullname" . }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.ingress.labels }}
-    {{ toYaml .Values.ingress.labels | indent 4 }}
+    {{- with .Values.ingress.labels }}
+    {{ toYaml . | indent 4 }}
     {{- end }}
-  {{- if $.Values.global.namespaceOverride }}
-  namespace: {{ $.Values.global.namespaceOverride }}
+  {{- with $.Values.global.namespaceOverride }}
+  namespace: {{ . }}
   {{- end }}
 spec:
-  {{- if .Values.ingress.ingressClassName }}
-  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . }}
   {{- end }}
   rules:
   {{- if .Values.ingress.hosts }}
-  {{- range $host := .Values.ingress.hosts }}
+    {{- range $host := .Values.ingress.hosts }}
     - host: {{ tpl $host $ }}
       http:
         paths:
-  {{- range $p := $paths }}
+          {{- range $p := $paths }}
           - path: {{ $p.path }}
             pathType: {{ $p.pathType }}
             backend:
@@ -38,12 +42,12 @@ spec:
                 name: {{ $p.serviceName | default $baseServiceName }}
                 port:
                   number: {{ $p.port }}
-  {{- end }}
-  {{- end }}
+          {{- end }}
+    {{- end }}
   {{- else }}
     - http:
         paths:
-  {{- range $p := $paths }}
+          {{- range $p := $paths }}
           - path: {{ $p.path }}
             pathType: {{ $p.pathType }}
             backend:
@@ -51,10 +55,10 @@ spec:
                 name: {{ $p.serviceName | default $baseServiceName }}
                 port:
                   number: {{ $p.port }}
+          {{- end }}
   {{- end }}
-  {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- with .Values.ingress.tls }}
   tls:
-{{ tpl (toYaml .Values.ingress.tls | indent 4) . }}
+    {{ tpl (toYaml . | indent 4) . }}
   {{- end }}
 {{- end }}

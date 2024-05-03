@@ -100,17 +100,18 @@ keystoreCLI:
 service:
   type: ClusterIP
   # Port will target ESPRESSO_SEQUENCER_API_PORT
-  svcAnnotations: {}
+  annotations: {}
 
 ingress:
   enabled: false
-  ingressClassName: ""
+  className: ""
 
   # -- Route Prefix. Can skip it if any item of path has the path defined.
   routePrefix: /
 
   annotations: {}
-
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
   labels: {}
 
   # -- Hostnames.
@@ -118,7 +119,7 @@ ingress:
   #
   hosts: []
   # hosts:
-  #   - prometheus.domain.com
+  #   - espresso.example.com
 
   # -- Paths to use for ingress rules
   # By default, the Service created by this chart is used as the target
@@ -146,9 +147,9 @@ ingress:
   # Secret must be manually created in the namespace
   #
   tls: []
-    # - secretName: execution-beacon-general-tls
-    #   hosts:
-    #     - nethermind.example.com
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
 externalSecrets:
   enabled: false
