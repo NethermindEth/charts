@@ -11,7 +11,7 @@ metadata:
   {{- end }}
   {{- end }}
   labels:
-    {{- include "kong.metaLabels" . | nindent 4 }}
+    {{- include "kong.nethagateMetaLabels" . | nindent 4 }}
     app.kubernetes.io/component: app
 spec:
   {{- if .Values.deployment.nethgate.svc.loadBalancerIP }}

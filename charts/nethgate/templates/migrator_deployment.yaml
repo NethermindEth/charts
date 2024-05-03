@@ -5,7 +5,7 @@ metadata:
   name: {{ template "kong.fullname" . }}-migrator
   namespace:  {{ template "kong.namespace" . }}
   labels:
-    {{- include "kong.metaLabels" . | nindent 4 }}
+    {{- include "kong.migratorMetaLabels" . | nindent 4 }}
     app.kubernetes.io/component: app
   {{- if .Values.deploymentAnnotations }}
   annotations:
@@ -27,7 +27,7 @@ spec:
         {{- end }}
         {{- end }}
       labels:
-        {{- include "kong.metaLabels" . | nindent 8 }}
+        {{- include "kong.migratorMetaLabels" . | nindent 8 }}
         app.kubernetes.io/component: app
         app: {{ template "kong.fullname" . }}
         version: {{ .Chart.AppVersion | quote }}
