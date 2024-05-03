@@ -42,6 +42,18 @@ app.kubernetes.io/component: app
 app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 
+{{- define "kong.nethagateSelectorLabels" -}}
+app.kubernetes.io/name: {{ template "kong.name" . }}
+app.kubernetes.io/component: nethgate
+app.kubernetes.io/instance: "{{ .Release.Name }}"
+{{- end -}}
+
+{{- define "kong.migratorSelectorLabels" -}}
+app.kubernetes.io/name: {{ template "kong.name" . }}
+app.kubernetes.io/component: migrator
+app.kubernetes.io/instance: "{{ .Release.Name }}"
+{{- end -}}
+
 {{- define "kong.postgresql.fullname" -}}
 {{- $name := default "postgresql" .Values.postgresql.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}

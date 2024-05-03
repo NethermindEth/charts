@@ -23,8 +23,6 @@ spec:
       port:  {{ .Values.deployment.nethgate.port }}
       targetPort:  {{ .Values.deployment.nethgate.port }}
   selector:
-    app.kubernetes.io/name: {{ template "kong.name" . }}
-    app.kubernetes.io/component: app
-    app.kubernetes.io/instance: "{{ .Release.Name }}"
+      {{- include "kong.nethagateSelectorLabels" . | nindent 6 }}
   type: {{ .Values.deployment.nethgate.svc.type }}
 {{- end -}}
