@@ -43,41 +43,19 @@ app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 
 {{- define "kong.nethagateMetaLabels" -}}
-app.kubernetes.io/name: {{ template "kong.name" . }}
-helm.sh/chart: {{ template "kong.chart" . }}
-app.kubernetes.io/instance: "{{ .Release.Name }}"
 app.kubernetes.io/app: nethgate
-app.kubernetes.io/managed-by: "{{ .Release.Service }}"
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- range $key, $value := .Values.extraLabels }}
-{{ $key }}: {{ include "kong.renderTpl" (dict "value" $value "context" $) | quote }}
-{{- end }}
 {{- end -}}
 
 {{- define "kong.nethagateSelectorLabels" -}}
 app.kubernetes.io/app: nethgate
-app.kubernetes.io/name: {{ template "kong.name" . }}
-app.kubernetes.io/component: app
-app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 
 {{- define "kong.migratorMetaLabels" -}}
-app.kubernetes.io/name: {{ template "kong.name" . }}
-helm.sh/chart: {{ template "kong.chart" . }}
-app.kubernetes.io/instance: "{{ .Release.Name }}"
 app.kubernetes.io/app: migrator
-app.kubernetes.io/managed-by: "{{ .Release.Service }}"
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- range $key, $value := .Values.extraLabels }}
-{{ $key }}: {{ include "kong.renderTpl" (dict "value" $value "context" $) | quote }}
-{{- end }}
 {{- end -}}
 
 {{- define "kong.migratorSelectorLabels" -}}
 app.kubernetes.io/app: migrator
-app.kubernetes.io/name: {{ template "kong.name" . }}
-app.kubernetes.io/component: app
-app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 
 {{- define "kong.postgresql.fullname" -}}

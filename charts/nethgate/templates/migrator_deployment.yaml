@@ -6,7 +6,6 @@ metadata:
   namespace:  {{ template "kong.namespace" . }}
   labels:
     {{- include "kong.migratorMetaLabels" . | nindent 4 }}
-    app.kubernetes.io/component: app
   {{- if .Values.deploymentAnnotations }}
   annotations:
   {{- range $key, $value := .Values.deploymentAnnotations }}
@@ -28,12 +27,6 @@ spec:
         {{- end }}
       labels:
         {{- include "kong.migratorMetaLabels" . | nindent 8 }}
-        app.kubernetes.io/component: app
-        app: {{ template "kong.fullname" . }}
-        version: {{ .Chart.AppVersion | quote }}
-        {{- if .Values.podLabels }}
-        {{ include "kong.renderTpl" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
-        {{- end }}
     spec:
       {{- if .Values.deployment.voyager_migrator.image.pullSecrets }}
       imagePullSecrets:
