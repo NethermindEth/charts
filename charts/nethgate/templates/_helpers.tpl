@@ -43,15 +43,11 @@ app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 
 {{- define "kong.nethagateSelectorLabels" -}}
-app.kubernetes.io/name: {{ template "kong.name" . }}
-app.kubernetes.io/component: nethgate
-app.kubernetes.io/instance: "{{ .Release.Name }}"
+app.kubernetes.io/name: nethgate
 {{- end -}}
 
 {{- define "kong.migratorSelectorLabels" -}}
-app.kubernetes.io/name: {{ template "kong.name" . }}
-app.kubernetes.io/component: migrator
-app.kubernetes.io/instance: "{{ .Release.Name }}"
+app.kubernetes.io/name: migrator
 {{- end -}}
 
 {{- define "kong.postgresql.fullname" -}}
