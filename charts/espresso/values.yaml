@@ -116,32 +116,35 @@ ingress:
 
   # -- Hostnames.
   # Can be provided if Ingress is enabled.
-  #
   hosts: []
   # hosts:
-  #   - espresso.example.com
+  #   - host: espresso.example.com
+  #     -- Paths to use for ingress rules
+  #     paths:
+  #       - path: "/metrics"
+  #         port: 9000
+  #         pathType: "Prefix"
+  #       - path: "/api"
+  #         port: 8080
+  #         pathType: "Exact"
+  #       - path: "/health"
+  #         port: 8085
+  #         pathType: "Prefix"
+  #         serviceName: "alternativeServiceName"
+  #   - paths:
+  #       - path: "/metrics"
+  #         port: 9000
+  #         pathType: "Prefix"
+  #     By default, the Service created by this chart is used as the target
+  #     Service for the Ingress.
+  #     If not defined the following default object will be used:
+  #     hosts:
+  #       paths:
+  #       - path: "/"
+  #         port: 8000
+  #         pathType: "ImplementationSpecific"
+  #         serviceName: "<common.names.fullname>"
 
-  # -- Paths to use for ingress rules
-  # By default, the Service created by this chart is used as the target
-  # Service for the Ingress.
-  # If not defined the following default object will be used:
-  # - path: "/"
-  #   port: 8000
-  #   pathType: "ImplementationSpecific"
-  #   serviceName: "<common.names.fullname>"
-  #
-  paths: []
-    # paths:
-    #  - path: "/metrics"
-    #    port: 9000
-    #    pathType: "Prefix"
-    #  - path: "/api"
-    #    port: 8080
-    #    pathType: "Exact"
-    #  - path: "/health"
-    #    port: 8085
-    #    pathType: "Prefix"
-    #    serviceName: "alternativeServiceName"
 
   # -- TLS configuration for Ingress
   # Secret must be manually created in the namespace
