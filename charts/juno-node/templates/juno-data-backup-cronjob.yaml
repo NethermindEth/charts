@@ -79,7 +79,7 @@ data:
       storageClassName: premium-rwo
       resources:
         requests:
-          storage: {{ .Values.backupJunoDataJob.strageSize }}
+          storage: {{ .Values.backupJunoDataJob.storageSize }}
 ---
 apiVersion: v1
 kind: ConfigMap
