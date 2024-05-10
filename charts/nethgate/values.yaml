@@ -21,6 +21,12 @@ deployment:
     enabled: true
   nethgate:
     enabled: false
+    image:
+      repository: nethermindeth/nethgate
+      nethgate_tag: 0.0.1-dev102
+      pullPolicy: "IfNotPresent"
+      pullSecrets:
+      - "regcred"
     port: "8080"
     svc:
       # annotations: {}
@@ -30,7 +36,8 @@ deployment:
     enabled: false
     image:
       repository: nethermindeth/voyager_migrator
-      tag: 0.0.1-dev102
+      migrator_tag: 0.0.1-dev102
+      pullPolicy: "IfNotPresent"
       pullSecrets:
       - "regcred"
 
