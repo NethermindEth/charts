@@ -37,7 +37,7 @@ spec:
       {{- if .Values.deployment.kong.enabled }}
       containers:
       - name: {{ template "kong.fullname" . }}-migrator
-        image: {{ .Values.deployment.voyager_migrator.image.repository }}:{{ .Values.deployment.voyager_migrator.image.tag }}
+        image: {{ .Values.deployment.voyager_migrator.image.repository }}:{{ .Values.deployment.voyager_migrator.image.migrator_tag }}
         imagePullPolicy: {{ .Values.deployment.voyager_migrator.image.pullPolicy }}
         securityContext:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
