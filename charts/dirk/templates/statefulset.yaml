@@ -197,8 +197,8 @@ spec:
         - name: scripts
           configMap:
             name: {{ include "common.names.fullname" . }}-scripts
-      {{- if and .Values.DNSPolicy (eq .Values.DNSPolicy "None") }}
-      dnsPolicy: {{ .Values.DNSPolicy }}
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
       dnsConfig:
         {{- toYaml .Values.dnsConfig | nindent 8 }}
       {{- end }}

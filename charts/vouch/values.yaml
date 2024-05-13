@@ -86,6 +86,7 @@ vouch:
 relays: []
 
 dnsPolicy: null
+dnsConfig: {}
 
 imagePullSecrets: []
 
