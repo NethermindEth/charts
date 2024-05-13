@@ -85,6 +85,8 @@ vouch:
 
 relays: []
 
+dnsPolicy: null
+
 imagePullSecrets: []
 
 ## Provide a name in place of operator for `app:` labels

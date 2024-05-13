@@ -197,6 +197,11 @@ spec:
         - name: scripts
           configMap:
             name: {{ include "common.names.fullname" . }}-scripts
+      {{- if .Values.DNSPolicy }}
+      dnsPolicy: {{ .Values.DNSPolicy }}
+      dnsConfig:
+        {{- toYaml .Values.dnsConfig | nindent 8 }}
+      {{- end }}
   minReadySeconds: {{ .Values.minReadySeconds }}
   volumeClaimTemplates:
     - metadata:
