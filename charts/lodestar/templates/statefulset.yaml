@@ -55,7 +55,7 @@ spec:
           volumeMounts:
             - mountPath: /opt/lodestar
               name: data
-            - mountPath: /home/charon/validator_keys
+            - mountPath: /home/lodestar/validator_keys
               name: validator-keys
           env:
             {{- toYaml .Values.env | nindent 12 }}
