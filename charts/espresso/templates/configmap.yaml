@@ -36,13 +36,13 @@ data:
     # Construct the variable names
     state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
     staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
-    key_prefix="{{ index $specs.externalSecrets.data $index | first | quote }}="
+    key_prefix="espresso-sequencer-private-keys-{{ $type }}{{ if ne $.Values.global.suffix "" }}-{{ $.Values.global.suffix }}{{ end }}="
     {{- if $specs.sqlStorage }}
     postgres_host_var="ESPRESSO_SEQUENCER_POSTGRES_HOST"
     postgres_user_var="ESPRESSO_SEQUENCER_POSTGRES_USER"
     postgres_pass_var="ESPRESSO_SEQUENCER_POSTGRES_PASSWORD"
-    postgres_prefix="espresso-sequencer-postgres-{{ index $specs.externalSecrets.data $index | first | quote }}="
-    {{- end }}
+    postgres_prefix="espresso-sequencer-postgres-{{ $type }}{{ if ne $.Values.global.suffix "" }}-{{ $.Values.global.suffix }}{{ end }}="
+{{- end }}
 
     # Process each key and write to the .env file
     echo "$(process_key $state_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY")" > /etc/espresso/.env

@@ -6,6 +6,8 @@ global:
     create: false
     annotations: {}
 
+  suffix: ""
+
   namespaceOverride: ""
 
   # -- Whether or not to allocate persistent volume disk for the data directory.
