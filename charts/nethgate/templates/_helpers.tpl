@@ -42,6 +42,22 @@ app.kubernetes.io/component: app
 app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 
+{{- define "kong.nethagateMetaLabels" -}}
+app.kubernetes.io/app: nethgate
+{{- end -}}
+
+{{- define "kong.nethagateSelectorLabels" -}}
+app.kubernetes.io/app: nethgate
+{{- end -}}
+
+{{- define "kong.migratorMetaLabels" -}}
+app.kubernetes.io/app: migrator
+{{- end -}}
+
+{{- define "kong.migratorSelectorLabels" -}}
+app.kubernetes.io/app: migrator
+{{- end -}}
+
 {{- define "kong.postgresql.fullname" -}}
 {{- $name := default "postgresql" .Values.postgresql.nameOverride -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
@@ -947,6 +963,46 @@ Use the Pod security context defined in Values or set the UID by default
 {{- define "kong.podsecuritycontext" -}}
 {{ .Values.securityContext | toYaml }}
 {{- end -}}
+
+{{/*
+Custom ENV for Nethgate
+*/}}
+
+{{- define "kong.nethgate" -}}
+- name: KONG_NGINX_DAEMON
+  value: "off"
+{{- $customNethgateEnv := dict -}}
+{{- range $key, $val := .Values.deployment.customNethgateEnv }}
+  {{- $upper := upper $key -}}
+  {{- $_ := set $customNethgateEnv $upper $val -}}
+{{- end -}}
+{{- template "kong.nethgateEnv" $customNethgateEnv -}}
+
+{{- end -}}
+
+{{- define "kong.nethgateEnv" -}}
+{{- $customNethgateEnv := . -}}
+{{- range keys . | sortAlpha }}
+{{- $val := pluck . $customNethgateEnv | first -}}
+{{- $valueType := printf "%T" $val -}}
+{{ if eq $valueType "map[string]interface {}" }}
+- name: {{ . }}
+{{ toYaml $val | indent 2 -}}
+{{- else if eq $valueType "string" }}
+{{- if regexMatch "valueFrom" $val }}
+- name: {{ . }}
+{{ $val | indent 2 }}
+{{- else }}
+- name: {{ . }}
+  value: {{ $val | quote }}
+{{- end }}
+{{- else }}
+- name: {{ . }}
+  value: {{ $val | quote }}
+{{- end }}
+{{- end -}}
+{{- end -}}
+
 
 {{- define "kong.no_daemon_env" -}}
 {{- template "kong.env" . }}

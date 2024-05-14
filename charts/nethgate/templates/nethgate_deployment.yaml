@@ -5,8 +5,7 @@ metadata:
   name: {{ template "kong.fullname" . }}-nethgate
   namespace:  {{ template "kong.namespace" . }}
   labels:
-    {{- include "kong.metaLabels" . | nindent 4 }}
-    app.kubernetes.io/component: app
+    {{- include "kong.nethagateMetaLabels" . | nindent 4 }}
   {{- if .Values.deploymentAnnotations }}
   annotations:
   {{- range $key, $value := .Values.deploymentAnnotations }}
@@ -17,7 +16,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "kong.selectorLabels" . | nindent 6 }}
+      {{- include "kong.nethagateSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -27,29 +26,23 @@ spec:
         {{- end }}
         {{- end }}
       labels:
-        {{- include "kong.metaLabels" . | nindent 8 }}
-        app.kubernetes.io/component: app
-        app: {{ template "kong.fullname" . }}
-        version: {{ .Chart.AppVersion | quote }}
-        {{- if .Values.podLabels }}
-        {{ include "kong.renderTpl" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
-        {{- end }}
+        {{- include "kong.nethagateMetaLabels" . | nindent 8 }}
     spec:
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
-      {{- range .Values.image.pullSecrets }}
+      {{- range .Values.deployment.nethgate.image.pullSecrets }}
         - name: {{ . }}
       {{- end }}
       {{- end }}
       {{- if .Values.deployment.kong.enabled }}
       containers:
       - name: {{ template "kong.fullname" . }}-nethgate
-        image: {{ include "kong.getRepoTag" .Values.image }}
+        image: {{ .Values.deployment.nethgate.image.repository }}:{{ .Values.deployment.nethgate.image.nethgate_tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         securityContext:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
-        {{- include "kong.no_daemon_env" . | nindent 8 }}
+        {{- include "kong.nethgate" . | nindent 8 }}
         command: ["nethgate", "server"]
         ports:
         - name: nethgate

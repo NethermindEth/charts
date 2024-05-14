@@ -1232,3 +1232,4 @@ Please do not open issues in [this](https://github.com/helm/charts) repository
 as the maintainers will not be notified and won't respond.
 
 ## Nethgate DOC
+if you run nethgate enable `deployment.nethgate.enabled=true`

@@ -5,8 +5,7 @@ metadata:
   name: {{ template "kong.fullname" . }}-migrator
   namespace:  {{ template "kong.namespace" . }}
   labels:
-    {{- include "kong.metaLabels" . | nindent 4 }}
-    app.kubernetes.io/component: app
+    {{- include "kong.migratorMetaLabels" . | nindent 4 }}
   {{- if .Values.deploymentAnnotations }}
   annotations:
   {{- range $key, $value := .Values.deploymentAnnotations }}
@@ -17,7 +16,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "kong.selectorLabels" . | nindent 6 }}
+      {{- include "kong.migratorSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -27,13 +26,7 @@ spec:
         {{- end }}
         {{- end }}
       labels:
-        {{- include "kong.metaLabels" . | nindent 8 }}
-        app.kubernetes.io/component: app
-        app: {{ template "kong.fullname" . }}
-        version: {{ .Chart.AppVersion | quote }}
-        {{- if .Values.podLabels }}
-        {{ include "kong.renderTpl" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
-        {{- end }}
+        {{- include "kong.migratorMetaLabels" . | nindent 8 }}
     spec:
       {{- if .Values.deployment.voyager_migrator.image.pullSecrets }}
       imagePullSecrets:
@@ -44,13 +37,13 @@ spec:
       {{- if .Values.deployment.kong.enabled }}
       containers:
       - name: {{ template "kong.fullname" . }}-migrator
-        image: {{ .Values.deployment.voyager_migrator.image.repository }}:{{ .Values.deployment.voyager_migrator.image.tag }}
+        image: {{ .Values.deployment.voyager_migrator.image.repository }}:{{ .Values.deployment.voyager_migrator.image.migrator_tag }}
         imagePullPolicy: {{ .Values.deployment.voyager_migrator.image.pullPolicy }}
         securityContext:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
-        {{- include "kong.no_daemon_env" . | nindent 8 }}
-        command: [{{ .Values.deployment.dvoyager_migrator.CMD  | quote }}]
+        {{- include "kong.nethgate" . | nindent 8 }}
+        command: ["voyager_migrator", "migrate"]
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 10 }}
         {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 10 }}
