@@ -33,15 +33,36 @@ data:
     index=$(hostname | grep -o -E "[0-9]+$")
     echo "Detected Pod Index: $index"
 
+  nodes:
+    normal:
+      replicaCount: 3
+      volumeMount: true
+      externalSecrets:
+        data:
+          - secretKey: espresso-sequencer-private-keys-normal-eu
+            remoteRef:
+              key: "espresso-sequencer-private-keys-normal"
+    da:
+      replicaCount: 0
+      sqlStorage: false
+      externalSecrets:
+        data:
+          - secretKey: espresso-sequencer-private-keys-da-eu
+            remoteRef:
+              key: "espresso-sequencer-private-keys-da"
+          - secretKey: espresso-sequencer-postgres-da-eu
+            remoteRef:
+              key: "espresso-da-db-nethermind-prod-sequencers"
+
     # Construct the variable names
     state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
     staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
-    key_prefix="espresso-sequencer-private-keys-{{ $type }}="
+    key_prefix="{{ index $specs.externalSecrets.data $index | first | quote }}="
     {{- if $specs.sqlStorage }}
     postgres_host_var="ESPRESSO_SEQUENCER_POSTGRES_HOST"
     postgres_user_var="ESPRESSO_SEQUENCER_POSTGRES_USER"
     postgres_pass_var="ESPRESSO_SEQUENCER_POSTGRES_PASSWORD"
-    postgres_prefix="espresso-sequencer-postgres-{{ $type }}="
+    postgres_prefix="espresso-sequencer-postgres-{{ index $specs.externalSecrets.data $index | first | quote }}="
     {{- end }}
 
     # Process each key and write to the .env file
