@@ -19,7 +19,7 @@ deployment:
     # Setting this to false with ingressController.enabled=true will create a
     # controller-only release.
     enabled: true
-  
+
   nethgate:
     enabled: false
     image:
