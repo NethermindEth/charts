@@ -19,6 +19,7 @@ deployment:
     # Setting this to false with ingressController.enabled=true will create a
     # controller-only release.
     enabled: true
+  
   nethgate:
     enabled: false
     image:
@@ -40,6 +41,12 @@ deployment:
       pullPolicy: "IfNotPresent"
       pullSecrets:
       - "regcred"
+  customNethgateEnv:
+    NETHGATE_SECRET:
+      valueFrom:
+        secretKeyRef:
+          key: secret
+          name: nethgate-dev-secret
 
   ## Minimum number of seconds for which a newly created pod should be ready without any of its container crashing,
   ## for it to be considered available.
