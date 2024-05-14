@@ -42,7 +42,7 @@ spec:
         securityContext:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
-        {{- include "kong.no_daemon_env" . | nindent 8 }}
+        {{- include "kong.nethgate" . | nindent 8 }}
         command: ["voyager_migrator", "migrate"]
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 10 }}
