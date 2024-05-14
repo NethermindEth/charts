@@ -32,6 +32,25 @@ entries:
   kong:
   - apiVersion: v2
     appVersion: "3.5"
+    created: "2024-05-14T11:21:48.768784359Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.9.13
+    description: The Cloud-Native Ingress and API-management
+    digest: f5606e84cb9e92775bae0e984f0943b1005da96f06a4f9719251a64de59b43b2
+    maintainers:
+    - email: anish@nethermind.io
+      name: anishgehlot
+    name: kong
+    sources:
+    - https://github.com/Kong/charts/tree/main/charts/kong
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/kong-2.33.4/kong-2.33.4.tgz
+    version: 2.33.4
+  - apiVersion: v2
+    appVersion: "3.5"
     created: "2024-05-01T10:05:33.245461942Z"
     dependencies:
     - condition: postgresql.enabled
@@ -72,4 +91,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/kong-2.33.2/kong-2.33.2.tgz
     version: 2.33.2
-generated: "2024-05-01T10:05:33.245474325Z"
+generated: "2024-05-14T11:21:48.768803685Z"
