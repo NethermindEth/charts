@@ -33,27 +33,6 @@ data:
     index=$(hostname | grep -o -E "[0-9]+$")
     echo "Detected Pod Index: $index"
 
-  nodes:
-    normal:
-      replicaCount: 3
-      volumeMount: true
-      externalSecrets:
-        data:
-          - secretKey: espresso-sequencer-private-keys-normal-eu
-            remoteRef:
-              key: "espresso-sequencer-private-keys-normal"
-    da:
-      replicaCount: 0
-      sqlStorage: false
-      externalSecrets:
-        data:
-          - secretKey: espresso-sequencer-private-keys-da-eu
-            remoteRef:
-              key: "espresso-sequencer-private-keys-da"
-          - secretKey: espresso-sequencer-postgres-da-eu
-            remoteRef:
-              key: "espresso-da-db-nethermind-prod-sequencers"
-
     # Construct the variable names
     state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
     staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
