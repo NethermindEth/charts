@@ -33,7 +33,7 @@ roleRef:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: rclone-config
+  name: {{ .Values.deployment.projectName }}-rclone-config
   namespace: {{ .Values.deployment.namespace }}
 stringData:
   rclone.conf: |
@@ -61,7 +61,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cloning-disk-manifest
+  name: {{ .Values.deployment.namespace }}-cloning-disk-manifest
   namespace: {{ .Values.deployment.namespace }}
 data:
   cloning-disk-manifest.yaml: |
@@ -84,7 +84,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cloning-juno-manifest
+  name: {{ .Values.deployment.namespace }}-cloning-juno-manifest
   namespace: {{ .Values.deployment.namespace }}
 data:
   cloning-juno-manifest.yaml: |
@@ -99,15 +99,15 @@ data:
       - name: juno-data-volume
         persistentVolumeClaim:
           claimName: {{ .Values.deployment.namespace }}-pv-ssd-snapshot
-      - name: rclone-config
+      - name: {{ .Values.deployment.projectName }}-rclone-config
         secret:
-          secretName: rclone-config
+          secretName: {{ .Values.deployment.projectName }}-rclone-config
       - name: tar-backup-volume
         persistentVolumeClaim:
           claimName: {{ .Values.deployment.namespace }}-juno-data-backup-pvc
       initContainers:
       - name: juno-archival-tar
-        image: ukemzyskywalker/archiver:v2
+        image: busybox
         command: ["/bin/sh", "-c"]
         args:
         - |
@@ -125,7 +125,7 @@ data:
         command: ["/bin/sh"]
         args: ["-c", "rclone copy /mnt/juno-tar-backup/*.tar R2:/juno-snapshot/{{ .Values.backupJunoDataJob.network}}"]
         volumeMounts:
-        - name: rclone-config
+        - name: {{ .Values.deployment.projectName }}-rclone-config
           mountPath: /config/rclone
         - name: tar-backup-volume
           mountPath: /mnt/juno-tar-backup
@@ -168,10 +168,10 @@ spec:
           volumes:
             - name: cloning-juno-manifest-volume
               configMap:
-                name: cloning-juno-manifest
+                name: {{ .Values.deployment.namespace }}-cloning-juno-manifest
             - name: cloning-disk-manifest-volume
               configMap:
-                name: cloning-disk-manifest
+                name: {{ .Values.deployment.namespace }}-cloning-disk-manifest
 ---
 apiVersion: batch/v1
 kind: CronJob
