@@ -652,6 +652,56 @@ spec:
             {{- range .Values.beacon.extraFlags }}
               {{ . }}
             {{- end }}
+          {{/* Configuration for Grandine beacon client */}}
+          {{- else if eq .Values.beacon.client "grandine" }}
+          command:
+            - sh
+            - -ac
+            - >
+              {{- if .Values.global.p2pNodePort.enabled }}
+              . /env/init-nodeport;
+              {{- end }}
+              exec grandine
+              --network={{ .Values.global.network }}
+              --disable-upnp
+              --data-dir=/data/beacon/grandine
+              --http-address={{ .Values.beacon.restApi.host }}
+              --http-port={{ index .Values.beacon.restApi.portMap "grandine" }}
+              --http-allowed-origins={{ .Values.beacon.restApi.hostAllowList | join "," }}
+            {{- if .Values.global.p2pNodePort.enabled }}
+              --listen-address=$EXTERNAL_IP
+              --libp2p-port=$EXTERNAL_BEACON_PORT
+              --discovery-port=$EXTERNAL_BEACON_PORT
+            {{- else }}
+              --listen-address=$POD_IP
+              --libp2p-port={{ include "beacon.p2pPort" . }}
+              --discovery-port={{ include "beacon.p2pPort" . }}
+            {{- end }}
+              --quic-port={{ include "beacon.quicPort" . }}
+              --target-peers={{ .Values.beacon.targetPeers }}
+              --eth1-rpc-urls={{ .Values.execution.jsonrpc.engine.url }}
+            {{- if .Values.global.externalSecrets.enabled }}
+              --jwt-secret=/external-secrets/JWT_SECRET
+            {{- else }}
+              --jwt-secret=/secret/jwtsecret
+            {{- end }}
+            {{- if .Values.beacon.builderEndpoint }}
+              --builder-api-url={{ .Values.beacon.builderEndpoint }}
+            {{- end }}
+            {{- if .Values.beacon.suggestedFeeRecipient }}
+              --suggested-fee-recipient={{ .Values.beacon.suggestedFeeRecipient }}
+            {{- end }}
+            {{- if .Values.beacon.checkPointSync.enabled }}
+              --checkpoint-sync-url={{ .Values.beacon.checkPointSync.url }}
+            {{- end }}
+            {{- if and .Values.global.metrics.enabled .Values.beacon.metrics.enabled }}
+              --metrics
+              --metrics-address={{ .Values.beacon.metrics.host }}
+              --metrics-port={{ .Values.beacon.metrics.port }}
+            {{- end }}
+            {{- range .Values.beacon.extraFlags }}
+              {{ . | quote }}
+            {{- end }}
           {{- end }}
           env:
             - name: POD_IP

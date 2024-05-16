@@ -38,6 +38,9 @@ global:
       lodestar: 
         repository: "chainsafe/lodestar"
         tag: "v1.13.0"
+      grandine:
+        repository: "sifrai/grandine"
+        tag: "0.4.1"
 
   ## JSON Web Token (JWT) authentication is used to secure the communication
   ## between the beacon node and execution client. You can generate a JWT using
@@ -490,6 +493,7 @@ beacon:
       lighthouse: 5052
       nimbus: 5052
       lodestar: 9596
+      grandine: 5052
 
   grpc:
     enabled: true
