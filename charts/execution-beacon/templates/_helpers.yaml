@@ -29,6 +29,6 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "grandine.quickPort" -}}
+{{- define "beacon.quicPort" -}}
 {{- printf "9001" -}}
 {{- end -}}
