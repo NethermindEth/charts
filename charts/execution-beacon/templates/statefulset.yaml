@@ -686,7 +686,7 @@ spec:
               --jwt-secret=/secret/jwtsecret
             {{- end }}
             {{- if .Values.beacon.builderEndpoint }}
-              --builder-api-url={{ .Values.beacon.builderEndpoint }}
+              --builder-url={{ .Values.beacon.builderEndpoint }}
             {{- end }}
             {{- if .Values.beacon.suggestedFeeRecipient }}
               --suggested-fee-recipient={{ .Values.beacon.suggestedFeeRecipient }}
