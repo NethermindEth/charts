@@ -104,6 +104,34 @@ service:
   # Port will target ESPRESSO_SEQUENCER_API_PORT
   annotations: {}
 
+serviceMonitor:
+  # -- The namespace in which the ServiceMonitor will be created
+  namespace: ""
+  # -- The interval at which metrics should be scraped
+  interval: 30s
+  # -- The timeout after which the scrape is ended
+  scrapeTimeout: ""
+  # -- Metrics RelabelConfigs to apply to samples before scraping.
+  relabellings: []
+  # -- Metrics RelabelConfigs to apply to samples before ingestion.
+  metricRelabelings: []
+  # -- Specify honorLabels parameter to add the scrape endpoint
+  honorLabels: false
+  # -- Additional labels that can be used so ServiceMonitor resource(s) can be discovered by Prometheus
+  additionalLabels: {}
+# -- Custom PrometheusRule to be defined
+# ref: https://github.com/coreos/prometheus-operator#customresourcedefinitions
+#
+prometheusRule:
+  # -- Create a default set of Alerts
+  default: true
+  # -- The namespace in which the prometheusRule will be created
+  namespace: ""
+  # -- Additional labels for the prometheusRule
+  additionalLabels: {}
+  # -- Custom Prometheus rules
+  rules: []
+
 ingress:
   enabled: false
   className: ""
