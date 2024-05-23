@@ -75,6 +75,17 @@ pgo:
     ENV: "juno-integration"
     URL: "http://localhost:6062/debug/pprof/profile"
 
+cache:
+  enabled: false
+  image: "badouralix/curl-jq"
+  resources:
+    limits:
+      cpu: "100m"
+      memory: 512Mi
+    requests:
+      cpu: "100m"
+      memory: 100Mi  
+
   ### Service account
 serviceAccount:
   enabled: false
