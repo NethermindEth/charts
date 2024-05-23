@@ -75,9 +75,10 @@ pgo:
     ENV: "juno-integration"
     URL: "http://localhost:6062/debug/pprof/profile"
 
+   ## cache warmup side container 
 cache:
   enabled: false
-  image: "badouralix/curl-jq"
+  image: "us-east1-docker.pkg.dev/juno-stg-nth/juno-cache/cache:2.0"
   resources:
     limits:
       cpu: "100m"
