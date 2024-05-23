@@ -69,6 +69,12 @@ A Helm chart for deploying Juno service
 | pgo.resources.limits.memory | string | `"4Gi"` |  |
 | pgo.resources.requests.cpu | string | `"1"` |  |
 | pgo.resources.requests.memory | string | `"2Gi"` |  |
+| cache.enabled | bool | `false` |  |
+| cache.image | string | `"us-east1-docker.pkg.dev/juno-stg-nth/juno-cache/cache:2.0"` |  |
+| cache.resources.limits.cpu | string | `"100m"` |  |
+| cache.resources.limits.memory | string | `"512Mi"` |  |
+| cache.resources.requests.cpu | string | `"100m"` |  |
+| cache.resources.requests.memory | string | `"100Mi"` |  |
 | pvc.datasource | string | `""` |  |
 | pvc.enabled | bool | `true` |  |
 | pvc.mount[0].mountPath | string | `"/var/lib/juno"` |  |
