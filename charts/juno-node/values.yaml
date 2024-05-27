@@ -75,7 +75,7 @@ pgo:
     ENV: "juno-integration"
     URL: "http://localhost:6062/debug/pprof/profile"
 
-   ## cache warmup side container 
+   ## cache warmup side container
 cache:
   enabled: false
   image: "us-east1-docker.pkg.dev/juno-stg-nth/juno-cache/cache:2.0"
@@ -85,7 +85,7 @@ cache:
       memory: 512Mi
     requests:
       cpu: "100m"
-      memory: 100Mi  
+      memory: 100Mi
 
   ### Service account
 serviceAccount:
