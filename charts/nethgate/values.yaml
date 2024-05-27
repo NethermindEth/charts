@@ -19,8 +19,15 @@ deployment:
     # Setting this to false with ingressController.enabled=true will create a
     # controller-only release.
     enabled: true
+
   nethgate:
     enabled: false
+    image:
+      repository: nethermindeth/nethgate
+      nethgate_tag: 0.0.1-dev102
+      pullPolicy: "IfNotPresent"
+      pullSecrets:
+      - "regcred"
     port: "8080"
     svc:
       # annotations: {}
@@ -30,10 +37,16 @@ deployment:
     enabled: false
     image:
       repository: nethermindeth/voyager_migrator
-      tag: 0.0.1-dev102
+      migrator_tag: 0.0.1-dev102
+      pullPolicy: "IfNotPresent"
       pullSecrets:
       - "regcred"
-    CMD: voyager_migrator
+  customNethgateEnv:
+    NETHGATE_SECRET:
+      valueFrom:
+        secretKeyRef:
+          key: secret
+          name: nethgate-dev-secret
 
   ## Minimum number of seconds for which a newly created pod should be ready without any of its container crashing,
   ## for it to be considered available.
