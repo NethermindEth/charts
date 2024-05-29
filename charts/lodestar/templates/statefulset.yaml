@@ -80,14 +80,16 @@ spec:
           configMap:
             name: {{ include "lodestar.fullname" . }}
             defaultMode: 0755
-      {{- if .Values.secrets.enabled -}}
         - name: validator-keys
+        {{- if .Values.secrets.enabled }}
           projected:
             sources:
             - secret:
                 name: {{ .Values.secrets.validatorKeys }}
-      {{- end }}      
-volumeClaimTemplates:
+        {{- else }}
+          persistentVolumeClaim:
+            claimName: validator-keys
+        {{- end }}
     {{- if and .Values.persistence.enabled (not .Values.secrets.enabled) }}    
     - metadata:
         name: validator-keys
