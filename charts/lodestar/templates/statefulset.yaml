@@ -90,7 +90,7 @@ spec:
           persistentVolumeClaim:
             claimName: validator-keys
           {{- end }}
-volumeClaimTemplates:
+  volumeClaimTemplates:
     {{- if and .Values.persistence.enabled (not .Values.secrets.enabled) }}    
     - metadata:
         name: validator-keys
