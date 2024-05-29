@@ -29,6 +29,20 @@ secrets:
   # -- validators keys
   validatorKeys: "validator-keys"
 
+# -- Additional init containers
+initContainers: []
+# - name: my-init-container
+#   image: busybox:latest
+#   command: ['sh', '-c', 'echo hello']
+
+persistence: 
+  enabled: true
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
+  annotations: {}
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
