@@ -81,15 +81,16 @@ spec:
             name: {{ include "lodestar.fullname" . }}
             defaultMode: 0755
         - name: validator-keys
-        {{- if .Values.secrets.enabled }}
+          {{- if .Values.secrets.enabled }}
           projected:
             sources:
             - secret:
                 name: {{ .Values.secrets.validatorKeys }}
-        {{- else }}
+          {{- else }}
           persistentVolumeClaim:
             claimName: validator-keys
-        {{- end }}
+          {{- end }}
+volumeClaimTemplates:
     {{- if and .Values.persistence.enabled (not .Values.secrets.enabled) }}    
     - metadata:
         name: validator-keys
