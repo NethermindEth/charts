@@ -103,4 +103,4 @@ volumeClaimTemplates:
         resources:
           requests:
             storage: {{ .Values.persistence.size | quote }}
-    {{- else }}
+    {{- end }}
