@@ -92,7 +92,7 @@ volumeClaimTemplates:
     - metadata:
         name: validator-keys
         labels:
-          {{- include "common.labels.statefulset" . | nindent 10 }}
+          {{- include "lodestar.labels" . | nindent 10 }}
       {{- with .Values.persistence.annotations }}
         annotations:
           {{ toYaml . | nindent 10 | trim }}
