@@ -219,7 +219,11 @@ spec:
             - "--network=auto"
             - "--config-file=/data/config"
             - "--validators-external-signer-url={{ include "web3signer" $root }}"
+            {{- if not ($root.Values.dvt.enabled) }}
             - "--validators-proposer-config=/data/proposerConfig.json"
+            {{- else }}
+            - "--validators-proposer-config={{ (index $root.Values.beaconChainRpcEndpoints 0) }}/teku_proposer_config"
+            {{- end }}
             {{- if $root.Values.enableBuilder }}
             - "--validators-proposer-blinded-blocks-enabled=true"
             {{- end }}

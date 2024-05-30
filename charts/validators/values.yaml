@@ -8,6 +8,9 @@ global:
   imagePullSecrets: []
   network: mainnet
 
+
+dvt:
+  enabled: false
 ## Provide a name in place of operator for `app:` labels
 ##
 nameOverride: ""
