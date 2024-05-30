@@ -4,7 +4,6 @@
 
 global:
   owner: ""
-  project: ""
   imagePullSecrets: []
   network: mainnet
 
