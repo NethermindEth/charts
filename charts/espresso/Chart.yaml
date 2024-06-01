@@ -1,0 +1,19 @@
+apiVersion: v2
+name: espresso
+version: 1.0.0
+appVersion: 0.0.1
+kubeVersion: "^1.23.0-0"
+description: A Helm chart that combines Kubernetes manifests and scripts to deploy Espresso Sequencer AVS nodes.
+type: application
+keywords:
+  - eigenlayer
+  - AVS
+  - espresso
+home: https://docs.espressosys.com/sequencer
+dependencies:
+  - name: common
+    repository: file://../common
+    version: 1.0.1
+maintainers:
+  - name: matilote
+  - name: AntiD2ta
