@@ -9,7 +9,7 @@ generate_certs() {
 LOCATION=$1
 CA_CERT_NAME=$2
 CERT_NAME=$3
-DOMAIN=$3
+DOMAIN=$4
 
 echo "DOMAIN: ${DOMAIN}"
 
