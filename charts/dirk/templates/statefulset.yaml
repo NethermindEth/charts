@@ -5,11 +5,17 @@ metadata:
   name: {{ include "common.names.fullname" . }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.clusterIndex }}
+    apps.kubernetes.io/cluster-deployment-type: cluster
+    {{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
+      {{- if .Values.clusterIndex }}
+      apps.kubernetes.io/cluster-deployment-type: cluster
+      {{- end }}
   serviceName: {{ include "common.names.fullname" . }}
   template:
     metadata:
@@ -19,6 +25,9 @@ spec:
       {{- end }}
       labels:
         {{- include "common.labels.matchLabels" . | nindent 8 }}
+        {{- if .Values.clusterIndex }}
+        apps.kubernetes.io/cluster-deployment-type: cluster
+        {{- end }}
     spec:
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -58,12 +67,20 @@ spec:
             - >
               rm -f /data/dirk/dirty;
               mkdir -p /data/dirk/certs;
+              {{- if .Values.clusterIndex }}
+              export INDEX="{{ .Values.clusterIndex }}";
+              {{- else }}
               export INDEX=$((${HOSTNAME##*-}+1));
+              {{- end }}
               echo "$INDEX" > /data/dirk/index;
               envsubst < /config/dirk.yaml.tml > /data/dirk/dirk.yaml;
               printenv CA_CRT | base64 -d  > /data/dirk/certs/ca.crt;
               printenv CA_KEY | base64 -d  > /data/dirk/certs/ca.key;
+              {{- if .Values.clusterIndex }}
+              bash /scripts/generate_cert.sh /data/dirk/certs/ ca ${HOSTNAME}.{{ include "dirk.fullname" . }} {{ get .Values.clusterMapping .Values.clusterLabel }};
+              {{- else }}
               bash /scripts/generate_cert.sh /data/dirk/certs/ ca ${HOSTNAME}.{{ include "dirk.fullname" . }};
+              {{- end }}
               chown -R {{ .Values.global.podSecurityContext.runAsUser }}:{{ .Values.global.podSecurityContext.fsGroup }} /data/dirk;
           envFrom:
             - secretRef:
@@ -184,6 +201,11 @@ spec:
         - name: scripts
           configMap:
             name: {{ include "common.names.fullname" . }}-scripts
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      dnsConfig:
+        {{- toYaml .Values.dnsConfig | nindent 8 }}
+      {{- end }}
   minReadySeconds: {{ .Values.minReadySeconds }}
   volumeClaimTemplates:
     - metadata:
