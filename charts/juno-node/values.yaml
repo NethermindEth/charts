@@ -248,4 +248,4 @@ secret:
     secretStoreKind: ClusterSecretStore   # external store name
     targetName: juno-sepolia-common       # name of the k8s secret to be created
     targetCreationPolicy: Owner
-    dataFromKey: secret-store             # name of the secret in secret manager (GCP secrent manager)
+    dataFromKey: secret-store             # name of the secret in secret manager (GCP secret manager)
