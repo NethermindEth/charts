@@ -23,6 +23,8 @@ global:
       
 replicaCount: 3
 clusterIndex: null
+clusterMapping: {}
+clusterLabel: ""
 
 image:
   repository: attestant/dirk

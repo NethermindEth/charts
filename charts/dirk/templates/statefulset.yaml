@@ -76,7 +76,11 @@ spec:
               envsubst < /config/dirk.yaml.tml > /data/dirk/dirk.yaml;
               printenv CA_CRT | base64 -d  > /data/dirk/certs/ca.crt;
               printenv CA_KEY | base64 -d  > /data/dirk/certs/ca.key;
+              {{- if .Values.clusterIndex }}
+              bash /scripts/generate_cert.sh /data/dirk/certs/ ca ${HOSTNAME}.{{ include "dirk.fullname" . }} {{ get .Values.clusterMapping .Values.clusterLabel }};
+              {{- else }}
               bash /scripts/generate_cert.sh /data/dirk/certs/ ca ${HOSTNAME}.{{ include "dirk.fullname" . }};
+              {{- end }}
               chown -R {{ .Values.global.podSecurityContext.runAsUser }}:{{ .Values.global.podSecurityContext.fsGroup }} /data/dirk;
           envFrom:
             - secretRef:
