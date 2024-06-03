@@ -37,8 +37,10 @@ subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = "${CERT_NAME}"
-if [ ! -z ${DOMAIN} ]; then echo "DNS.2 = \"${CERT_NAME}.${DOMAIN}\""; fi
 EOEXT
+
+if [ -n "${DOMAIN}" ]; then echo "DNS.2 = \"${CERT_NAME}.${DOMAIN}\"" >> "${CERT_NAME}.ext"; fi
+
 
 cat "${CERT_NAME}".ext
 
