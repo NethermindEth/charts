@@ -37,7 +37,10 @@ subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = "${CERT_NAME}"
+if [ ! -z ${DOMAIN} ]; then echo "DNS.2 = \"${CERT_NAME}.${DOMAIN}\""; fi
 EOEXT
+
+cat "${CERT_NAME}".ext
 
   openssl genrsa -out "${CERT_NAME}.key" 4096
   openssl req -out "${CERT_NAME}.csr" -key "${CERT_NAME}.key" -new -subj "/CN=${CERT_NAME}" -addext "subjectAltName=DNS:${CERT_NAME}"
