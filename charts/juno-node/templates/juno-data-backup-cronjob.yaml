@@ -192,8 +192,8 @@ spec:
               configMap:
                 name: {{ .Values.deployment.namespace }}-cloning-disk-manifest
             - name: cloning-juno-manifest-volume
-            configMap:
-              name: {{ .Values.deployment.namespace }}-cloning-juno-manifest
+              configMap:
+                name: {{ .Values.deployment.namespace }}-cloning-juno-manifest
 
 ---
 # CronJob for Cleaning up Completed Pods and PVCs
