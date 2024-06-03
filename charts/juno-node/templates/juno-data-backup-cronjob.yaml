@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ .Values.deployment.projectName }}-backup-junodata-sa
+  name: {{ .Values.deployment.namespace }}-backup-junodata-sa
   namespace: {{ .Values.deployment.namespace }}
 ---
 
@@ -11,10 +11,10 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ .Values.deployment.projectName }}-backup-junodata-role
+  name: {{ .Values.deployment.namespace }}-backup-junodata-role
   namespace: {{ .Values.deployment.namespace }}
 rules:
-  - apiGroups: ["", "apps","batch"]
+  - apiGroups: [ "", "apps","batch"]
     resources: ["pods", "jobs", "persistentvolumeclaims"]
     verbs: ["get", "list","create", "update", "patch", "delete"]
 ---
@@ -22,32 +22,31 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ .Values.deployment.projectName }}-backup-junodata-rolebinding
+  name: {{ .Values.deployment.namespace }}-backup-junodata-rolebinding
   namespace: {{ .Values.deployment.namespace }}
 subjects:
   - kind: ServiceAccount
-    name: {{ .Values.deployment.projectName }}-backup-junodata-sa
+    name: {{ .Values.deployment.namespace }}-backup-junodata-sa
     namespace: {{ .Values.deployment.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ .Values.deployment.projectName }}-backup-junodata-role
+  name: {{ .Values.deployment.namespace }}-backup-junodata-role
 ---
 
 # Secret to store R2 Cloud credentials
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Values.deployment.projectName }}-rclone-config
+  name: {{ .Values.deployment.namespace }}-rclone-config
   namespace: {{ .Values.deployment.namespace }}
 stringData:
   rclone.conf: |
     [R2]
     type = s3
     provider = Cloudflare
-    access_key_id =  {{ .Values.backupJunoDataJob.key }}
-    secret_access_key = {{ .Values.backupJunoDataJob.secret }}
-    endpoint = {{ .Values.backupJunoDataJob.endpoint }}
+    env_auth = true
+    endpoint = https://d1cc7d59ae8f8dc2b1aa530c41b5c6ec.r2.cloudflarestorage.com
 ---
 # PVC for storing backup data
 apiVersion: v1
@@ -105,14 +104,14 @@ data:
       ttlSecondsAfterFinished: 60
       template:
         spec:
-          serviceAccountName: {{ .Values.deployment.projectName }}-backup-junodata-sa
+          serviceAccountName: {{ .Values.deployment.namespace }}-backup-junodata-sa
           volumes:
           - name: juno-data-volume
             persistentVolumeClaim:
               claimName: {{ .Values.deployment.namespace }}-pv-ssd-snapshot
-          - name: {{ .Values.deployment.projectName }}-rclone-config
+          - name: {{ .Values.deployment.namespace }}-rclone-config
             secret:
-              secretName: {{ .Values.deployment.projectName }}-rclone-config
+              secretName: {{ .Values.deployment.namespace }}-rclone-config
           - name: tar-backup-volume
             persistentVolumeClaim:
               claimName: {{ .Values.deployment.namespace }}-juno-data-backup-pvc
@@ -133,10 +132,21 @@ data:
           containers:
           - name: rclone-upload-container
             image: rclone/rclone:latest
+            env:
+              - name: AWS_ACCESS_KEY_ID
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ .Values.secret.data.targetName }}
+                    key: r2_access_key_id
+              - name: AWS_SECRET_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ .Values.secret.data.targetName }}
+                    key: r2_secret_access_key
             command: ["/bin/sh"]
             args: ["-c", "rclone copy /mnt/juno-tar-backup/*.tar R2:/juno-snapshot/{{ .Values.backupJunoDataJob.network }}"]
             volumeMounts:
-            - name: {{ .Values.deployment.projectName }}-rclone-config
+            - name: {{ .Values.deployment.namespace }}-rclone-config
               mountPath: /config/rclone
             - name: tar-backup-volume
               mountPath: /mnt/juno-tar-backup
@@ -146,7 +156,7 @@ data:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ .Values.deployment.projectName }}-backup-junodata-cronjob
+  name: {{ .Values.deployment.namespace }}-backup-junodata-cronjob
   namespace: {{ .Values.deployment.namespace }}
 spec:
   schedule: "{{ .Values.backupJunoDataJob.backupSchedule }}"
@@ -159,7 +169,7 @@ spec:
       ttlSecondsAfterFinished: 30
       template:
         spec:
-          serviceAccountName: {{ .Values.deployment.projectName }}-backup-junodata-sa
+          serviceAccountName: {{ .Values.deployment.namespace }}-backup-junodata-sa
           restartPolicy: Never
           initContainers:
             - name: copy-disk-kubectl-container
@@ -182,8 +192,8 @@ spec:
               configMap:
                 name: {{ .Values.deployment.namespace }}-cloning-disk-manifest
             - name: cloning-juno-manifest-volume
-              configMap:
-                name: {{ .Values.deployment.namespace }}-cloning-juno-manifest
+            configMap:
+              name: {{ .Values.deployment.namespace }}-cloning-juno-manifest
 
 ---
 # CronJob for Cleaning up Completed Pods and PVCs
@@ -203,7 +213,7 @@ spec:
       ttlSecondsAfterFinished: 30
       template:
         spec:
-          serviceAccountName: {{ .Values.deployment.projectName }}-backup-junodata-sa
+          serviceAccountName: {{ .Values.deployment.namespace }}-backup-junodata-sa
           restartPolicy: OnFailure
           containers:
             - name: kubectl-container
@@ -219,11 +229,11 @@ spec:
                     kubectl delete pvc {{ .Values.deployment.namespace }}-pv-ssd-snapshot
                     sleep 30
                   fi
-                  describe_output=$(kubectl describe pvc {{ .Values.deployment.namespace }}-juno-data-backup-pvc)
-                  if echo "$describe_output" | grep -q "Used By:[[:space:]]*<none>"; then
-                    echo "Deleting {{ .Values.deployment.namespace }}-juno-data-backup-pvc..."
-                    kubectl delete pvc {{ .Values.deployment.namespace }}-juno-data-backup-pvc
-                    sleep 30
-                  fi
+#                  describe_output=$(kubectl describe pvc {{ .Values.deployment.namespace }}-juno-data-backup-pvc)
+#                  if echo "$describe_output" | grep -q "Used By:[[:space:]]*<none>"; then
+#                    echo "Deleting {{ .Values.deployment.namespace }}-juno-data-backup-pvc..."
+#                    #kubectl delete pvc {{ .Values.deployment.namespace }}-juno-data-backup-pvc-a
+#                    sleep 30
+#                  fi
 ---
 {{- end -}}
