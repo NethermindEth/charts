@@ -226,8 +226,8 @@ env:
 backupJunoDataJob:
   enabled: true
   dataSource: "juno-sepolia-pv-ssd-juno-sepolia-0"
-  backupSchedule: "*/20 * * * *"
-  cleanupSchedule: "*/40 * * * *"
+  backupSchedule: "0 0 * * *"
+  cleanupSchedule: "0 12 * * *"
   network: "sepolia"
   storageSize: 200Gi
 
