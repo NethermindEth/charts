@@ -10,6 +10,7 @@ spec:
   selector:
     matchLabels:
       {{- include "lodestar.selectorLabels" . | nindent 6 }}
+  serviceName: "{{ include "lodestar.fullname" . }}"
   template:
     metadata:
       {{- with .Values.podAnnotations }}
