@@ -10,6 +10,7 @@ spec:
   selector:
     matchLabels:
       {{- include "lodestar.selectorLabels" . | nindent 6 }}
+  serviceName: "{{ include "lodestar.fullname" . }}"
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -55,7 +56,7 @@ spec:
           volumeMounts:
             - mountPath: /opt/lodestar
               name: data
-            - mountPath: /home/charon/validator_keys
+            - mountPath: /home/lodestar/validator_keys
               name: validator-keys
           env:
             {{- toYaml .Values.env | nindent 12 }}
