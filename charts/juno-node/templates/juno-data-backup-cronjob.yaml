@@ -60,7 +60,7 @@ spec:
   storageClassName: premium-rwo
   resources:
     requests:
-      storage: 200Gi
+      storage:  {{ .Values.backupJunoDataJob.storageSize }}
 ---
 # ConfigMap for cloning disk manifest
 apiVersion: v1
