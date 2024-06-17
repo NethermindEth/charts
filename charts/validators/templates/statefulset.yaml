@@ -215,6 +215,9 @@ spec:
             - "--validators-external-signer-url={{ include "web3signer" $root }}"
             {{- else if eq $root.Values.type "lighthouse" }}
             - "--network={{ $root.Values.network }}"
+            {{- if $root.Values.dvt.enabled }}
+            - "--distributed"
+            {{- end }}
             {{- else if eq $root.Values.type "teku" }}
             - "--network=auto"
             - "--config-file=/data/config"
