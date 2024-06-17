@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ssv-node.fullname" . }}
+  labels:
+    {{- include "ssv-node.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    ssv:
+      Network: {{ .Values.config.network }}
+      ValidatorOptions:
+        BuilderProposals: true
+    KeyStore:
+      PrivateKeyFile: {{ .Values.config.privateKeyFile }}
+      PasswordFile: {{ .Values.config.passwordFile }}
+    p2p:
+      DiscoveryType: discv5
+      TcpPort: {{ .Values.service.ports.p2pTCP }}
+      UdpPort: {{ .Values.service.ports.p2pUDP }}
+    db:
+      Path: /data/db
+    eth2:
+      BeaconNodeAddr: {{ .Values.config.beaconAddress }}
+    eth1:
+      ETH1Addr: {{ .Values.config.executionAddress }}
+    MetricsAPIPort: {{ .Values.service.ports.metrics }}
+    global:
+      LogFormat: json
+      LogLevelFormat: lowercase
+      LogLevel: {{ .Values.config.logLevel }}
+      LogFilePath: /data/debug.log
+      LogFileBackups: 28
