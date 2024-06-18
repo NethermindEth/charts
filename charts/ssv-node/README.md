@@ -4,6 +4,12 @@
 
 A Helm chart for Kubernetes
 
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| refl3ction | <denis.policastro@nethermind.io> |  |
+
 ## Values
 
 | Key | Type | Default | Description |
