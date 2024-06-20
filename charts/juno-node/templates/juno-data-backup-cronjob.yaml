@@ -123,7 +123,7 @@ data:
             - |
               rm -rf /mnt/juno-tar-backup/*.tar &&
               rm -rf /mnt/data/*.tar &&
-              tar -czvf /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_{{ .Values.deployment.imagetag }}_$(date +\%Y\%m\%d).tar --exclude=./lost+found --exclude=./*.sst  -C /mnt/data .  && sleep 10
+              tar -czvf /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_{{ .Values.deployment.imagetag }}_$(date +\%Y\%m\%d).tar --exclude=./lost+found -C /mnt/data .  && sleep 10
             volumeMounts:
             - name: juno-data-volume
               mountPath: /mnt/data
