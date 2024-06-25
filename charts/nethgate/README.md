@@ -1224,6 +1224,59 @@ successfully. Overriding this with Argo's `Sync` policy starts the Job at the
 same time as the upgraded Deployment Pods. The new Pods may fail to start
 temporarily, but will eventually start normally once migrations complete.
 
+## Nethgate DOC
+```
+deployment:
+  serviceAccount:
+    name: nethgate-user-sa
+  nethgate:
+    enabled: true
+    port: "8080"
+    image:
+      repository: <image>
+      nethgate_tag: <tag>
+      pullSecrets:
+      - "regcred"
+    svc:
+      annotations:
+        cloud.google.com/load-balancer-type: internal
+        cloud.google.com/neg: '{"ingress":true}'
+        networking.gke.io/internal-load-balancer-allow-global-access: 'true'
+      type: LoadBalancer
+      loadBalancerIP: <ip>
+```
+# Migrator DOC
+```
+deployment:
+  voyager_migrator:
+    enabled: true
+    image:
+      repository: nethermindeth/voyager_migrator
+      migrator_tag: 0.0.1-dev403
+      pullSecrets:
+      - "regcred"
+```
+## Custom ENV for both Nethgate and migrator both
+```
+deployment:
+  customNethgateEnv:
+    NETHGATE_SECRET:
+      valueFrom:
+        secretKeyRef:
+          key: secret
+          name: <secret>
+    NETHGATE_DSN:
+      valueFrom:
+        secretKeyRef:
+          key: password
+          name: <dsn>
+    NETHGATE_REDIS_DSN:
+      valueFrom:
+        secretKeyRef:
+          key: password
+          name: <dns>
+```
+
 ## Seeking help
 
 If you run into an issue, bug or have a question, please reach out to the Kong
@@ -1231,5 +1284,3 @@ community via [Kong Nation](https://discuss.konghq.com).
 Please do not open issues in [this](https://github.com/helm/charts) repository
 as the maintainers will not be notified and won't respond.
 
-## Nethgate DOC
-if you run nethgate enable `deployment.nethgate.enabled=true`
