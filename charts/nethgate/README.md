@@ -74,6 +74,7 @@ helm install kong/kong --generate-name
 - [Argo CD considerations](#argo-cd-considerations)
 - [Changelog](https://github.com/Kong/charts/blob/main/charts/kong/CHANGELOG.md)
 - [Upgrading](https://github.com/Kong/charts/blob/main/charts/kong/UPGRADE.md)
+- [Nethgate] (#Nethgate DOC)
 - [Seeking help](#seeking-help)
 
 ## Prerequisites
