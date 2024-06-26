@@ -70,7 +70,11 @@ spec:
         {{ toYaml .Values.containerSecurityContext | nindent 10 }}
         env:
         {{- include "kong.no_daemon_env" . | nindent 8 }}
-        args: [ "kong", "migrations", "up" ]
+        {{- if .Values.migrations.sidecarContainers }}
+        args: ["/bin/sh", "-c", "kong migrations up && curl http://localhost:9091/quitquitquit" ]
+        {{- else }}
+        args: [ "kong", "migrations", "up" ]          
+        {{- end }}
         volumeMounts:
         {{- include "kong.volumeMounts" . | nindent 8 }}
         {{- include "kong.userDefinedVolumeMounts" .Values.deployment | nindent 8 }}
