@@ -3,10 +3,12 @@ description: The Cloud-Native Ingress and API-management
 maintainers:
   - name: anishgehlot
     email: anish@nethermind.io
+  - name: Manjeet
+    email: manjeet@nethermind.io
 name: kong
 sources:
   - https://github.com/Kong/charts/tree/main/charts/kong
-version: 2.33.4
+version: 2.33.5
 appVersion: "3.5"
 dependencies:
   - name: postgresql

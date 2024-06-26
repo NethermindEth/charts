@@ -28,6 +28,14 @@ spec:
       labels:
         {{- include "kong.nethagateMetaLabels" . | nindent 8 }}
     spec:
+      {{- if or .Values.deployment.serviceAccount.create .Values.deployment.serviceAccount.name }}
+      serviceAccountName: {{ template "kong.serviceAccountName" . }}
+      {{- end }}
+      {{- if (and (or .Values.deployment.serviceAccount.create .Values.deployment.serviceAccount.name) .Values.deployment.serviceAccount.automountServiceAccountToken) }}
+      automountServiceAccountToken: true
+      {{- else }}
+      automountServiceAccountToken: false
+      {{ end }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
       {{- range .Values.deployment.nethgate.image.pullSecrets }}
@@ -36,6 +44,9 @@ spec:
       {{- end }}
       {{- if .Values.deployment.kong.enabled }}
       containers:
+      {{- if .Values.deployment.sidecarContainers }}
+      {{- toYaml .Values.deployment.sidecarContainers | nindent 6 }}
+      {{- end }}
       - name: {{ template "kong.fullname" . }}-nethgate
         image: {{ .Values.deployment.nethgate.image.repository }}:{{ .Values.deployment.nethgate.image.nethgate_tag }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
