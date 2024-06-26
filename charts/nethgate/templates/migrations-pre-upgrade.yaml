@@ -71,7 +71,7 @@ spec:
         env:
         {{- include "kong.no_daemon_env" . | nindent 8 }}
         {{- if .Values.migrations.sidecarContainers }}
-        args: ["/bin/sh", "-c", "kong migrations up && curl http://localhost:9091/quitquitquit" ]
+        args: ["/bin/sh", "-c", "kong migrations up && sleep 10 && curl http://localhost:9091/quitquitquit" ]
         {{- else }}
         args: [ "kong", "migrations", "up" ]          
         {{- end }}
