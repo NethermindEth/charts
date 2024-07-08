@@ -184,6 +184,12 @@ spec:
               --proposerSettingsFile=/data/proposerConfig.yaml
               --externalSigner.url={{ include "web3signer" $root }}
               --externalSigner.pubkeys=$PUBKEYS
+            {{- if $root.Values.dvt.enabled }}
+              --distributed
+            {{- if $root.Values.enableBuilder }}
+              --builder.selection="builderonly"
+            {{- end }}
+            {{- end }}
             {{- if $.Values.beaconChainRpcEndpointsRandomized }}
               --beaconNodes={{ $rpcEndpoints }}"
             {{- else }}
