@@ -69,6 +69,9 @@ spec:
           imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
           securityContext:
             {{- toYaml $root.Values.global.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
           env:
             - name: WEB3SIGNER_URL
               value: {{ include "web3signer" $root }}
@@ -97,14 +100,14 @@ spec:
             {{- if not $root.Values.enableBuilder }}
             - "--no-proposal-builder-enabled"
             {{- end }}
-          volumeMounts:
-            - name: data
-              mountPath: /data
         - name: prepare
           image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
           imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
           securityContext:
             {{- toYaml $root.Values.global.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
           command:
             - sh
             - -c
@@ -120,12 +123,9 @@ spec:
               echo '{"externalSigner.pubkeys": ['"$(awk '{printf "%s\"%s\"", (NR==1 ? "" : ", "), $0}' /data/pubkeys.txt)"']}' > /data/rcconfig.json;
               cat /data/rcconfig.json;
               ls -lha /data;
-            {{- if eq $root.Values.type "nimbus" }}	
+              {{- if eq $root.Values.type "nimbus" }}	
               find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;	
-            {{- end }}
-          volumeMounts:
-            - name: data
-              mountPath: /data
+              {{- end }}
       containers:
       {{- if $root.Values.enableWatcher }}
         - name: watcher
