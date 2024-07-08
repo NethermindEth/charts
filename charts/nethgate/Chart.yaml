@@ -5,7 +5,7 @@ maintainers:
     email: anish@nethermind.io
   - name: Manjeet
     email: manjeet@nethermind.io
-name: kong
+name: nethgate
 sources:
   - https://github.com/Kong/charts/tree/main/charts/kong
 version: 2.33.5
