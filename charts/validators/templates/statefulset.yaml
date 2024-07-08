@@ -68,7 +68,7 @@ spec:
           image: "{{ $root.Values.cliImage.repository }}:{{ $root.Values.cliImage.tag }}"
           imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
           securityContext:
-            runAsUser: 0
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           env:
             - name: WEB3SIGNER_URL
               value: {{ include "web3signer" $root }}
@@ -100,47 +100,39 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-          {{- if $root.Values.feeOverride }}
-            - name: fee-override
-              mountPath: /fee
-          {{- end }}
         - name: prepare
           image: "{{ $root.Values.initImageBusybox.repository }}:{{ $root.Values.initImageBusybox.tag }}"
           imagePullPolicy: {{ $root.Values.initImageBusybox.pullPolicy }}
           securityContext:
-            runAsUser: 0
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           command:
             - sh
             - -c
             - >
-              ls -lha /data;
               mkdir -p /data/lighthouse/validators;
               cp /data/validator_definitions.yml /data/lighthouse/validators/validator_definitions.yml;
-              cp /mnt/gnosis-prysm/config.yaml /data/config_gnosis_prysm;
               cat /data/signer_keys.yml > /data/config;
               cat /data/config;
               cat /data/proposerConfig.json;
               cat /data/proposerConfig.yaml;
               formatted_content=$(cat /data/signer_keys.yml | grep -o '".*"' | sed -e 's/"//g' | tr ',' '\n');
-              echo "$formatted_content" > /data/pubkeys.txt;	
-              cat /data/pubkeys.txt;
-              echo "" >>
-              cat /data/signer_keys.yml >> /data/config_gnosis_prysm;
-              cat /data/config_gnosis_prysm;
-              chown -R {{ $root.Values.securityContext.runAsUser }}:{{ $root.Values.securityContext.runAsUser }} /data;
+              echo "$formatted_content" > /data/pubkeys.txt;
+              echo '{"externalSigner.pubkeys": ['"$(awk '{printf "%s\"%s\"", (NR==1 ? "" : ", "), $0}' /data/pubkeys.txt)"']}' > /data/rcconfig.json;
+              cat /data/rcconfig.json;
+              ls -lha /data;
            {{- if eq $root.Values.type "nimbus" }}	
               find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;	
             {{- end }}
           volumeMounts:
             - name: data
               mountPath: /data
-            - name: gnosis-prysm
-              mountPath: /mnt/gnosis-prysm
       containers:
       {{- if $root.Values.enableWatcher }}
         - name: watcher
           image: "{{ $root.Values.cliImage.repository }}:{{ $root.Values.cliImage.tag }}"
           imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
+          securityContext:
+            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
           env:
             - name: WEB3SIGNER_URL
               value: {{ include "web3signer" $root }}
@@ -158,10 +150,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
-          {{- if $root.Values.feeOverride }}
-            - name: fee-override
-              mountPath: /fee
-          {{- end }}
           {{- if $root.Values.enableWatcher }}
             - name: watcher
               mountPath: /scripts
@@ -175,7 +163,6 @@ spec:
             - sh
             - -c
             - >
-              export PUBKEYS=$(paste -sd, /data/pubkeys.txt);
               node ./packages/cli/bin/lodestar
             {{- range (pluck $root.Values.type $root.Values.flags | first) }}
               {{ . }}
@@ -183,13 +170,13 @@ spec:
               --network={{ $root.Values.network }}
               --proposerSettingsFile=/data/proposerConfig.yaml
               --externalSigner.url={{ include "web3signer" $root }}
-              --externalSigner.pubkeys=$PUBKEYS
+              --rcConfig=/data/rcconfig.json
             {{- if $root.Values.dvt.enabled }}
               --distributed
               --builder.selection="builderonly"
             {{- end }}
             {{- if $.Values.beaconChainRpcEndpointsRandomized }}
-              --beaconNodes={{ $rpcEndpoints }}"
+              --beaconNodes={{ $rpcEndpoints }}
             {{- else }}
               {{- include "beacon-rpc-node" $ | nindent 12 }}
             {{- end }}
@@ -288,9 +275,6 @@ spec:
             - name: data
               mountPath: /data
       volumes:
-        - name: gnosis-prysm
-          configMap:
-            name: {{ template "validators.fullname" $root }}-gnosis-prysm
       {{- if $root.Values.feeOverride }}
         - name: fee-override
           configMap:
