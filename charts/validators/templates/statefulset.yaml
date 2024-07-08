@@ -271,11 +271,6 @@ spec:
             - name: data
               mountPath: /data
       volumes:
-      {{- if $root.Values.feeOverride }}
-        - name: fee-override
-          configMap:
-            name: {{ template "validators.fullname" $root }}-override-fee-recipient
-      {{- end }}
       {{- if $root.Values.enableWatcher }}
         - name: watcher
           configMap:

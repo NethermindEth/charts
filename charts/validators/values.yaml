@@ -230,11 +230,6 @@ beaconChainRpcEndpointsRandomized: []
 ##
 graffiti: ""
 
-## Override fees for solo validators
-## used for stakewise solo validators only
-##
-feeOverride: ""
-
 enableWatcher: false
 
 ## Lodestar specific setting	
