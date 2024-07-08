@@ -199,6 +199,15 @@ flags:
     - "validator-client"
     - "--log-destination=CONSOLE"
     - "--data-base-path=/data"
+  nimbus:
+    - "--data-dir=/data/nimbus"
+    - "--non-interactive"
+    - "--log-level=INFO"
+    - "--doppelganger-detection=off"
+  lodestar: 
+    - "validator"
+    - "--dataDir=/data/lodestar"
+    - "--logLevel=info"
 
 ## Validators extra flags
 ##
