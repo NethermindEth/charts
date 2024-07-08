@@ -230,8 +230,6 @@ beaconChainRpcEndpointsRandomized: []
 ##
 graffiti: ""
 
-enableWatcher: false
-
 ## Lodestar specific setting	
 ## Enables strict checking of the validator's feeRecipient with the one returned by engine	
 strictFeeRecipientCheck: false

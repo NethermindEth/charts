@@ -127,34 +127,6 @@ spec:
               find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;	
               {{- end }}
       containers:
-      {{- if $root.Values.enableWatcher }}
-        - name: watcher
-          image: "{{ $root.Values.cliImage.repository }}:{{ $root.Values.cliImage.tag }}"
-          imagePullPolicy: {{ $root.Values.cliImage.pullPolicy }}
-          securityContext:
-            {{- toYaml $root.Values.global.securityContext | nindent 12 }}
-          env:
-            - name: WEB3SIGNER_URL
-              value: {{ include "web3signer" $root }}
-            - name: ESO_DB_KEYSTORE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: eso-{{ template "validators.fullname" $root }}
-                  key: ESO_DB_KEYSTORE_URL
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          command: [ "/bin/bash" ]
-          args: ["/scripts/watcher.sh", "{{ . }}", "{{ $root.Values.validatorsNoOfKeys }}"]
-          volumeMounts:
-            - name: data
-              mountPath: /data
-          {{- if $root.Values.enableWatcher }}
-            - name: watcher
-              mountPath: /scripts
-          {{- end }}
-      {{- end }}
         - name: validator
           image: "{{ (pluck $root.Values.type $root.Values.image | first ).repository }}:{{ (pluck $root.Values.type $root.Values.image | first ).tag }}"
           imagePullPolicy: {{ $root.Values.image.pullPolicy }}
@@ -271,11 +243,6 @@ spec:
             - name: data
               mountPath: /data
       volumes:
-      {{- if $root.Values.enableWatcher }}
-        - name: watcher
-          configMap:
-            name: {{ template "validators.fullname" $root }}-watcher
-      {{- end }}
         - name: data
           emptyDir: {}
 {{- end }}
