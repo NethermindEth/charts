@@ -220,7 +220,7 @@ spec:
             {{- range (pluck $root.Values.type $root.Values.extraFlags | first) }}
             - {{ . | quote }}
             {{- end -}}
-
+          {{- end }}
           {{- if $root.Values.metrics.enabled }}
           ports:
             - containerPort: {{ $root.Values.metrics.port }}
@@ -245,6 +245,5 @@ spec:
       volumes:
         - name: data
           emptyDir: {}
-{{- end }}
 {{- end }}
 {{- end }}
