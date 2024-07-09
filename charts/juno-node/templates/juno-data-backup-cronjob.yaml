@@ -143,8 +143,13 @@ data:
                   secretKeyRef:
                     name: {{ .Values.secret.data.targetName }}
                     key: r2_secret_access_key
-            command: ["/bin/sh"]
-            args: ["-c", "rclone copy /mnt/juno-tar-backup/*.tar R2:/juno-snapshot/{{ .Values.backupJunoDataJob.network }}"]
+            command: ["/bin/sh", "-c"]
+            args:
+            - |
+              latestBlockNumber=$(curl --location 'https://free-rpc.nethermind.io/mainnet-juno' --header 'Content-Type: application/json' --data '{ "jsonrpc": "2.0","method": "starknet_blockNumber", "id": 1}' | jq '.result') &&
+              echo "latestBlockNumber is $latestBlockNumber" &&
+              mv /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_{{ .Values.deployment.imagetag }}*.tar /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_{{ .Values.deployment.imagetag }}_$latestBlockNumber.tar
+              rclone copy /mnt/juno-tar-backup/*.tar R2:/juno-snapshot/{{ .Values.backupJunoDataJob.network }}
             volumeMounts:
             - name: {{ .Values.deployment.namespace }}-rclone-config
               mountPath: /config/rclone
