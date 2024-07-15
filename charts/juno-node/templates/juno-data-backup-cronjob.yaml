@@ -199,7 +199,71 @@ spec:
             - name: cloning-juno-manifest-volume
               configMap:
                 name: {{ .Values.deployment.namespace }}-cloning-juno-manifest
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Values.deployment.namespace }}-r2-retention-cronjob
+  namespace: {{ .Values.deployment.namespace }}
+spec:
+  schedule: "0 0 * * *"  # Run everyday
+  jobTemplate:
+    spec:
+      completions: 1
+      ttlSecondsAfterFinished: 300
+      template:
+        spec:
+          containers:
+            - name: {{ .Values.deployment.namespace }}-r2-retention
+              image: ubuntu:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  #!/bin/sh
+                  mkdir -p /var/lib/apt/lists/partial
+                  apt-get update && apt-get install -y curl jq
+                  # Constants
+                  API_TOKEN="$API_TOKEN"
+                  RETENTION_LIMIT="$RETENTION_LIMIT"
+                  ACCOUNT_ID="$ACCOUNT_ID"
+                  BUCKET_NAME="$BUCKET_NAME"
 
+                  # Construct the Cloudflare API URL with account ID and bucket name
+                  CLOUDFLARE_API_URL="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/r2/buckets/$BUCKET_NAME/objects?prefix={{ .Values.backupJunoDataJob.network }}/"
+                  echo ...."$CLOUDFLARE_API_URL"....
+                  # Get the list of objects with the specified prefix
+                  objects=$(curl -s -X GET "$CLOUDFLARE_API_URL" -H "Authorization: Bearer $API_TOKEN" | jq -r '.result')
+
+                  # Check if the number of objects exceeds the retention limit
+                   object_count=$(echo "$objects" | jq length)
+                  echo "total backup number is $object_count"
+
+                   if [ "$object_count" -le "$RETENTION_LIMIT" ]; then
+                    echo "exiting...."
+                    exit 0
+                   fi
+                  delete_number=$((object_count - RETENTION_LIMIT))
+                  # Sort the objects by last_modified date and delete the oldest ones
+                  echo "$objects" | jq -r '.[] | [.key, .last_modified] | @tsv' | sort -k2 | head -n "$delete_number" | while IFS=$'\t' read -r key last_modified; do
+                  delete_url="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/r2/buckets/$BUCKET_NAME/objects/${key}tar"
+                  echo "Deleting ${key}tar at $delete_url"
+                  delete_response=$(curl -s -X DELETE "$delete_url" -H "Authorization: Bearer $API_TOKEN")
+                  echo "Delete response: $delete_response"
+                  done
+              env:
+                - name: API_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.secret.data.targetName }}
+                      key: r2_api_token
+                - name: RETENTION_LIMIT
+                  value: {{ .Values.backupJunoDataJob.retensionLimit }}
+                - name: ACCOUNT_ID
+                  value: "d1cc7d59ae8f8dc2b1aa530c41b5c6ec"
+                - name: BUCKET_NAME
+                  value: "juno-snapshot"
+          restartPolicy: OnFailure
 ---
 # CronJob for Cleaning up Completed Pods and PVCs
 apiVersion: batch/v1
