@@ -145,7 +145,7 @@ spec:
               --rcConfig=/data/rcconfig.json
             {{- if $root.Values.dvt.enabled }}
               --distributed
-              --builder.selection="builderonly"
+              --builder.selection="builderalways"
             {{- end }}
             {{- if $root.Values.beaconChainRpcEndpointsRandomized }}
               --beaconNodes={{ $rpcEndpoints }}
