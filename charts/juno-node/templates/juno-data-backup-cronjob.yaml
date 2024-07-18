@@ -259,7 +259,7 @@ spec:
                       name: {{ .Values.secret.data.targetName }}
                       key: r2_api_token
                 - name: RETENTION_LIMIT
-                  value: {{ .Values.backupJunoDataJob.retensionLimit }}
+                  value: {{ .Values.backupJunoDataJob.retentionLimit }}
                 - name: ACCOUNT_ID
                   value: "d1cc7d59ae8f8dc2b1aa530c41b5c6ec"
                 - name: BUCKET_NAME
