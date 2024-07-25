@@ -223,3 +223,13 @@ rbac:
       - "list"
       - "watch"
       - "delete"
+    # -- Required to create ServiceMonitor CRD
+    #
+    - apiGroups: ["monitoring.coreos.com"]
+      resources:
+      - "services"
+      - "servicemonitors"
+      verbs:
+      - "get"
+      - "list"
+      - "watch"
