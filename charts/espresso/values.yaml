@@ -228,7 +228,7 @@ rbac:
     - apiGroups: ["monitoring.coreos.com"]
       resources:
       - "services"
-      - "servicemonitors"
+      - "endpoints"
       verbs:
       - "get"
       - "list"
