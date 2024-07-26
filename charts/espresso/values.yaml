@@ -111,7 +111,7 @@ serviceMonitor:
   # -- The namespace in which the ServiceMonitor will be created
   namespace: ""
   # -- The interval at which metrics should be scraped
-  interval: 30s
+  # interval: 30s
   # -- The timeout after which the scrape is ended
   scrapeTimeout: ""
   # -- Metrics RelabelConfigs to apply to samples before scraping.
