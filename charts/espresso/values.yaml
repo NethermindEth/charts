@@ -238,4 +238,10 @@ rbac:
       - "list"
       - "watch"
       - "delete"
-
+    - apiGroups: [""]
+      resources:
+      - "services"
+      verbs:
+      - "get"
+      - "list"
+      - "watch"
