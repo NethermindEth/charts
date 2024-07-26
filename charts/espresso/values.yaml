@@ -210,6 +210,18 @@ rbac:
   #
   name: ""
   create: true
+  # -- Required ClusterRole rules
+  clusterRules:
+   # # -- Required to create ServiceMonitor CRD
+    # #
+    - apiGroups: [""]
+      resources:
+      - "services"
+      - "endpoints"
+      verbs:
+      - "get"
+      - "list"
+      - "watch"
   # -- Required Role rules
   rules:
     # -- Required to create Sequencer env Secret.
@@ -223,13 +235,4 @@ rbac:
       - "list"
       - "watch"
       - "delete"
-    # -- Required to create ServiceMonitor CRD
-    #
-    - apiGroups: ["monitoring.coreos.com"]
-      resources:
-      - "services"
-      - "endpoints"
-      verbs:
-      - "get"
-      - "list"
-      - "watch"
+
