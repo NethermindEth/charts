@@ -19,6 +19,9 @@ global:
       - ReadWriteOnce
     size: 150Gi
     annotations: {}
+  
+  rbac:
+    create: true
 
 nodes:
   normal:
