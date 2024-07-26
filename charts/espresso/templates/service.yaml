@@ -18,7 +18,8 @@ metadata:
 spec:
   type: {{ $.Values.service.type }} # ClusterIP, NodePort, LoadBalancer, or ExternalName
   ports:
-    - port: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
+    - name: api
+      port: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
       targetPort: api
       protocol: TCP
   selector:
