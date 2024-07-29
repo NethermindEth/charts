@@ -1,0 +1,141 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "zenrock-mpc.fullname" . }}
+  labels:
+    {{- include "zenrock-mpc.labels" . | nindent 4 }}
+    {{- if .Values.commonLabels }}
+      {{- toYaml .Values.commonLabels | nindent 4 }}
+    {{- end }}
+  {{- with .Values.deploymentAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.deploymentStrategy }}
+  strategy:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "zenrock-mpc.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        {{- include "zenrock-mpc.annotations" . | nindent 8 }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "zenrock-mpc.selectorLabels" . | nindent 8 }}
+        {{- if .Values.commonLabels }}
+          {{- toYaml .Values.commonLabels | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.name }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "zenrock-mpc.fullname" . }}
+          {{- if .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+          {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          {{- if .Values.command }}
+          {{- with .Values.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.args }}
+          {{- with .Values.args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          {{- end }}
+          {{- if or .Values.env .Values.valuesFrom }}
+          env:
+            {{- if .Values.env }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+            {{- end }}
+            {{- if .Values.valuesFrom }}
+            {{- toYaml .Values.valuesFrom | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if or .Values.configMapEnv .Values.secretEnv }}
+          envFrom:
+          {{- if .Values.secretEnv }}
+          - secretRef:
+              name: {{ .Values.secretEnv }}
+          {{- end }}
+          {{- if .Values.configMapEnv }}
+          - configMapRef:
+              name: {{ .Values.configMapEnv }}
+          {{- end }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.ports }}
+          ports:
+          {{- toYaml .Values.ports | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
+          livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.volumes .Values.persistence.enabled (and .Values.secretManager.enabled .Values.secretManager.pvc.create)}}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: {{ .Values.persistence.volumeName }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.existingClaim | default (include "zenrock-mpc.fullname" .) }}
+        {{- end }}
+        {{- if and .Values.secretManager.enabled .Values.secretManager.pvc.create}}
+        - name: secrets
+          persistentVolumeClaim:
+            {{- if .Values.secretManager.pvc.name}}
+            claimName: {{ .Values.secretManager.pvc.name }}
+            {{ else }}
+            claimName: {{ include "zenrock-mpc.fullname" . }}-secrets
+            {{- end }}
+        {{- end }}
+        {{- if .Values.volumes}}
+          {{- toYaml .Values.volumes | nindent 8 }}
+        {{- end }}
+      {{- end }}
