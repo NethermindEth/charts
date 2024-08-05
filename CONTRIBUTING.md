@@ -1,8 +1,8 @@
-# Contributing to Nethermind Helm Charts
+# Contributing
 
 The Nethermind infrastructure team is responsible for maintaining the Nethermind Helm charts. We welcome contributions from the community and are happy to review and merge pull requests. This document outlines the process for contributing to the Nethermind Helm charts.
 
-## Contributing
+## Before you begin
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
