@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   release:
@@ -32,7 +33,7 @@ jobs:
             helm dependency update "$dir";
           done
           helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add ethereum-helm-charts https://ethpandaops.github.io/ethereum-helm-charts 
+          helm repo add ethereum-helm-charts https://ethpandaops.github.io/ethereum-helm-charts
           helm repo add prometheus-charts https://prometheus-community.github.io/helm-charts
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo add external-secrets https://charts.external-secrets.io
@@ -43,4 +44,5 @@ jobs:
           charts_dir: charts
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}" # The GitHub token of this repository
+          CR_SKIP_EXISTING: true
           CR_GENERATE_RELEASE_NOTES: true
