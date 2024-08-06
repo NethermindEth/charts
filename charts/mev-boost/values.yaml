@@ -27,7 +27,7 @@ global:
     runAsUser: 10000
     capabilities:
       drop:
-      - ALL
+        - ALL
 
 # -- Relay URLs
 relays:
@@ -38,6 +38,8 @@ relays:
     - "https://0xafa4c6985aa049fb79dd37010438cfebeb0f2bd42b115b89dd678dab0670c1de38da0c4e9138c9290a398ecd9a0b3110@builder-relay-goerli.flashbots.net"
   sepolia:
     - "https://0x845bd072b7cd566f02faeb0a4033ce9399e42839ced64e8b2adcfc859ed1e8e1a5a293336a49feac6d9a5edb779be53a@builder-relay-sepolia.flashbots.net"
+  holesky:
+    - https://0xaa58208899c6105603b74396734a6263cc7d947f444f396a90f7b7d3e65d102aec7e5e5291b27e08d02c50a050825c2f@holesky.titanrelay.xyz
 
 # -- minimum loglevel: trace, debug, info, warn/warning, error, fatal, panic
 logLevel: info
@@ -52,7 +54,7 @@ image:
   repository: flashbots/mev-boost
   pullPolicy: IfNotPresent
   # -- Overrides the image tag whose default is the chart appVersion.
-  tag: "1.6"
+  tag: "1.7.1"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -77,7 +79,8 @@ service:
 # choice for the user. This also increases chances charts run on environments with little
 # resources, such as Minikube. If you do want to specify resources, uncomment the following
 # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-resources: {}
+resources:
+  {}
   # limits:
   #   cpu: 100m
   #   memory: 128Mi
