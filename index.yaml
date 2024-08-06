@@ -91,4 +91,52 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/kong-2.33.2/kong-2.33.2.tgz
     version: 2.33.2
-generated: "2024-05-14T11:21:48.768803685Z"
+  nethgate:
+  - apiVersion: v2
+    appVersion: "3.5"
+    created: "2024-08-06T07:14:41.963114854Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.9.13
+    description: The Cloud-Native Ingress and API-management
+    digest: 45e1255c1599acad03634a8a148d1b74e5f064f71afc72a8d1ef6a18992ed0e0
+    maintainers:
+    - email: anish@nethermind.io
+      name: anishgehlot
+    - email: manjeet@nethermind.io
+      name: Manjeet
+    name: nethgate
+    sources:
+    - https://github.com/Kong/charts/tree/main/charts/kong
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/nethgate-2.33.5/nethgate-2.33.5.tgz
+    version: 2.33.5
+  ssv-node:
+  - apiVersion: v2
+    created: "2024-08-06T07:14:42.097726804Z"
+    description: A Helm chart for Kubernetes
+    digest: f9aa95c7b1085b3f7f886cd6c388f1baff25757653413efee24db0af9c2602b5
+    maintainers:
+    - email: denis.policastro@nethermind.io
+      name: refl3ction
+    name: ssv-node
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/ssv-node-0.1.1/ssv-node-0.1.1.tgz
+    version: 0.1.1
+  zenrock-mpc:
+  - apiVersion: v2
+    created: "2024-08-06T07:14:42.228338972Z"
+    description: A Helm chart for Kubernetes
+    digest: ff5518b955d6b6cd66e64151f306ee958fd5274a9dd2cfc6d300c02917d8758a
+    maintainers:
+    - email: denis.policastro@nethermind.io
+      name: 0xDones
+    name: zenrock-mpc
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.0/zenrock-mpc-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-08-06T07:14:42.228354831Z"
