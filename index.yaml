@@ -91,6 +91,21 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/kong-2.33.2/kong-2.33.2.tgz
     version: 2.33.2
+  lodestar:
+  - apiVersion: v2
+    created: "2024-08-06T17:39:08.181841227Z"
+    description: A Helm chart to deploy the Lodestar Consensus Client using Kubernetes
+    digest: 5caf2e481e6b0b9333790428cb10fae010a52527338ccfcac685c3969f064016
+    maintainers:
+    - name: matilote
+    - name: aivarasko
+    - name: stdevMac
+    - name: 0xDones
+    name: lodestar
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/lodestar-0.1.2/lodestar-0.1.2.tgz
+    version: 0.1.2
   nethgate:
   - apiVersion: v2
     appVersion: "3.5"
@@ -139,4 +154,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.0/zenrock-mpc-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-06T07:14:42.228354831Z"
+generated: "2024-08-06T17:39:08.18185864Z"
