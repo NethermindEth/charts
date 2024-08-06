@@ -2,22 +2,18 @@ apiVersion: v2
 name: validator-ejector
 description: A Helm chart for installing and configuring Lido's validator-ejector
 type: application
-version: 1.0.1
+version: 1.0.2
 appVersion: "v0.0.1"
-
 keywords:
   - ethereum
   - lido
   - validators
   - exits
-
 home: https://nethermind.io/
-
-dependencies:
-- name: common
-  repository: file://../common
-  version: 1.0.1
-
 maintainers:
   - name: matilote
   - name: aivarasko
+dependencies:
+  - name: common
+    repository: file://../common
+    version: 1.0.1
