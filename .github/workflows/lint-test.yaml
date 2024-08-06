@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
           check-latest: true
 
       - name: Set up chart-testing
@@ -27,10 +27,10 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-            changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
-            if [[ -n "$changed" ]]; then
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
-            fi
+          fi
 
       - name: Helm Dependencies
         if: steps.list-changed.outputs.changed == 'true'
@@ -66,4 +66,4 @@ jobs:
       #       # skipped for some reason.
       #       exit 0
       #       fi
-      #       ct install --config ct.yaml --excluded-charts execution-beacon,ethereum-node 
+      #       ct install --config ct.yaml --excluded-charts execution-beacon,ethereum-node
