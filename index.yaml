@@ -106,6 +106,30 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/lodestar-0.1.2/lodestar-0.1.2.tgz
     version: 0.1.2
+  mev-boost:
+  - apiVersion: v2
+    appVersion: 1.7.1
+    created: "2024-08-07T12:11:31.122718058Z"
+    dependencies:
+    - name: common
+      repository: file://../common
+      version: 1.0.1
+    description: mev-boost allows proof-of-stake Ethereum consensus clients to outsource
+      block construction
+    digest: a3fcd146f51138bae1d33e7c1b7fb4154874a6ad510467a2003e287fe36ec945
+    home: https://boost.flashbots.net/
+    keywords:
+    - ethereum
+    - blockchain
+    - mev-boost
+    maintainers:
+    - name: matilote
+    - name: aivarasko
+    name: mev-boost
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/mev-boost-1.0.2/mev-boost-1.0.2.tgz
+    version: 1.0.2
   nethgate:
   - apiVersion: v2
     appVersion: "3.5"
@@ -141,6 +165,30 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/ssv-node-0.1.1/ssv-node-0.1.1.tgz
     version: 0.1.1
+  validator-ejector:
+  - apiVersion: v2
+    appVersion: v0.0.1
+    created: "2024-08-07T12:11:31.332883554Z"
+    dependencies:
+    - name: common
+      repository: file://../common
+      version: 1.0.1
+    description: A Helm chart for installing and configuring Lido's validator-ejector
+    digest: 713bc7815c542b513271464a5320468af747ce7490689d0398da2c4d9f5ba535
+    home: https://nethermind.io/
+    keywords:
+    - ethereum
+    - lido
+    - validators
+    - exits
+    maintainers:
+    - name: matilote
+    - name: aivarasko
+    name: validator-ejector
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/validator-ejector-1.0.2/validator-ejector-1.0.2.tgz
+    version: 1.0.2
   zenrock-mpc:
   - apiVersion: v2
     created: "2024-08-06T07:14:42.228338972Z"
@@ -154,4 +202,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.0/zenrock-mpc-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-06T17:39:08.18185864Z"
+generated: "2024-08-07T12:11:31.332902971Z"
