@@ -62,10 +62,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{/*
-Some changes for upgrade docker image without any changes in helm
-*/}}
-{{- define "zenrock-mpc.annotations" -}}
-releaseTime: {{ dateInZone "2006-01-02 15:04:05Z" (now) "UTC"| quote }}
-{{- end }}
