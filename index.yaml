@@ -191,6 +191,18 @@ entries:
     version: 1.0.2
   zenrock-mpc:
   - apiVersion: v2
+    created: "2024-08-08T13:38:20.339309529Z"
+    description: A Helm chart for Kubernetes
+    digest: 789b785d7685776d2c9e52cd63f96e03d16b28ef2866aaf6a2edd8b7ff2fd81c
+    maintainers:
+    - email: denis.policastro@nethermind.io
+      name: 0xDones
+    name: zenrock-mpc
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.1/zenrock-mpc-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     created: "2024-08-06T07:14:42.228338972Z"
     description: A Helm chart for Kubernetes
     digest: ff5518b955d6b6cd66e64151f306ee958fd5274a9dd2cfc6d300c02917d8758a
@@ -202,4 +214,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.0/zenrock-mpc-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-07T12:11:31.332902971Z"
+generated: "2024-08-08T13:38:20.339332121Z"
