@@ -1,0 +1,3 @@
+{{- if and .Values.proverNode.enabled .Values.proverAgent.enabled }}
+{{- fail "Only one of 'proverNode.enabled' or 'proverAgent.enabled' can be true" }}
+{{- end }}
