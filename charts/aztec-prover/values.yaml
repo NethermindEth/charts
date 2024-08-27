@@ -18,7 +18,9 @@ proverNode:
   enabled: true
   name: node
   args:
-    - "start --prover-node --archiver"
+    - "start"
+    - "--prover-node"
+    - "--archiver"
   env:
     # URL to an Ethereum node.
     ETHEREUM_HOST: "https://provernet-mainnet-fork.aztec.network:8545/$APIKEY"
@@ -50,7 +52,8 @@ proverAgent:
   enabled: false
   name: agent
   args:
-    - "start --prover"
+    - "start"
+    - "--prover"
   env:
     # URL to the prover node that acts as a proving job source.
     AZTEC_NODE_URL: "http://aztec-prover-node:8080"
