@@ -12,6 +12,7 @@
 
 /.github/workflows/ @NethermindEth/angkor-validator-operators @AntiD2ta @aivarasko @matilote
 
+/charts/aztec-prover/ @0xDones
 /charts/cert-manager/ @gehlotanish @Manjeet-Nethermind
 /charts/common/ @aivarasko @matilote
 /charts/dirk/ @aivarasko @matilote
