@@ -1,0 +1,20 @@
+# Default values for webchart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicas: 1
+
+namespace: test
+
+image:
+  name: nginx
+  tag: latest
+
+deployment:
+  name: nginx-deployment
+  label: web-server
+
+service:
+  name: nginx-service
+  port: 80
+
