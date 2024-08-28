@@ -1,8 +1,14 @@
 # aztec-prover
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Kubernetes
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| 0xDones |  |  |
 
 ## Values
 
@@ -32,35 +38,23 @@ A Helm chart for Kubernetes
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
 | persistence.accessModes[0] | string | `"ReadWriteOnce"` |  |
-| persistence.enabled | bool | `false` |  |
+| persistence.enabled | bool | `true` |  |
 | persistence.mountPath | string | `"/data"` |  |
 | persistence.size | string | `"50Gi"` |  |
 | persistence.storageClass | string | `""` |  |
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
-| proverAgent.args[0] | string | `"start --prover"` |  |
+| proverAgent.args[0] | string | `"start"` |  |
+| proverAgent.args[1] | string | `"--prover"` |  |
 | proverAgent.enabled | bool | `false` |  |
-| proverAgent.env.AZTEC_NODE_URL | string | `"http://aztec-prover-node:8080"` |  |
-| proverAgent.env.IS_DEV_NET | string | `"true"` |  |
-| proverAgent.env.LOG_JSON | string | `"false"` |  |
-| proverAgent.env.LOG_LEVEL | string | `"debug"` |  |
-| proverAgent.env.OTEL_EXPORTER_OTLP_ENDPOINT | string | `""` |  |
-| proverAgent.env.PROVER_AGENTS | string | `"1"` |  |
-| proverAgent.env.PROVER_REAL_PROOFS | string | `"true"` |  |
+| proverAgent.env | object | `{}` |  |
 | proverAgent.name | string | `"agent"` |  |
-| proverNode.args[0] | string | `"start --prover-node --archiver"` |  |
+| proverNode.args[0] | string | `"start"` |  |
+| proverNode.args[1] | string | `"--prover-node"` |  |
+| proverNode.args[2] | string | `"--archiver"` |  |
 | proverNode.enabled | bool | `true` |  |
-| proverNode.env.AZTEC_PORT | string | `"8080"` |  |
-| proverNode.env.DATA_DIRECTORY | string | `"/data"` |  |
-| proverNode.env.ETHEREUM_HOST | string | `"https://provernet-mainnet-fork.aztec.network:8545/$APIKEY"` |  |
-| proverNode.env.IS_DEV_NET | string | `"true"` |  |
-| proverNode.env.L1_CHAIN_ID | string | `"677692"` |  |
-| proverNode.env.LOG_JSON | string | `"false"` |  |
-| proverNode.env.LOG_LEVEL | string | `"debug"` |  |
-| proverNode.env.OTEL_EXPORTER_OTLP_ENDPOINT | string | `""` |  |
-| proverNode.env.PROVER_REAL_PROOFS | string | `"true"` |  |
-| proverNode.env.TX_PROVIDER_NODE_URL | string | `"https://api.aztec.network/provernet/aztec-node-1/$APIKEY"` |  |
+| proverNode.env | object | `{}` |  |
 | proverNode.name | string | `"node"` |  |
 | readinessProbe.httpGet.path | string | `"/status"` |  |
 | readinessProbe.httpGet.port | string | `"http"` |  |
