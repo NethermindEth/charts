@@ -80,7 +80,7 @@ extraObjects:
   #   metadata:
   #     name: '{{ include "aztec-prover.fullname" . }}'
   #   stringData:
-  #     PROVER_PUBLISHER_PRIVATE_KEY: "0x1234567890abcdef"
+  #     PROVER_PUBLISHER_PRIVATE_KEY: "<PRIVATE KEY>"
 
 envFrom:
   []
