@@ -22,31 +22,30 @@ proverNode:
     - "--prover-node"
     - "--archiver"
   env:
+    {}
     # URL to an Ethereum node.
-    ETHEREUM_HOST: "https://provernet-mainnet-fork.aztec.network:8545/$APIKEY"
+    # ETHEREUM_HOST: "https://provernet-mainnet-fork.aztec.network:8545/$APIKEY"
     # Chain ID for the L1 Ethereum chain.
-    L1_CHAIN_ID: "677692"
+    # L1_CHAIN_ID: "677692"
     # Local folder where archive and world state data is stored.
-    DATA_DIRECTORY: "/data"
+    # DATA_DIRECTORY: "/data"
     # Port where the JSON-RPC APIs will be served.
-    AZTEC_PORT: "8080"
+    # AZTEC_PORT: "8080"
     # URL to an Aztec node that acts as transaction provider and as source of truth for the L1 contract addresses.
-    TX_PROVIDER_NODE_URL: "https://api.aztec.network/provernet/aztec-node-1/$APIKEY"
-    # Private key used for publishing proofs to L1. Ensure it corresponds to an address with ETH to pay for gas.
-    # PROVER_PUBLISHER_PRIVATE_KEY: ""
+    # TX_PROVIDER_NODE_URL: "https://api.aztec.network/provernet/aztec-node-1/$APIKEY"
     ####################
     # Common Envs
     ####################
     # Whether to generate actual proofs, as opposed to only simulating the circuit and outputting fake proofs. Set to true for the scope of the integration.
-    PROVER_REAL_PROOFS: "true"
+    # PROVER_REAL_PROOFS: "true"
     # Whether to skip consensus checks. Set to true for the scope of the integration.
-    IS_DEV_NET: "true"
+    # IS_DEV_NET: "true"
     # One of debug, verbose, info, warn, or error.
-    LOG_LEVEL: "debug"
+    # LOG_LEVEL: "debug"
     # Set to true to output logs in ndJSON format (unreleased).
-    LOG_JSON: "false"
+    # LOG_JSON: "false"
     #  Optional URL for pushing telemetry data to a remote OpenTelemetry data collector.
-    OTEL_EXPORTER_OTLP_ENDPOINT: ""
+    # OTEL_EXPORTER_OTLP_ENDPOINT: ""
 
 proverAgent:
   enabled: false
@@ -55,23 +54,24 @@ proverAgent:
     - "start"
     - "--prover"
   env:
+    {}
     # URL to the prover node that acts as a proving job source.
-    AZTEC_NODE_URL: "http://aztec-prover-node:8080"
+    # AZTEC_NODE_URL: "http://aztec-prover-node:8080"
     # Maximum concurrency for this given prover agent. Defaults to 1.
-    PROVER_AGENTS: "1"
-    ####################
+    # PROVER_AGENTS: "1"
+    # ###################
     # Common Envs
-    ####################
+    # ###################
     # Whether to generate actual proofs, as opposed to only simulating the circuit and outputting fake proofs. Set to true for the scope of the integration.
-    PROVER_REAL_PROOFS: "true"
+    # PROVER_REAL_PROOFS: "true"
     # Whether to skip consensus checks. Set to true for the scope of the integration.
-    IS_DEV_NET: "true"
+    # IS_DEV_NET: "true"
     # One of debug, verbose, info, warn, or error.
-    LOG_LEVEL: "debug"
+    # LOG_LEVEL: "debug"
     # Set to true to output logs in ndJSON format (unreleased).
-    LOG_JSON: "false"
+    # LOG_JSON: "false"
     #  Optional URL for pushing telemetry data to a remote OpenTelemetry data collector.
-    OTEL_EXPORTER_OTLP_ENDPOINT: ""
+    # OTEL_EXPORTER_OTLP_ENDPOINT: ""
 
 extraObjects:
   []
@@ -79,9 +79,8 @@ extraObjects:
   #   kind: Secret
   #   metadata:
   #     name: '{{ include "aztec-prover.fullname" . }}'
-  #   spec:
-  #     stringData:
-  #       PROVER_PUBLISHER_PRIVATE_KEY: "0x1234567890abcdef"
+  #   stringData:
+  #     PROVER_PUBLISHER_PRIVATE_KEY: "0x1234567890abcdef"
 
 envFrom:
   []
