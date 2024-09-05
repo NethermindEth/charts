@@ -16,7 +16,6 @@ metadata:
     {{- end }}
 spec:
   groups:
-  {{- if or .Values.execution.metrics.prometheusRule.rules .Values.execution.metrics.prometheusRule.default }}
   {{- with .Values.execution.metrics.prometheusRule.rules }}
     - name: {{ include "common.names.fullname" $ }}
       rules: {{- tpl (toYaml .) $ | nindent 8 }}
@@ -46,9 +45,6 @@ spec:
             description: Nethermind Node {{ printf "{{ $labels.instance }}" }} is down
   {{- end }}
   {{- end }}
-  {{- else }}
-  []
-  {{- end }}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
@@ -66,7 +62,6 @@ metadata:
     {{- end }}
 spec:
   groups:
-  {{- if or .Values.beacon.metrics.prometheusRule.rules .Values.beacon.metrics.prometheusRule.default }}
   {{- with .Values.beacon.metrics.prometheusRule.rules }}
     - name: {{ include "common.names.fullname" $ }}
       rules: {{- tpl (toYaml .) $ | nindent 8 }}
@@ -154,8 +149,5 @@ spec:
             summary: Teku beacon node is out of sync
             description: Check {{ printf  "{{ $labels.pod }}" }} beacon node in namespace {{ printf "{{ $labels.namespace }}" }}
   {{- end }}
-  {{- end }}
-  {{- else }}
-  []
   {{- end }}
 {{- end }}
