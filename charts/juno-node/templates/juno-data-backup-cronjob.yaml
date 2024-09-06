@@ -286,7 +286,6 @@ spec:
 
                   # Construct the Cloudflare API URL with account ID and bucket name
                   CLOUDFLARE_API_URL="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/r2/buckets/$BUCKET_NAME/objects?prefix={{ .Values.backupJunoDataJob.network }}/"
-                  echo ...."$CLOUDFLARE_API_URL"....
                   # Get the list of objects with the specified prefix
                   objects=$(curl -s -X GET "$CLOUDFLARE_API_URL" -H "Authorization: Bearer $API_TOKEN" | jq -r '.result')
 
