@@ -75,7 +75,7 @@ pgo:
     ENV: "juno-integration"
     URL: "http://localhost:6062/debug/pprof/profile"
 
-   ## cache warmup side container 
+   ## cache warmup side container
 cache:
   enabled: false
   image: "us-east1-docker.pkg.dev/juno-stg-nth/juno-cache/cache:2.0"
@@ -85,7 +85,7 @@ cache:
       memory: 512Mi
     requests:
       cpu: "100m"
-      memory: 100Mi  
+      memory: 100Mi
 
   ### Service account
 serviceAccount:
@@ -221,3 +221,35 @@ env:
   data:
   - name: NETWORK
     value: "juno"
+
+secret:
+  feederGateway:
+    refreshInterval: 10m
+    secretStoreName: juno-store
+    secretStoreKind: ClusterSecretStore
+    targetName: juno-goerli         # name of the k8s secret to be created
+    targetCreationPolicy: Owner
+    key: feeder-gateway             # name of the secret to target secret manager
+    property: testnet               # name of the property to retrieve from secret manager
+    version: "1"                    # version of secret
+    secretKey: testnet              # name of the secret data key
+  data:
+    refreshInterval: 10m
+    secretStoreName: juno-store           # external store name (ClusterSecretStore), it is used to connect to a secret manager.
+    secretStoreKind: ClusterSecretStore   # external store name
+    targetName: juno-sepolia-common       # name of the k8s secret to be created
+    targetCreationPolicy: Owner
+    dataFromKey: secret-store             # name of the secret in secret manager (GCP secret manager)
+
+### Back up juno data and upload to R2 cloud
+backupJunoDataJob:
+  enabled: true
+  dataSource: "juno-sepolia-pv-ssd-juno-sepolia-0"
+  backupSchedule: "0 3 * * *"
+  cleanupSchedule: "0 10 * * *"
+  network: "sepolia"
+  storageSize: 250Gi
+  bucketName: "juno-snapshot"
+  enableRetention: false
+  retentionLimit: 10
+  junoFreeEndpoint: "https://free-rpc-staging.nethermind.dev"
