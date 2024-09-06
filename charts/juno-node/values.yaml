@@ -241,15 +241,15 @@ secret:
     targetCreationPolicy: Owner
     dataFromKey: secret-store             # name of the secret in secret manager (GCP secret manager)
 
-    ### Back up juno data and upload to R2 cloud
-    backupJunoDataJob:
-      enabled: true
-      dataSource: "archival-mainnet-b-ssd-01-archival-mainnet-b-0"
-      backupSchedule: "0 12 * * */4"        # backup every Thursday
-      cleanupSchedule: "0 0 * * */6"        # cleanup every Saturday
-      network: "mainnet"
-      storageSize: 250Gi
-      bucketName: "test-job"
-      enableRetention: false
-      retentionLimit: 10
-      junoFreeEndpoint: "https://free-rpc-staging.nethermind.dev"
+### Back up juno data and upload to R2 cloud
+backupJunoDataJob:
+  enabled: true
+  dataSource: "juno-sepolia-pv-ssd-juno-sepolia-0"
+  backupSchedule: "0 3 * * *"
+  cleanupSchedule: "0 10 * * *"
+  network: "sepolia"
+  storageSize: 250Gi
+  bucketName: "juno-snapshot"
+  enableRetention: false
+  retentionLimit: 10
+  junoFreeEndpoint: "https://free-rpc-staging.nethermind.dev"
