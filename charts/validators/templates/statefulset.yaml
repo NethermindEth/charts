@@ -90,12 +90,12 @@ spec:
             - "{{ . }}"
             - "--no-of-keys"
             - "{{ $root.Values.validatorsNoOfKeys }}"
-            {{- if not $root.Values.strictFeeRecipientCheck }}	
-            - "--no-strict-fee-recipient-check"	
-            {{- end }}	
-            {{- if eq $.Values.type "lodestar" }}	
-            - "--graffiti"	
-            - "{{ $root.Values.graffiti }}"	
+            {{- if not $root.Values.strictFeeRecipientCheck }}
+            - "--no-strict-fee-recipient-check"
+            {{- end }}
+            {{- if eq $.Values.type "lodestar" }}
+            - "--graffiti"
+            - "{{ $root.Values.graffiti }}"
             {{- end }}
             {{- if not $root.Values.enableBuilder }}
             - "--no-proposal-builder-enabled"
@@ -123,8 +123,8 @@ spec:
               echo '{"externalSigner.pubkeys": ['"$(awk '{printf "%s\"%s\"", (NR==1 ? "" : ", "), $0}' /data/pubkeys.txt)"']}' > /data/rcconfig.json;
               cat /data/rcconfig.json;
               ls -lha /data;
-              {{- if eq $root.Values.type "nimbus" }}	
-              find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;	
+              {{- if eq $root.Values.type "nimbus" }}
+              find /data/nimbus -type d -name '0x*' -exec chmod 0600 {}/remote_keystore.json \;
               {{- end }}
       containers:
         - name: validator
@@ -145,6 +145,7 @@ spec:
               --rcConfig=/data/rcconfig.json
             {{- if $root.Values.dvt.enabled }}
               --distributed
+              --builder="true"
               --builder.selection="builderalways"
             {{- end }}
             {{- if $root.Values.beaconChainRpcEndpointsRandomized }}
