@@ -1,0 +1,17 @@
+apiVersion: v2
+name: erpc
+description: A Helm chart to deploy eRPC instances
+version: 1.0.0
+appVersion: "0.0.23"
+type: application
+keywords:
+  - rpcs
+  - erpc
+home: https://docs.erpc.cloud
+dependencies:
+  - name: common
+    repository: file://../common
+    version: 1.0.1
+maintainers:
+  - name: cbermudez97
+  - name: AntiD2ta

@@ -1,0 +1,58 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.names.fullname" $ }}-init-config-script
+  labels:
+    {{- include "common.labels.standard" $ | nindent 4 }}
+data:
+  init.sh: |
+    #!/bin/bash
+    template=$1
+    output=$2
+    set -e
+    echo "Initializing config from template $template to $output..."
+    envsubst < $template > $output
+    echo "Config initialized!"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "common.names.fullname" $ }}-config-template
+  labels:
+    {{- include "common.labels.standard" $ | nindent 4 }}
+data:
+  erpc.yaml: |
+    logLevel: {{ .Values.erpc.config.logLevel }}
+    server:
+      {{- toYaml .Values.erpc.config.server | nindent 6 }}
+    metrics:
+      {{- toYaml .Values.erpc.config.metrics | nindent 6 }}
+    projects:
+      {{- range $i, $project := .Values.erpc.config.projects }}
+      - id: {{ $project.id }}
+        networks:
+          {{- range $j, $network := $project.networks }}
+          {{- if eq $network.type "evm" }}
+          - architecture: evm
+            evm:
+              chainId: {{ $network.chainId }}
+          {{- end }}
+          {{- end }}
+      {{- end }}
+    upstreams:
+      {{- range $i, $upstream := .Values.erpc.config.upstreams }}
+      - id: {{ $upstream.id }}
+        {{- if eq $upstream.type "evm" }}
+        type: evm
+        evm:
+          chainId: {{ $upstream.chainId }}
+        {{- end }}
+        endpoint: >-
+          {{- if $upstream.endpoint.secret.enabled }}
+          {{ "${" }}{{ $upstream.endpoint.secret.variable }}{{ "}" }}
+          {{- else }}
+          {{ $upstream.endpoint.value }}
+          {{- end }}
+      {{- end }}
+

@@ -1,0 +1,62 @@
+---
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" $ }}
+kind: Deployment
+metadata:
+  name: "{{ include "common.names.fullname" $ }}"
+  {{- with $.Values.global.namespaceOverride }}
+  namespace: {{ . }}
+  {{- end }}
+spec:
+  serviceName: "{{ include "common.names.fullname" $ }}"
+  replicas: {{ .Values.erpc.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" $ | nindent 6 }}
+      app: erpc
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.matchLabels" $ | nindent 8 }}
+        app: erpc
+    spec:
+      serviceAccountName: {{ include "common.names.serviceAccountName" $ }}
+      initContainers:
+        - name: init-erpc-config
+          image: "{{ .Values.initImage.repository }}:{{ .Values.initImage.tag }}"
+          imagePullPolicy: {{ .Values.initImage.pullPolicy }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.erpc.secret.name }}
+          command:
+            - /bin/bash
+            - /scripts/init.sh
+            - /templates/erpc.yaml
+            - /etc/erpc/erpc.yaml
+          volumeMounts:
+            - name: erpc-config
+              mountPath: /etc/erpc
+            - name: erpc-config-template
+              mountPath: /templates
+            - name: erpc-config-init-script
+              mountPath: /scripts
+      containers:
+        - name: erpc
+          image: "{{ .Values.erpc.image.repository }}:{{ .Values.erpc.image.tag }}"
+          imagePullPolicy: {{ .Values.erpc.image.pullPolicy }}
+          command:
+            - /root/erpc-server
+          resources:
+            {{- toYaml .Values.erpc.resources | nindent 12 }}
+          volumeMounts:
+            - name: erpc-config
+              mountPath: /root/erpc.yaml
+              subPath: erpc.yaml
+      volumes:
+        - name: erpc-config
+          emptyDir: {}
+        - name: erpc-config-template
+          configMap:
+            name: {{ include "common.names.fullname" $ }}-config-template
+        - name: erpc-config-init-script
+          configMap:
+            name: {{ include "common.names.fullname" $ }}-init-config-script

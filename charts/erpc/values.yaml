@@ -1,0 +1,158 @@
+global:
+  # -- Service account
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  #
+  serviceAccount:
+    create: false
+    annotations: {}
+
+  suffix: ""
+
+  namespaceOverride: ""
+
+# erpc configurations
+erpc:
+  # erpc deployment replica count
+  replicaCount: 3
+
+  # erpc image to be used
+  image:
+    repository: ghcr.io/erpc/erpc
+    tag: "0.0.23"
+    pullPolicy: IfNotPresent
+
+  # erpc resources
+  resources:
+    requests:
+      cpu: "2"
+      memory: "3Gi"
+    limits:
+      cpu: "2"
+      memory: "3Gi"
+
+  # erpc required secret used for the init container
+  secret:
+    name: ""
+
+  config:
+    # erpc log level
+    logLevel: warn
+
+    # erpc server configuration
+    server:
+      listenV4: true
+      httpHostV4: "0.0.0.0"
+      listenV6: false
+      httpHostV6: "[::]"
+      httpPort: 4000
+
+    # erpc metrics configuration
+    metrics:
+      enabled: true
+      listenV4: true
+      hostV4: "0.0.0.0"
+      listenV6: false
+      hostV6: "[::]"
+      port: 4001
+
+    # erpc projects configuration
+    projects:
+      - # project id to be used (must be a valid http path)
+        id: ""
+        # project networks to be used
+        networks:
+          - # chain type to be used
+            type: evm
+            # chain id of the network
+            chainId: 1
+
+    upstreams:
+      - # upstream id to be used (must be a valid http path)
+        id: ""
+        # upstream type to be used
+        type: evm
+        # upstream chain id to be used
+        chainId: 1
+        # upstream endpoint to be used
+        endpoint:
+          # secret configuration
+          secret:
+            enabled: false
+            variable: ""
+          # endpoint value
+          value: ""
+
+# -- Init image is used to generate the erpc config file.
+#
+initImage:
+  repository: bash
+  tag: "5.2"
+  pullPolicy: IfNotPresent
+
+# -- Service account
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+#
+serviceAccount:
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  #
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+ingress:
+  enabled: false
+  className: ""
+
+  # -- Route Prefix. Can skip it if any item of path has the path defined.
+  routePrefix: /
+
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  labels: {}
+
+  # -- Hostnames.
+  # Can be provided if Ingress is enabled.
+  hosts: []
+  # hosts:
+  #   - host: espresso.example.com
+  #     -- Paths to use for ingress rules
+  #     paths:
+  #       - path: "/metrics"
+  #         port: 9000
+  #         pathType: "Prefix"
+  #       - path: "/api"
+  #         port: 8080
+  #         pathType: "Exact"
+  #       - path: "/health"
+  #         port: 8085
+  #         pathType: "Prefix"
+  #         serviceName: "alternativeServiceName"
+  #   - paths:
+  #       - path: "/metrics"
+  #         port: 9000
+  #         pathType: "Prefix"
+  #     By default, the Service created by this chart is used as the target
+  #     Service for the Ingress.
+  #     If not defined the following default object will be used:
+  #     hosts:
+  #       paths:
+  #       - path: "/"
+  #         port: 8000
+  #         pathType: "ImplementationSpecific"
+  #         serviceName: "<common.names.fullname>"
+
+  # -- TLS configuration for Ingress
+  # Secret must be manually created in the namespace
+  #
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
