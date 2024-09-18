@@ -11,7 +11,7 @@ A Helm chart to deploy the Lodestar Consensus Client using Kubernetes
 | matilote |  |  |
 | aivarasko |  |  |
 | stdevMac |  |  |
-| refl3ction |  |  |
+| 0xDones |  |  |
 
 ## Values
 
