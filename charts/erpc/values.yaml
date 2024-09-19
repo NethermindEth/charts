@@ -41,6 +41,30 @@ erpc:
     # -- Erpc log level.
     logLevel: warn
 
+    # Erpc database configurations for requests cache.
+    # Ref: https://docs.erpc.cloud/config/database
+    database:
+      evmJsonRpcCache:
+        # -- Cache driver to be used. One of `memory` or `redis`.
+        # Other drivers configurations will be ignored. DynamoDB and Postgres drivers are not supported at the moment.
+        # Ref: https://docs.erpc.cloud/config/database
+        driver: ""
+        ## Memory
+        # -- Maximum number of items to be cached.
+        maxItems: 10000
+        ## Redis
+        redis:
+          # -- Redis server address.
+          addr: ""
+          # -- Redis server password.
+          password:
+            secret:
+              # Secret resource name.
+              name: ""
+              # Secret key.
+              key: ""
+          # -- Redis database to be used.
+          db: ""
     # -- Erpc json-rpc server configuration.
     server:
       listenV4: true
@@ -58,11 +82,17 @@ erpc:
       hostV6: "[::]"
       port: 4001
 
-    # -- Erpc projects configuration.
+    # Erpc projects configuration.
     projects:
       - # -- Project id to be used.
         # Must be a valid http path.
         id: ""
+        # -- Project authentication strategies.
+        # Ref: https://docs.erpc.cloud/config/auth.
+        # Only `secret` strategy is supported at the moment.
+        auth:
+          type: secret
+          secretKey: ""
         # -- Project networks to be used.
         networks:
           - # -- Chain type to be used.

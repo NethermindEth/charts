@@ -23,9 +23,14 @@ A Helm chart to deploy eRPC instances
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| erpc.config.database.evmJsonRpcCache.driver | string | `""` | Cache driver to be used. One of `memory` or `redis`. Other drivers configurations will be ignored. DynamoDB and Postgres drivers are not supported at the moment. Ref: https://docs.erpc.cloud/config/database |
+| erpc.config.database.evmJsonRpcCache.maxItems | int | `10000` | Maximum number of items to be cached. |
+| erpc.config.database.evmJsonRpcCache.redis.addr | string | `""` | Redis server address. |
+| erpc.config.database.evmJsonRpcCache.redis.db | string | `""` | Redis database to be used. |
+| erpc.config.database.evmJsonRpcCache.redis.password | object | `{"secret":{"key":"","name":""}}` | Redis server password. |
 | erpc.config.logLevel | string | `"warn"` | Erpc log level. |
 | erpc.config.metrics | object | `{"enabled":true,"hostV4":"0.0.0.0","hostV6":"[::]","listenV4":true,"listenV6":false,"port":4001}` | Erpc prometheus metrics server configuration. |
-| erpc.config.projects | list | `[{"id":"","networks":[{"chainId":1,"failsafe":{},"type":"evm"}],"upstreams":[{"chainId":1,"endpoint":{"secret":{"enabled":false,"key":""},"value":""},"failsafe":{},"id":"","type":"evm"}]}]` | Erpc projects configuration. |
+| erpc.config.projects[0].auth | object | `{"secretKey":"","type":"secret"}` | Project authentication strategies. Ref: https://docs.erpc.cloud/config/auth. Only `secret` strategy is supported at the moment. |
 | erpc.config.projects[0].id | string | `""` | Project id to be used. Must be a valid http path. |
 | erpc.config.projects[0].networks | list | `[{"chainId":1,"failsafe":{},"type":"evm"}]` | Project networks to be used. |
 | erpc.config.projects[0].networks[0].chainId | int | `1` | Chain id of the network. |

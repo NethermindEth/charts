@@ -24,6 +24,20 @@ metadata:
 data:
   erpc.yaml: |
     logLevel: {{ .Values.erpc.config.logLevel }}
+    {{- if .Values.erpc.config.database }}
+    {{- with .Values.erpc.config.database.evmJsonRpcCache }}
+    database:
+      evmJsonRpcCache:
+        {{- if eq .driver "redis" }}
+        redis:
+          addr: {{ .redis.addr }}
+          password: '${ERPC_REDIS_PASSWORD}'
+          db: {{ .redis.db }}
+        {{- else if eq .driver "memory" }}
+        maxItems: {{ .maxItems }}
+        {{- end }}
+    {{- end }}
+    {{- end }}
     server:
       {{- toYaml .Values.erpc.config.server | nindent 6 }}
     metrics:
@@ -31,6 +45,15 @@ data:
     projects:
       {{- range $i, $project := .Values.erpc.config.projects }}
       - id: {{ $project.id }}
+        {{- with $project.auth }}
+        {{- if eq .type "secret" }}
+        auth:
+          strategies:
+            - type: secret
+              secret:
+                value: {{ "'${" }}{{ .secretKey }}{{ "}'" }}
+        {{- end }}
+        {{- end }}
         networks:
           {{- range $j, $network := $project.networks }}
           {{- if eq $network.type "evm" }}

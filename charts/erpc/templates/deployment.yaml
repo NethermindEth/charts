@@ -24,6 +24,18 @@ spec:
         - name: init-erpc-config
           image: "{{ .Values.initImage.repository }}:{{ .Values.initImage.tag }}"
           imagePullPolicy: {{ .Values.initImage.pullPolicy }}
+          env:
+            {{- if .Values.erpc.config.database }}
+            {{- with .Values.erpc.config.database.evmJsonRpcCache }}
+            {{- if eq .driver "redis" }}
+            - name: ERPC_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .redis.password.secret.name }}
+                  key: {{ .redis.password.secret.key }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
           envFrom:
             - secretRef:
                 name: {{ .Values.erpc.secret.name }}
