@@ -26,16 +26,18 @@ data:
     logLevel: {{ .Values.erpc.config.logLevel }}
     {{- if .Values.erpc.config.database }}
     {{- with .Values.erpc.config.database.evmJsonRpcCache }}
+    {{- if eq .driver "redis" }}
     database:
       evmJsonRpcCache:
-        {{- if eq .driver "redis" }}
         redis:
           addr: {{ .redis.addr }}
           password: '${ERPC_REDIS_PASSWORD}'
           db: {{ .redis.db }}
-        {{- else if eq .driver "memory" }}
+    {{- else if eq .driver "memory" }}
+    database:
+      evmJsonRpcCache:
         maxItems: {{ .maxItems }}
-        {{- end }}
+    {{- end }}
     {{- end }}
     {{- end }}
     server:
