@@ -47,6 +47,11 @@ spec:
             - /root/erpc-server
           resources:
             {{- toYaml .Values.erpc.resources | nindent 12 }}
+          ports:
+            - name: http-jsonrpc
+              containerPort: {{ .Values.erpc.config.server.httpPort }}
+            - name: http-metrics
+              containerPort: {{ .Values.erpc.config.metrics.port }}
           volumeMounts:
             - name: erpc-config
               mountPath: /root/erpc.yaml

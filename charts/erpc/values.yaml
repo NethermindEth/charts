@@ -1,7 +1,6 @@
 global:
-  # -- Service account
-  # -- Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-  #
+  # -- Service account.
+  # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
   serviceAccount:
     create: false
     annotations: {}
@@ -12,16 +11,16 @@ global:
 
 # Erpc configurations
 erpc:
-  # -- Erpc deployment replica count
+  # -- Erpc deployment replica count.
   replicaCount: 3
 
-  # -- Erpc image to be used
+  # -- Erpc image to be used.
   image:
     repository: ghcr.io/erpc/erpc
     tag: "0.0.23"
     pullPolicy: IfNotPresent
 
-  # -- Erpc resources
+  # -- Erpc container resources.
   resources:
     requests:
       cpu: "2"
@@ -30,15 +29,19 @@ erpc:
       cpu: "2"
       memory: "3Gi"
 
-  # -- Erpc required secret used for the init container
+  # -- Erpc required secret used for the init container.
+  # All keys used for configurations secrets must be defined inside this secret resource.
   secret:
     name: ""
 
+  # Erpc configuration.
+  # This is used to generate the erpc.yaml file.
+  # Ref: https://docs.erpc.cloud/config/example
   config:
-    # -- Erpc log level
+    # -- Erpc log level.
     logLevel: warn
 
-    # -- Erpc server configuration
+    # -- Erpc json-rpc server configuration.
     server:
       listenV4: true
       httpHostV4: "0.0.0.0"
@@ -46,7 +49,7 @@ erpc:
       httpHostV6: "[::]"
       httpPort: 4000
 
-    # -- Erpc metrics configuration
+    # -- Erpc prometheus metrics server configuration.
     metrics:
       enabled: true
       listenV4: true
@@ -55,94 +58,106 @@ erpc:
       hostV6: "[::]"
       port: 4001
 
-    # -- Erpc projects configuration
+    # -- Erpc projects configuration.
     projects:
-      - # -- Project id to be used (must be a valid http path)
+      - # -- Project id to be used.
+        # Must be a valid http path.
         id: ""
-        # -- Project networks to be used
+        # -- Project networks to be used.
         networks:
-          - # -- Chain type to be used
+          - # -- Chain type to be used.
+            # Only `evm` is supported at the moment.
             type: evm
-            # -- Chain id of the network
+            # -- Chain id of the network.
             chainId: 1
-            # -- Failsafe policies to be used for this network
+            # -- Failsafe policies to be used for this network.
+            # Ref: https://docs.erpc.cloud/config/failsafe
             failsafe:
-              timeout:
-                duration: 30s
-              retry:
-                maxCount: 3
-                delay: 500ms
-                backoffMaxDelay: 10s
-                backoffFactor: 0.3
-                jitter: 500ms
-              hedge:
-                delay: 500ms
-                maxCount: 1
+              {}
+              # timeout:
+              #   duration: 30s
+              # retry:
+              #   maxCount: 3
+              #   delay: 500ms
+              #   backoffMaxDelay: 10s
+              #   backoffFactor: 0.3
+              #   jitter: 500ms
+              # hedge:
+              #   delay: 500ms
+              #   maxCount: 1
 
-    upstreams:
-      - # -- Upstream id to be used (must be a valid http path)
-        id: ""
-        # -- Upstream type to be used
-        type: evm
-        # -- Upstream chain id to be used
-        chainId: 1
-        # -- Upstream endpoint to be used
-        endpoint:
-          # -- Secret configuration
-          secret:
-            enabled: false
-            variable: ""
-          # -- Endpoint value
-          value: ""
-        # -- Failsafe policies to be used for this upstream
-        failsafe:
-          timeout:
-            duration: 30s
-          retry:
-            maxCount: 3
-            delay: 500ms
-            backoffMaxDelay: 10s
-            backoffFactor: 0.3
-            jitter: 500ms
-          circuitBreaker:
-            failureThresholdCount: 30
-            failureThresholdCapacity: 100
-            halfOpenAfter: 60s
-            successThresholdCount: 8
-            successThresholdCapacity: 10
+        upstreams:
+          - # -- Upstream id to be used.
+            # Must be a valid http path.
+            id: ""
+            # -- Upstream type to be used.
+            type: evm
+            # -- Upstream chain id to be used.
+            chainId: 1
+            # -- Upstream endpoint to be used.
+            endpoint:
+              # -- Optional secret key to be used.
+              # This key is taken from the configured `erpc.secret` resource.
+              secret:
+                enabled: false
+                key: ""
+              # -- Optional endpoint value.
+              # Ignored if the endpoint is using the `secret` configuration.
+              value: ""
+            # -- Failsafe policies to be used for this upstream.
+            # Ref: https://docs.erpc.cloud/config/failsafe
+            failsafe:
+              {}
+              # timeout:
+              #   duration: 30s
+              # retry:
+              #   maxCount: 3
+              #   delay: 500ms
+              #   backoffMaxDelay: 10s
+              #   backoffFactor: 0.3
+              #   jitter: 500ms
+              # circuitBreaker:
+              #   failureThresholdCount: 30
+              #   failureThresholdCapacity: 100
+              #   halfOpenAfter: 60s
+              #   successThresholdCount: 8
+              #   successThresholdCapacity: 10
 
 # -- Init image is used to generate the erpc config file.
-#
 initImage:
   repository: bash
   tag: "5.2"
   pullPolicy: IfNotPresent
 
-# -- Service account
-# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
-#
+# -- Service account.
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 serviceAccount:
-  # -- Annotations to add to the service account
+  # -- Annotations to add to the service account.
   annotations: {}
   # -- The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  #
+  # If not set and create is true, a name is generated using the fullname template.
   name: ""
 
-# -- Erpc Service configuration
+# Erpc Service configuration.
 service:
-  # -- Erpc Service type
+  # -- Erpc Service type.
   type: ClusterIP
-  # -- Erpc Service port
+  # -- Erpc Service port.
   port: 80
-  # -- Erpc Service annotations
+  # -- Erpc Service metrics port.
+  metricsPort: 9000
+  # -- Erpc Service annotations.
   annotations: {}
 
+# Erpc Ingress configuration.
 ingress:
+  # -- Enable Ingress.
   enabled: false
+  # -- Ingress class name.
   className: ""
 
-  # -- Route prefix. Can skip it if any item of path has the path defined.
+  # -- Route prefix.
+  # Can skip it if any item of path has the path defined.
   routePrefix: /
 
   annotations:

@@ -21,6 +21,10 @@ spec:
       port: {{ .Values.service.port }}
       targetPort: {{ .Values.erpc.config.server.httpPort }}
       protocol: TCP
+    - name: http-metrics
+      port: {{ .Values.service.metricsPort }}
+      targetPort: {{ .Values.erpc.config.metrics.port }}
+      protocol: TCP
   selector:
     {{- include "common.labels.matchLabels" $ | nindent 4 }}
     app: erpc

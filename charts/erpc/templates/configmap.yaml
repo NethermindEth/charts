@@ -43,24 +43,24 @@ data:
             {{- end }}
           {{- end }}
           {{- end }}
-      {{- end }}
-    upstreams:
-      {{- range $i, $upstream := .Values.erpc.config.upstreams }}
-      - id: {{ $upstream.id }}
-        {{- if eq $upstream.type "evm" }}
-        type: evm
-        evm:
-          chainId: {{ $upstream.chainId }}
-        {{- end }}
-        endpoint: >-
-          {{- if $upstream.endpoint.secret.enabled }}
-          {{ "${" }}{{ $upstream.endpoint.secret.variable }}{{ "}" }}
-          {{- else }}
-          {{ $upstream.endpoint.value }}
+        upstreams:
+          {{- range $i, $upstream := $project.upstreams }}
+          - id: {{ $upstream.id }}
+            {{- if eq $upstream.type "evm" }}
+            type: evm
+            evm:
+              chainId: {{ $upstream.chainId }}
+            {{- end }}
+            endpoint: >-
+              {{- if $upstream.endpoint.secret.enabled }}
+              {{ "${" }}{{ $upstream.endpoint.secret.variable }}{{ "}" }}
+              {{- else }}
+              {{ $upstream.endpoint.value }}
+              {{- end }}
+            {{- if $upstream.failsafe }}
+            failsafe:
+              {{- toYaml $upstream.failsafe | nindent 14 }}
+            {{- end }}
           {{- end }}
-        {{- if $upstream.failsafe }}
-        failsafe:
-          {{- toYaml $upstream.failsafe | nindent 10 }}
-        {{- end }}
       {{- end }}
 
