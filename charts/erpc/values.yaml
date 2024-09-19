@@ -1,6 +1,6 @@
 global:
   # -- Service account
-  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  # -- Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
   #
   serviceAccount:
     create: false
@@ -10,18 +10,18 @@ global:
 
   namespaceOverride: ""
 
-# erpc configurations
+# Erpc configurations
 erpc:
-  # erpc deployment replica count
+  # -- Erpc deployment replica count
   replicaCount: 3
 
-  # erpc image to be used
+  # -- Erpc image to be used
   image:
     repository: ghcr.io/erpc/erpc
     tag: "0.0.23"
     pullPolicy: IfNotPresent
 
-  # erpc resources
+  # -- Erpc resources
   resources:
     requests:
       cpu: "2"
@@ -30,15 +30,15 @@ erpc:
       cpu: "2"
       memory: "3Gi"
 
-  # erpc required secret used for the init container
+  # -- Erpc required secret used for the init container
   secret:
     name: ""
 
   config:
-    # erpc log level
+    # -- Erpc log level
     logLevel: warn
 
-    # erpc server configuration
+    # -- Erpc server configuration
     server:
       listenV4: true
       httpHostV4: "0.0.0.0"
@@ -46,7 +46,7 @@ erpc:
       httpHostV6: "[::]"
       httpPort: 4000
 
-    # erpc metrics configuration
+    # -- Erpc metrics configuration
     metrics:
       enabled: true
       listenV4: true
@@ -55,32 +55,61 @@ erpc:
       hostV6: "[::]"
       port: 4001
 
-    # erpc projects configuration
+    # -- Erpc projects configuration
     projects:
-      - # project id to be used (must be a valid http path)
+      - # -- Project id to be used (must be a valid http path)
         id: ""
-        # project networks to be used
+        # -- Project networks to be used
         networks:
-          - # chain type to be used
+          - # -- Chain type to be used
             type: evm
-            # chain id of the network
+            # -- Chain id of the network
             chainId: 1
+            # -- Failsafe policies to be used for this network
+            failsafe:
+              timeout:
+                duration: 30s
+              retry:
+                maxCount: 3
+                delay: 500ms
+                backoffMaxDelay: 10s
+                backoffFactor: 0.3
+                jitter: 500ms
+              hedge:
+                delay: 500ms
+                maxCount: 1
 
     upstreams:
-      - # upstream id to be used (must be a valid http path)
+      - # -- Upstream id to be used (must be a valid http path)
         id: ""
-        # upstream type to be used
+        # -- Upstream type to be used
         type: evm
-        # upstream chain id to be used
+        # -- Upstream chain id to be used
         chainId: 1
-        # upstream endpoint to be used
+        # -- Upstream endpoint to be used
         endpoint:
-          # secret configuration
+          # -- Secret configuration
           secret:
             enabled: false
             variable: ""
-          # endpoint value
+          # -- Endpoint value
           value: ""
+        # -- Failsafe policies to be used for this upstream
+        failsafe:
+          timeout:
+            duration: 30s
+          retry:
+            maxCount: 3
+            delay: 500ms
+            backoffMaxDelay: 10s
+            backoffFactor: 0.3
+            jitter: 500ms
+          circuitBreaker:
+            failureThresholdCount: 30
+            failureThresholdCapacity: 100
+            halfOpenAfter: 60s
+            successThresholdCount: 8
+            successThresholdCapacity: 10
 
 # -- Init image is used to generate the erpc config file.
 #
@@ -100,16 +129,20 @@ serviceAccount:
   #
   name: ""
 
+# -- Erpc Service configuration
 service:
+  # -- Erpc Service type
   type: ClusterIP
+  # -- Erpc Service port
   port: 80
+  # -- Erpc Service annotations
   annotations: {}
 
 ingress:
   enabled: false
   className: ""
 
-  # -- Route Prefix. Can skip it if any item of path has the path defined.
+  # -- Route prefix. Can skip it if any item of path has the path defined.
   routePrefix: /
 
   annotations:

@@ -37,6 +37,10 @@ data:
           - architecture: evm
             evm:
               chainId: {{ $network.chainId }}
+            {{- if $network.failsafe }}
+            failsafe:
+              {{- toYaml $network.failsafe | nindent 14 }}
+            {{- end }}
           {{- end }}
           {{- end }}
       {{- end }}
@@ -54,5 +58,9 @@ data:
           {{- else }}
           {{ $upstream.endpoint.value }}
           {{- end }}
+        {{- if $upstream.failsafe }}
+        failsafe:
+          {{- toYaml $upstream.failsafe | nindent 10 }}
+        {{- end }}
       {{- end }}
 
