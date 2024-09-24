@@ -25,6 +25,7 @@ data:
         fi
 
         # Construct the final key name
+        # Replace all occurrences of key_var in key_value with final_var
         local final_key="${key_value//$key_var/${final_var}}"
 
         echo "$final_key"
@@ -34,6 +35,8 @@ data:
     echo "Detected Pod Index: $index"
 
     # Construct the variable names
+    # ENV is imported from the external secret manager
+    # ENV keys are in the format of state_key_var and staking_key_var with the index as the suffix
     state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
     staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
     key_prefix="espresso-sequencer-private-keys-{{ $type }}{{ if ne $.Values.global.suffix "" }}-{{ $.Values.global.suffix }}{{ end }}="
@@ -42,7 +45,7 @@ data:
     postgres_user_var="ESPRESSO_SEQUENCER_POSTGRES_USER"
     postgres_pass_var="ESPRESSO_SEQUENCER_POSTGRES_PASSWORD"
     postgres_prefix="espresso-sequencer-postgres-{{ $type }}{{ if ne $.Values.global.suffix "" }}-{{ $.Values.global.suffix }}{{ end }}="
-{{- end }}
+    {{- end }}
 
     # Process each key and write to the .env file
     echo "$(process_key $state_key_var $key_prefix "ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY")" > /etc/espresso/.env
