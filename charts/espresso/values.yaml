@@ -6,8 +6,6 @@ global:
     create: false
     annotations: {}
 
-  suffix: ""
-
   namespaceOverride: ""
 
   # -- Whether or not to allocate persistent volume disk for the data directory.
@@ -19,7 +17,7 @@ global:
       - ReadWriteOnce
     size: 150Gi
     annotations: {}
-  
+
   rbac:
     create: true
 
@@ -39,8 +37,17 @@ nodes:
     resources:
       requests:
         memory: "12000Mi"
-    externalSecrets:
+    # -- Secrets to be used by the node.
+    # The secret key must be the same as the one in the Secret resource or ExternalSecret resource.
+    secrets:
+      # -- Sequencer secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the node type.
+      sequencerSecretKey: ""
       data: []
+    # secrets:
+    #   data:
+    #     - secretKey: espresso-sequencer-private-keys-normal-asia
+    #       remoteRef:
+    #         key: "espresso-sequencer-private-keys-normal-asia"
   da:
     replicaCount: 0
     command:
@@ -60,8 +67,20 @@ nodes:
     resources:
       requests:
         memory: "12000Mi"
-    externalSecrets:
+    # -- Secrets to be used by the node.
+    # The secret key must be the same as the one in the Secret resource or ExternalSecret resource.
+    secrets:
+      # -- Sequencer secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the sequencer node secrets.
+      sequencerSecretKey: ""
+      # -- Postgres secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the postgres related secrets.
+      postgresSecretKey: ""
       data: []
+    # secrets:
+    #   data:
+    #     - secretKey: espresso-sequencer-private-keys-normal-asia
+    #       remoteRef:
+    #         key: "espresso-sequencer-private-keys-normal-asia"
+    # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
 
 nodes_config:
   ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: https://orchestrator.cappuccino.testnet.espresso.network
@@ -96,7 +115,7 @@ keystoreCLI:
     pullPolicy: IfNotPresent
   projectId: ""  # GCP Project ID
   pv:
-    secretId: ""   # GCP Secret ID without the Sequencer node type suffix
+    secretId: ""   # GCP Secret ID
   db:
     secretId: ""   # GCP Secret ID of the DB credentials
     host: ""       # DB host

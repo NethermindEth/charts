@@ -39,12 +39,12 @@ data:
     # ENV keys are in the format of state_key_var and staking_key_var with the index as the suffix
     state_key_var="ESPRESSO_SEQUENCER_PRIVATE_STATE_KEY_$index"
     staking_key_var="ESPRESSO_SEQUENCER_PRIVATE_STAKING_KEY_$index"
-    key_prefix="espresso-sequencer-private-keys-{{ $type }}{{ if ne $.Values.global.suffix "" }}-{{ $.Values.global.suffix }}{{ end }}="
+    key_prefix="{{ $specs.secrets.sequencerSecretKey }}="
     {{- if $specs.sqlStorage }}
     postgres_host_var="ESPRESSO_SEQUENCER_POSTGRES_HOST"
     postgres_user_var="ESPRESSO_SEQUENCER_POSTGRES_USER"
     postgres_pass_var="ESPRESSO_SEQUENCER_POSTGRES_PASSWORD"
-    postgres_prefix="espresso-sequencer-postgres-{{ $type }}{{ if ne $.Values.global.suffix "" }}-{{ $.Values.global.suffix }}{{ end }}="
+    postgres_prefix="{{ $specs.secrets.postgresSecretKey }}="
     {{- end }}
 
     # Process each key and write to the .env file

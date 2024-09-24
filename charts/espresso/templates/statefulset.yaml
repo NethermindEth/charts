@@ -40,7 +40,7 @@ spec:
           - name: PROJECT_ID
             value: {{ (required "Project ID is required" $.Values.keystoreCLI.projectId) | quote }}
           - name: SECRET_ID
-            value: {{ required "Secret ID is required" $.Values.keystoreCLI.pv.secretId }}-{{ $type }}{{ if ne $.Values.global.suffix "" }}-{{ $.Values.global.suffix }}{{ end }}
+            value: {{ required "Secret ID is required" $.Values.keystoreCLI.pv.secretId }}
           volumeMounts:
           - name: keys
             mountPath: /keys
