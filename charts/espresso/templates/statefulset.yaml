@@ -85,6 +85,14 @@ spec:
             - name: {{ $key }}
               value: {{ required (printf "%s is required" $key) $value | quote }}
             {{- end }}
+            - name: ESPRESSO_SEQUENCER_IDENTITY_NODE_NAME
+              value: {{ $specs.nodeName }}-$(hostname | awk -F'-' '{print $NF}')
+            - name: ESPRESSO_SEQUENCER_IDENTITY_OPERATING_SYSTEM
+              value: $(uname -sr)
+            {{- with $.Values.global.networkType }}
+            - name: ESPRESSO_SEQUENCER_IDENTITY_NETWORK_TYPE
+              value: {{ . }}
+            {{- end }}
           {{- if $.Values.externalSecrets.enabled }}
           envFrom:
             - secretRef:

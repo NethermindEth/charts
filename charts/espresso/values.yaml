@@ -21,6 +21,11 @@ global:
   rbac:
     create: true
 
+  # -- Network type to be used in Espresso's Node Validator Dashboard for identity purposes.
+  # Values: Residential, Hosted, AWS, Azure, GCP, Cloud Provider.
+  # If the value is a well known cloud provider, then availability zone could be added. E.g. AWS us-east-1a.
+  networkType: ""
+
 nodes:
   normal:
     replicaCount: 1
@@ -48,6 +53,9 @@ nodes:
     #     - secretKey: espresso-sequencer-private-keys-normal-asia
     #       remoteRef:
     #         key: "espresso-sequencer-private-keys-normal-asia"
+    # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
+    nodeName: ""
+    # nodeName: "nethermind-sequencer-<region>"
   da:
     replicaCount: 0
     command:
@@ -81,20 +89,26 @@ nodes:
     #       remoteRef:
     #         key: "espresso-sequencer-private-keys-normal-asia"
     # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
+    nodeName: ""
+    # nodeName: "nethermind-sequencer-da-<region>"
 
 nodes_config:
+  # Required parameters
+  ESPRESSO_SEQUENCER_L1_PROVIDER: ""   # JSON-RPC endpoint for Sepolia testnet
   ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: https://orchestrator.cappuccino.testnet.espresso.network
   ESPRESSO_SEQUENCER_CDN_ENDPOINT: "cdn.cappuccino.testnet.espresso.network:1737"
   ESPRESSO_STATE_RELAY_SERVER_URL: https://state-relay.cappuccino.testnet.espresso.network
-  ESPRESSO_SEQUENCER_BASE_FEE: 0
-  ESPRESSO_SEQUENCER_MAX_BLOCK_SIZE: "30000000"
-  ESPRESSO_SEQUENCER_CHAIN_ID: 0
+  ESPRESSO_SEQUENCER_STATE_PEERS: https://query.cappuccino.testnet.espresso.network
+  ESPRESSO_SEQUENCER_GENESIS_FILE: "/genesis/cappuccino.toml"   # Path to file containing genesis state
+  ESPRESSO_SEQUENCER_LIBP2P_BIND_ADDRESS: "0.0.0.0:31000"   # The address to bind Libp2p to in host:port form. Other nodes should be able to access this.
+  ESPRESSO_SEQUENCER_LIBP2P_ADVERTISE_ADDRESS: "0.0.0.0:31000"   # The address we should advertise to other nodes as being our Libp2p endpoint (in host:port form). It should resolve a connection to the above bind address.
+  # Optional parameters
   RUST_LOG: "warn,libp2p=off"
   RUST_LOG_FORMAT: "json"
-  ESPRESSO_SEQUENCER_STATE_PEERS: https://query.cappuccino.testnet.espresso.network
-  ESPRESSO_SEQUENCER_L1_PROVIDER: ""   # JSON-RPC endpoint for Sepolia testnet
-  ESPRESSO_SEQUENCER_API_PORT: 80      # Port on which to host metrics and healthchecks
   ESPRESSO_SEQUENCER_STORAGE_PATH: "/mount/sequencer/store/"    # Path in container to store consensus state
+  ESPRESSO_SEQUENCER_API_PORT: 80      # Port on which to host metrics and healthchecks
+  ESPRESSO_SEQUENCER_IDENTITY_COMPANY_NAME: "Nethermind"
+  ESPRESSO_SEQUENCER_IDENTITY_COMPANY_WEBSITE: "https://nethermind.io"
 
 image:
   repository: ghcr.io/espressosystems/espresso-sequencer/sequencer
