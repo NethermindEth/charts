@@ -223,6 +223,16 @@ env:
     value: "juno"
 
 secret:
+  feederGateway:
+    refreshInterval: 10m
+    secretStoreName: juno-store
+    secretStoreKind: ClusterSecretStore
+    targetName: juno-goerli         # name of the k8s secret to be created
+    targetCreationPolicy: Owner
+    key: feeder-gateway             # name of the secret to target secret manager
+    property: testnet               # name of the property to retrieve from secret manager
+    version: "1"                    # version of secret
+    secretKey: testnet              # name of the secret data key
   data:
     refreshInterval: 10m
     secretStoreName: juno-store           # external store name (ClusterSecretStore), it is used to connect to a secret manager.
