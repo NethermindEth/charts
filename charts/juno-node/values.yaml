@@ -221,3 +221,25 @@ env:
   data:
   - name: NETWORK
     value: "juno"
+
+secret:
+  data:
+    refreshInterval: 10m
+    secretStoreName: juno-store           # external store name (ClusterSecretStore), it is used to connect to a secret manager.
+    secretStoreKind: ClusterSecretStore   # external store name
+    targetName: juno-sepolia-common       # name of the k8s secret to be created
+    targetCreationPolicy: Owner
+    dataFromKey: secret-store             # name of the secret in secret manager (GCP secret manager)
+
+### Back up juno data and upload to R2 cloud
+backupJunoDataJob:
+  enabled: false
+  dataSource: "juno-sepolia-pv-ssd-juno-sepolia-0"
+  backupSchedule: "0 3 * * *"
+  cleanupSchedule: "0 10 * * *"
+  network: "sepolia"
+  storageSize: 250Gi
+  bucketName: "juno-snapshot"
+  enableRetention: false
+  retentionLimit: 10
+  junoFreeEndpoint: "https://free-rpc-staging.nethermind.dev"
