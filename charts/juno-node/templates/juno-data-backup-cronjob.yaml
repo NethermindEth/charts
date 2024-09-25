@@ -146,10 +146,12 @@ data:
             - |
               apk add --no-cache curl &&
               apk add --no-cache jq &&
-                latestBlockNumber=$(curl --location '{{ .Values.backupJunoDataJob.junoFreeEndpoint }}/{{ .Values.backupJunoDataJob.network }}-juno' --header 'Content-Type: application/json' --data '{ "jsonrpc": "2.0","method": "starknet_blockNumber", "id": 1}' | jq '.result') &&
+              latestBlockNumber=$(curl --location '{{ .Values.backupJunoDataJob.junoFreeEndpoint }}/{{ .Values.backupJunoDataJob.network }}-juno' --header 'Content-Type: application/json' --data '{ "jsonrpc": "2.0","method": "starknet_blockNumber", "id": 1}' | jq '.result') &&
               echo "latestBlockNumber is $latestBlockNumber" &&
-              mv /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_{{ .Values.deployment.imagetag }}*.tar /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_{{ .Values.deployment.imagetag }}_$latestBlockNumber.tar &&
-              echo "/mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_{{ .Values.deployment.imagetag }}_$latestBlockNumber.tar" &&
+              junoVersion=$(curl --location '{{ .Values.backupJunoDataJob.junoFreeEndpoint }}/{{ .Values.backupJunoDataJob.network }}-juno' --header 'Content-Type: application/json' --data '{ "jsonrpc": "2.0","method": "juno_version", "id": 1}' | jq -r '.result') &&
+              echo "junoVersion is $junoVersion " &&
+              mv /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_*.tar /mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_${junoVersion}_${latestBlockNumber}.tar &&
+              echo "/mnt/juno-tar-backup/juno_{{ .Values.backupJunoDataJob.network }}_${junoVersion}_${latestBlockNumber}.tar" &&
               rclone copy /mnt/juno-tar-backup/*.tar R2:/{{ .Values.backupJunoDataJob.bucketName }}/{{ .Values.backupJunoDataJob.network }}
             volumeMounts:
             - name: {{ .Values.deployment.namespace }}-rclone-config
