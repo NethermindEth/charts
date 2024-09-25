@@ -95,11 +95,11 @@ nodes:
 nodes_config:
   # Required parameters
   ESPRESSO_SEQUENCER_L1_PROVIDER: ""   # JSON-RPC endpoint for Sepolia testnet
-  ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: https://orchestrator.cappuccino.testnet.espresso.network
-  ESPRESSO_SEQUENCER_CDN_ENDPOINT: "cdn.cappuccino.testnet.espresso.network:1737"
-  ESPRESSO_STATE_RELAY_SERVER_URL: https://state-relay.cappuccino.testnet.espresso.network
-  ESPRESSO_SEQUENCER_STATE_PEERS: https://query.cappuccino.testnet.espresso.network
-  ESPRESSO_SEQUENCER_GENESIS_FILE: "/genesis/cappuccino.toml"   # Path to file containing genesis state
+  ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: https://orchestrator-7BEFB0C9FFC.decaf.testnet.espresso.network
+  ESPRESSO_SEQUENCER_CDN_ENDPOINT: "cdn.decaf.testnet.espresso.network:1737"
+  ESPRESSO_STATE_RELAY_SERVER_URL: https://state-relay.decaf.testnet.espresso.network
+  ESPRESSO_SEQUENCER_STATE_PEERS: https://query.decaf.testnet.espresso.network
+  ESPRESSO_SEQUENCER_GENESIS_FILE: "/genesis/decaf.toml"   # Path to file containing genesis state
   ESPRESSO_SEQUENCER_LIBP2P_BIND_ADDRESS: "0.0.0.0:31000"   # The address to bind Libp2p to in host:port form. Other nodes should be able to access this.
   ESPRESSO_SEQUENCER_LIBP2P_ADVERTISE_ADDRESS: "0.0.0.0:31000"   # The address we should advertise to other nodes as being our Libp2p endpoint (in host:port form). It should resolve a connection to the above bind address.
   # Optional parameters
