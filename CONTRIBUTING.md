@@ -11,10 +11,12 @@ When contributing to this repository, please first discuss the change you wish t
 1. Create a new branch from `main`.
 2. Make changes to a single chart in the `charts/` directory only (CI will fail if you try to update more than one chart).
 3. Update the chart version in the `Chart.yaml` file, along with any other changes you want to make. Mind the [semantic versioning](https://semver.org/) rules.
-4. Run `make docs` to update the `README.md` file using the `helm-docs` tool.
-5. Run `make lint` to lint the chart.
-6. Push your changes and create a pull request. The pull request should include a description of the changes made and the reason for the changes. The pull request title must follow the `[<chart-name>] <short-description>` format.
-7. The pull request will be reviewed by the maintainers. If the pull request is approved, it will be merged into the `main` branch and new chart version will be released with tag `<chart-name>-<chart-version>`.
+4. Run `make lint` to lint the chart.
+5. Push your changes and create a pull request. The pull request should include a description of the changes made and the reason for the changes. The pull request title must follow the `[<chart-name>] <short-description>` format.
+6. The pull request will be reviewed by the maintainers. If the pull request is approved, it will be merged into the `main` branch and new chart version will be released with tag `<chart-name>-<chart-version>`.
+
+> [!NOTE]
+> Documentation is automatically generated and pushed to the Pull Request head branch.
 
 ## Branch Naming
 
