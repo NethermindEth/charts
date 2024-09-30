@@ -1,7 +1,7 @@
 apiVersion: v2
 name: espresso
 version: 1.0.0
-appVersion: 0.0.1
+appVersion: "1.0.0"
 kubeVersion: "^1.23.0-0"
 description: A Helm chart that combines Kubernetes manifests and scripts to deploy Espresso Sequencer AVS nodes.
 type: application
