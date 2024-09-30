@@ -56,25 +56,25 @@ nodes:
     # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
     nodeName: ""
     # nodeName: "nethermind-sequencer-<region>"
-  da:
-    replicaCount: 0
-    command:
-      - "sequencer"
-      - "--"
-      - "storage-sql"
-      - "--"
-      - "http"
-      - "--"
-      - "catchup"
-      - "--"
-      - "status"
-      - "--"
-      - "query"
-    sqlStorage: true
-    volumeMount: false
-    resources:
-      requests:
-        memory: "12000Mi"
+  # da:
+  #   replicaCount: 0
+  #   command:
+  #     - "sequencer"
+  #     - "--"
+  #     - "storage-sql"
+  #     - "--"
+  #     - "http"
+  #     - "--"
+  #     - "catchup"
+  #     - "--"
+  #     - "status"
+  #     - "--"
+  #     - "query"
+  #   sqlStorage: true
+  #   volumeMount: false
+  #   resources:
+  #     requests:
+  #       memory: "12000Mi"
     # -- Secrets to be used by the node.
     # The secret key must be the same as the one in the Secret resource or ExternalSecret resource.
     secrets:
