@@ -222,6 +222,7 @@ ingress:
 
 externalSecrets:
   enabled: false
+  name: "eso-espresso-sequencer-secrets"
   secretStoreRef:
     name: secretStoreRef
     kind: SecretStore
