@@ -99,11 +99,6 @@ spec:
             {{- end }}
             - name: ESPRESSO_SEQUENCER_KEY_FILE
               value: /etc/espresso/.env
-          {{- if $.Values.externalSecrets.enabled }}
-          envFrom:
-            - secretRef:
-                name: sequencer-env-secrets-{{ $type }} 
-          {{- end }}
           ports:
             - name: api
               containerPort: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
