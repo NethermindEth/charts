@@ -31,9 +31,8 @@ A Helm chart to deploy eRPC instances
 | erpc.config.logLevel | string | `"warn"` | Erpc log level. |
 | erpc.config.metrics | object | `{"enabled":true,"hostV4":"0.0.0.0","hostV6":"[::]","listenV4":true,"listenV6":false,"port":4001}` | Erpc prometheus metrics server configuration. |
 | erpc.config.projects[0].auth | object | `{"secretKey":"","type":"secret"}` | Project authentication strategies. Ref: https://docs.erpc.cloud/config/auth. Only `secret` strategy is supported at the moment. |
-| erpc.config.projects[0].id | string | `""` | Project id to be used. Must be a valid http path. |
+| erpc.config.projects[0].id | string | `""` |  |
 | erpc.config.projects[0].networks | list | `[{"chainId":1,"failsafe":{},"type":"evm"}]` | Project networks to be used. |
-| erpc.config.projects[0].networks[0].chainId | int | `1` | Chain id of the network. |
 | erpc.config.projects[0].networks[0].failsafe | object | `{}` | Failsafe policies to be used for this network. Ref: https://docs.erpc.cloud/config/failsafe |
 | erpc.config.projects[0].networks[0].type | string | `"evm"` | Chain type to be used. Only `evm` is supported at the moment. |
 | erpc.config.projects[0].upstreams[0].chainId | int | `1` | Upstream chain id to be used. |
@@ -41,7 +40,7 @@ A Helm chart to deploy eRPC instances
 | erpc.config.projects[0].upstreams[0].endpoint.secret | object | `{"enabled":false,"key":""}` | Optional secret key to be used. This key is taken from the configured `erpc.secret` resource. |
 | erpc.config.projects[0].upstreams[0].endpoint.value | string | `""` | Optional endpoint value. Ignored if the endpoint is using the `secret` configuration. |
 | erpc.config.projects[0].upstreams[0].failsafe | object | `{}` | Failsafe policies to be used for this upstream. Ref: https://docs.erpc.cloud/config/failsafe |
-| erpc.config.projects[0].upstreams[0].id | string | `""` | Upstream id to be used. Must be a valid http path. |
+| erpc.config.projects[0].upstreams[0].id | string | `""` |  |
 | erpc.config.projects[0].upstreams[0].type | string | `"evm"` | Upstream type to be used. |
 | erpc.config.server | object | `{"httpHostV4":"0.0.0.0","httpHostV6":"[::]","httpPort":4000,"listenV4":true,"listenV6":false}` | Erpc json-rpc server configuration. |
 | erpc.image | object | `{"pullPolicy":"IfNotPresent","repository":"ghcr.io/erpc/erpc","tag":"0.0.23"}` | Erpc image to be used. |

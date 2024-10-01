@@ -84,9 +84,7 @@ erpc:
 
     # Erpc projects configuration.
     projects:
-      - # -- Project id to be used.
-        # Must be a valid http path.
-        id: ""
+      - id: ""
         # -- Project authentication strategies.
         # Ref: https://docs.erpc.cloud/config/auth.
         # Only `secret` strategy is supported at the moment.
@@ -95,11 +93,11 @@ erpc:
           secretKey: ""
         # -- Project networks to be used.
         networks:
-          - # -- Chain type to be used.
+          - chainId: 1
+            # -- Chain type to be used.
             # Only `evm` is supported at the moment.
             type: evm
             # -- Chain id of the network.
-            chainId: 1
             # -- Failsafe policies to be used for this network.
             # Ref: https://docs.erpc.cloud/config/failsafe
             failsafe:
@@ -117,9 +115,7 @@ erpc:
               #   maxCount: 1
 
         upstreams:
-          - # -- Upstream id to be used.
-            # Must be a valid http path.
-            id: ""
+          - id: ""
             # -- Upstream type to be used.
             type: evm
             # -- Upstream chain id to be used.
