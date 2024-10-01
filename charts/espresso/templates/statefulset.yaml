@@ -68,7 +68,11 @@ spec:
           command: ['/bin/bash', '/scripts/init.sh'] 
           envFrom:
             - secretRef:
-                name: eso-espresso-sequencer-secrets-{{ $type }}
+                {{- if $.Values.externalSecrets.enabled }}
+                name: {{ $.Values.externalSecrets.name }}-{{ $type }}
+                {{- else }}
+                name: k8s-espresso-sequencer-secrets-{{ $type }}
+                {{- end }}
           volumeMounts:
             - name: init-env
               mountPath: /etc/espresso

@@ -77,19 +77,19 @@ nodes:
   #       memory: "12000Mi"
     # -- Secrets to be used by the node.
     # The secret key must be the same as the one in the Secret resource or ExternalSecret resource.
-    secrets:
-      # -- Sequencer secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the sequencer node secrets.
-      sequencerSecretKey: ""
-      # -- Postgres secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the postgres related secrets.
-      postgresSecretKey: ""
-      data: []
     # secrets:
-    #   data:
-    #     - secretKey: espresso-sequencer-private-keys-normal-asia
-    #       remoteRef:
-    #         key: "espresso-sequencer-private-keys-normal-asia"
-    # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
-    nodeName: ""
+    #   # -- Sequencer secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the sequencer node secrets.
+    #   sequencerSecretKey: ""
+    #   # -- Postgres secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the postgres related secrets.
+    #   postgresSecretKey: ""
+    #   data: []
+    # # secrets:
+    # #   data:
+    # #     - secretKey: espresso-sequencer-private-keys-normal-asia
+    # #       remoteRef:
+    # #         key: "espresso-sequencer-private-keys-normal-asia"
+    # # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
+    # nodeName: ""
     # nodeName: "nethermind-sequencer-da-<region>"
 
 nodes_config:
