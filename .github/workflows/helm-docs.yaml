@@ -13,8 +13,14 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
       - name: Run helm-docs
-        run: docker run --rm --volume "$(pwd):/helm-docs" -u "$(id -u)" jnorwood/helm-docs:latest
+        run: |
+          TARGET_BRANCH=${{ github.event.pull_request.base.ref }}
+          TARGET_CHART_PATH=$(ct list-changed --target-branch "$TARGET_BRANCH" | head -n 1)
+          docker run --rm --volume "$(pwd)/${TARGET_CHART_PATH}:/helm-docs" -u "$(id -u)" jnorwood/helm-docs:latest
 
       - name: Check for unstaged changes
         run: |
