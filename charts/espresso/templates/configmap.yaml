@@ -59,6 +59,6 @@ data:
     # cat /etc/espresso/.env 
 
     # Create Secret with .env file
-    kubectl delete secret sequencer-env-secrets-{{ $type }} --ignore-not-found
-    kubectl create secret generic sequencer-env-secrets-{{ $type }} --from-env-file=/etc/espresso/.env
+    # kubectl delete secret sequencer-env-secrets-{{ $type }}-$index --ignore-not-found
+    # kubectl create secret generic sequencer-env-secrets-{{ $type }}-$index --from-env-file=/etc/espresso/.env
 {{- end }}

@@ -97,6 +97,8 @@ spec:
             - name: ESPRESSO_SEQUENCER_IDENTITY_NETWORK_TYPE
               value: {{ . }}
             {{- end }}
+            - name: ESPRESSO_SEQUENCER_KEY_FILE
+              value: /etc/espresso/.env
           {{- if $.Values.externalSecrets.enabled }}
           envFrom:
             - secretRef:
@@ -109,6 +111,8 @@ spec:
           volumeMounts:
             - name: consensus-data
               mountPath: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_STORAGE_PATH }}
+            - name: init-env
+              mountPath: /etc/espresso
           {{- end }}
           {{- with $specs.resources }}
           resources:
