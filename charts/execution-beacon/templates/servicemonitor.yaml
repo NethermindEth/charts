@@ -17,7 +17,7 @@ metadata:
 spec:
   endpoints:
     - port: metrics-exec
-      {{- if eq .Values.execution.client "geth" }}
+      {{- if eq .Values.execution.client "opGeth" }}
       path: /debug/metrics/prometheus
       {{- else }}
       path: /metrics
