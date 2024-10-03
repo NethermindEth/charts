@@ -96,7 +96,7 @@ spec:
               . /env/init-nodeport;
               {{- end }}
             {{- /* Configuration for Nethermind execution client */}}
-            {{- if eq .Values.execution.client "op-nethermind" }}
+            {{- if eq .Values.execution.client "opNethermind" }}
               exec /nethermind/Nethermind.Runner
               --config={{ .Values.global.network }}
               --datadir=/data/execution
@@ -148,7 +148,7 @@ spec:
               --Merge.TerminalTotalDifficulty={{ .Values.execution.terminalTotalDifficulty }}
             {{- end }}
             {{- /* Configuration for Geth execution client */}}
-            {{- else if eq .Values.execution.client "op-geth" }}
+            {{- else if eq .Values.execution.client "opGeth" }}
               exec geth
               --datadir=/data/execution
               --ipcdisable
@@ -210,7 +210,7 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          {{- if and (eq .Values.execution.client "op-nethermind") (.Values.global.p2pNodePort.enabled) }}
+          {{- if and (eq .Values.execution.client "opNethermind") (.Values.global.p2pNodePort.enabled) }}
             {{- range $i, $e := until (int .Values.global.replicaCount) }}
             {{- $portExecution := add $.Values.global.p2pNodePort.startAtExecution $i }}
             {{- if hasKey $.Values.global.p2pNodePort.replicaToNodePort ($i | toString) }}
@@ -279,7 +279,7 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           {{/* Configuration for op-node beacon client */}}
-          {{- if eq .Values.beacon.client "op-node" }}
+          {{- if eq .Values.beacon.client "opNode" }}
           command:
             - sh
             - -ac
@@ -295,15 +295,15 @@ spec:
               {{- else }}
               --l2.jwt-secret=/secret/jwtsecret
               {{- end }}
-              --l1={{ .Values.beacon.l1Endpoint }}
+              --l1={{ .Values.beacon.l1ExecutionEndpoint }}
               --l1.beacon={{ .Values.beacon.l1BeaconEndpoint }}
-            {{- if eq .Values.execution.client "op-geth" }}
+            {{- if eq .Values.execution.client "opGeth" }}
               --syncmode=execution-layer
               --l2.enginekind=geth
             {{- end }}
             {{- if .Values.beacon.restApi.enabled }}
               --rpc.addr={{ .Values.beacon.restApi.host }}
-              --rpc.port={{ index .Values.beacon.restApi.portMap "op-node" }}
+              --rpc.port={{ index .Values.beacon.restApi.portMap "opNode" }}
             {{- end }}
               --p2p-enabled=true
               --p2p-peer-upper-bound={{ .Values.beacon.targetPeers }}
