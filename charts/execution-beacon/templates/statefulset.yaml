@@ -202,7 +202,7 @@ spec:
               exec op-reth node
               --datadir=/data/execution
               --chain={{ .Values.global.network }}
-              --rollup.disable-tx-pool-gossip=true
+              --rollup.disable-tx-pool-gossip
               --rollup.sequencer-http={{ .Values.execution.sequencerUrl }}
             {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
