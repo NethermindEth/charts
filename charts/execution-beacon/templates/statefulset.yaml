@@ -217,14 +217,6 @@ spec:
               --ws
             {{- end }}
             {{- end }}
-              --maxpeers={{ .Values.execution.targetPeers }}
-            {{- if .Values.global.p2pNodePort.enabled }}
-              --nat=extip:$EXTERNAL_IP
-              --port=$EXTERNAL_EXECUTION_PORT
-            {{- else }}
-              --nat=extip:$POD_IP
-              --port={{ include "execution.p2pPort" . }}
-            {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --metrics
               --metrics.port={{ .Values.execution.metrics.port }}
