@@ -213,12 +213,28 @@ spec:
               --authrpc.port={{ .Values.execution.jsonrpc.engine.port }}
             {{- if .Values.execution.jsonrpc.enabled }}
               --http
+              --http.addr={{ .Values.execution.jsonrpc.host }}
+              --http.port={{ .Values.execution.jsonrpc.http.port }}
+              --http.corsdomain={{ .Values.execution.jsonrpc.http.corsOrigins | join "," }}
+              --http.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
             {{- if .Values.execution.jsonrpc.websocket.enabled }}
               --ws
+              --ws.addr={{ .Values.execution.jsonrpc.host }}
+              --ws.port={{ .Values.execution.jsonrpc.websocket.port }}
+              --ws.origins={{ .Values.execution.jsonrpc.websocket.origins }}
+              --ws.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
             {{- end }}
+            {{- end }}
+              --max-inbound-peers={{ .Values.execution.targetPeers }}
+            {{- if .Values.global.p2pNodePort.enabled }}
+              --nat=extip:$EXTERNAL_IP
+              --port=$EXTERNAL_EXECUTION_PORT
+            {{- else }}
+              --nat=extip:$POD_IP
+              --port={{ include "execution.p2pPort" . }}
             {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
-              --metrics
+              --metrics={{ .Values.execution.metrics.host }}:{{ .Values.execution.metrics.port }}
             {{- end }}
             {{- end }}
             {{- range .Values.execution.extraFlags }}
