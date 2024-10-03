@@ -308,6 +308,8 @@ spec:
               --rpc.addr={{ .Values.beacon.restApi.host }}
               --rpc.port={{ index .Values.beacon.restApi.portMap "opNode" }}
             {{- end }}
+              --p2p.peerstore.path=/data/beacon/opnode_peerstore_db
+              --p2p.discovery.path=/data/beacon/opnode_discovery_db
             {{- if .Values.global.p2pNodePort.enabled }}
               --p2p.advertise.tcp=$EXTERNAL_BEACON_PORT
               --p2p.advertise.udp=$EXTERNAL_BEACON_PORT
