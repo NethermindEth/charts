@@ -154,7 +154,7 @@ spec:
               exec geth
               --datadir=/data/execution
               --ipcdisable
-              --network={{ .Values.global.network }}
+              --op-network={{ .Values.global.network }}
             {{- if hasPrefix .Values.global.network "op-" }}
               --rollup.disabletxpoolgossip=true
               --rollup.sequencerhttp={{ .Values.execution.sequencerUrl }}
