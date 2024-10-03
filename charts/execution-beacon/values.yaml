@@ -523,5 +523,3 @@ rbac:
       - "get"
       - "list"
       - "watch"
-```
-</rewritten_file>
