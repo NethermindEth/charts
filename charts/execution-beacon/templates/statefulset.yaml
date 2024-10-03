@@ -219,8 +219,6 @@ spec:
             {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --metrics
-              --metrics.port={{ .Values.execution.metrics.port }}
-              --metrics.addr={{ .Values.execution.metrics.host }}  
             {{- end }}
             {{- end }}
             {{- range .Values.execution.extraFlags }}
