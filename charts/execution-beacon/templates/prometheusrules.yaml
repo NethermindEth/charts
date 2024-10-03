@@ -21,29 +21,29 @@ spec:
       rules: {{- tpl (toYaml .) $ | nindent 8 }}
   {{- end }}
   {{- if .Values.global.metrics.prometheusRule.default }}
-  {{- if eq .Values.execution.client "opGeth" }}
-    - name: {{ include "common.names.fullname" $ }}-default
-      rules:
-        - alert: OpGethNodeDown
-          expr: up{job="{{ include "common.names.fullname" . }}"} == 0
-          for: 5m
-          labels:
-            severity: critical
-          annotations:
-            summary: OP Geth Node {{ printf "{{ $labels.instance }}" }} down
-            description: OP Geth Node {{ printf "{{ $labels.instance }}" }} is down
-  {{- else if eq .Values.execution.client "opNethermind" }}
-    - name: {{ include "common.names.fullname" $ }}-default
-      rules:
-        - alert: OpNethermindNodeDown
-          expr: up{job="{{ include "common.names.fullname" . }}"} == 0
-          for: 5m
-          labels:
-            severity: critical
-          annotations:
-            summary: OP Nethermind Node {{ printf "{{ $labels.instance }}" }} down
-            description: OP Nethermind Node {{ printf "{{ $labels.instance }}" }} is down
-  {{- end }}
+  # {{- if eq .Values.execution.client "opGeth" }}
+  #   - name: {{ include "common.names.fullname" $ }}-default
+  #     rules:
+  #       - alert: OpGethNodeDown
+  #         expr: up{job="{{ include "common.names.fullname" . }}"} == 0
+  #         for: 5m
+  #         labels:
+  #           severity: critical
+  #         annotations:
+  #           summary: OP Geth Node {{ printf "{{ $labels.instance }}" }} down
+  #           description: OP Geth Node {{ printf "{{ $labels.instance }}" }} is down
+  # {{- else if eq .Values.execution.client "opNethermind" }}
+  #   - name: {{ include "common.names.fullname" $ }}-default
+  #     rules:
+  #       - alert: OpNethermindNodeDown
+  #         expr: up{job="{{ include "common.names.fullname" . }}"} == 0
+  #         for: 5m
+  #         labels:
+  #           severity: critical
+  #         annotations:
+  #           summary: OP Nethermind Node {{ printf "{{ $labels.instance }}" }} down
+  #           description: OP Nethermind Node {{ printf "{{ $labels.instance }}" }} is down
+  # {{- end }}
   {{- end }}
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -67,17 +67,17 @@ spec:
       rules: {{- tpl (toYaml .) $ | nindent 8 }}
   {{- end }}
   {{- if .Values.global.metrics.prometheusRule.default }}
-  {{- if eq .Values.beacon.client "opNode" }}
-    - name: {{ include "common.names.fullname" $ }}-default
-      rules:
-        - alert: OpNodeBeaconNodeDown
-          expr: up{job='{{ include "common.names.fullname" . }}'} == 0
-          for: 1m
-          labels:
-            severity: critical
-          annotations:
-            summary: OP Node beacon node is down
-            description: Check {{ printf "{{ $labels.pod }}" }} beacon node in namespace {{ printf "{{ $labels.namespace }}" }}
-  {{- end }}
+  # {{- if eq .Values.beacon.client "opNode" }}
+  #   - name: {{ include "common.names.fullname" $ }}-default
+  #     rules:
+  #       - alert: OpNodeBeaconNodeDown
+  #         expr: up{job='{{ include "common.names.fullname" . }}'} == 0
+  #         for: 1m
+  #         labels:
+  #           severity: critical
+  #         annotations:
+  #           summary: OP Node beacon node is down
+  #           description: Check {{ printf "{{ $labels.pod }}" }} beacon node in namespace {{ printf "{{ $labels.namespace }}" }}
+  # {{- end }}
 {{- end }}
 {{- end }}
