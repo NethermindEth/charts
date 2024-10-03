@@ -198,7 +198,12 @@ spec:
             {{- else if eq .Values.execution.client "opReth" }}
               exec op-reth node
               --datadir=/data/execution
+              --log.file.directory=/data/execution/logs
+            {{- if eq .Values.global.network "op-mainnet" }}
+              --chain=optimism
+            {{- else }}
               --chain={{ .Values.global.network }}
+            {{- end }}
               --rollup.disable-tx-pool-gossip
               --rollup.sequencer-http={{ .Values.execution.sequencerUrl }}
             {{- if .Values.global.externalSecrets.enabled }}
