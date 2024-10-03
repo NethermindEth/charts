@@ -197,7 +197,6 @@ spec:
               --metrics.addr={{ .Values.execution.metrics.host }}  
             {{- end }}
             {{- end }}
-            {{- end }}
             {{- range .Values.execution.extraFlags }}
               {{ . }}
             {{- end }}
