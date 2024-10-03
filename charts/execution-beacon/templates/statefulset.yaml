@@ -211,20 +211,10 @@ spec:
             {{- end }}
               --authrpc.addr={{ .Values.execution.jsonrpc.host }}
               --authrpc.port={{ .Values.execution.jsonrpc.engine.port }}
-              --authrpc.vhosts={{ .Values.execution.jsonrpc.engine.hostAllowList | join "," }}
             {{- if .Values.execution.jsonrpc.enabled }}
               --http
-              --http.addr={{ .Values.execution.jsonrpc.host }}
-              --http.port={{ .Values.execution.jsonrpc.http.port }}
-              --http.corsdomain={{ .Values.execution.jsonrpc.http.corsOrigins | join "," }}
-              --http.vhosts={{ .Values.execution.jsonrpc.http.hostAllowList | join "," }}
-              --http.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
             {{- if .Values.execution.jsonrpc.websocket.enabled }}
               --ws
-              --ws.addr={{ .Values.execution.jsonrpc.host }}
-              --ws.port={{ .Values.execution.jsonrpc.websocket.port }}
-              --ws.origins={{ .Values.execution.jsonrpc.websocket.origins }}
-              --ws.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
             {{- end }}
             {{- end }}
               --maxpeers={{ .Values.execution.targetPeers }}
