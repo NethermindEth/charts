@@ -336,6 +336,11 @@ execution:
         - eth
         - net
         - engine
+      reth:
+        - web3
+        - eth
+        - net
+        - reth
     host: "0.0.0.0"
     grpc:
       port: 9090

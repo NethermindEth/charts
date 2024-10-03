@@ -190,9 +190,6 @@ spec:
               --nat=extip:$POD_IP
               --port={{ include "execution.p2pPort" . }}
             {{- end }}
-            {{- if .Values.execution.terminalTotalDifficulty }}
-              --override.geth.terminaltotaldifficulty={{ .Values.execution.terminalTotalDifficulty }}
-            {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --metrics
               --metrics.port={{ .Values.execution.metrics.port }}
@@ -216,13 +213,13 @@ spec:
               --http.addr={{ .Values.execution.jsonrpc.host }}
               --http.port={{ .Values.execution.jsonrpc.http.port }}
               --http.corsdomain={{ .Values.execution.jsonrpc.http.corsOrigins | join "," }}
-              --http.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
+              --http.api={{ .Values.execution.jsonrpc.namespaces.reth | join "," }}
             {{- if .Values.execution.jsonrpc.websocket.enabled }}
               --ws
               --ws.addr={{ .Values.execution.jsonrpc.host }}
               --ws.port={{ .Values.execution.jsonrpc.websocket.port }}
               --ws.origins={{ .Values.execution.jsonrpc.websocket.origins }}
-              --ws.api={{ .Values.execution.jsonrpc.namespaces.geth | join "," }}
+              --ws.api={{ .Values.execution.jsonrpc.namespaces.reth | join "," }}
             {{- end }}
             {{- end }}
               --max-inbound-peers={{ .Values.execution.targetPeers }}
