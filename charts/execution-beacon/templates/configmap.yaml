@@ -9,7 +9,7 @@ data:
   init.sh: |
     #!/bin/sh
 {{- if or (and .Values.execution.persistence.enabled .Values.execution.initChownData) (and .Values.beacon.persistence.enabled .Values.beacon.initChownData) (.Values.sharedPersistence.enabled) }}
-    # mkdir -p /data && chown -R {{ .Values.global.podSecurityContext.runAsUser }}:{{ .Values.global.podSecurityContext.runAsUser }} /data;
+    mkdir -p /data && chown -R {{ .Values.global.podSecurityContext.runAsUser }}:{{ .Values.global.podSecurityContext.runAsUser }} /data;
     mkdir -p /data/beacon && chown -R {{ .Values.global.podSecurityContext.runAsUser }}:{{ .Values.global.podSecurityContext.runAsUser }} /data/beacon;
 {{- end }}
     echo "Namespace: ${POD_NAMESPACE} Pod: ${POD_NAME}";
@@ -35,12 +35,5 @@ data:
       echo "EXTERNAL_BEACON_PORT=$EXTERNAL_BEACON_PORT" >> /env/init-nodeport
       echo "EXTERNAL_IP=$EXTERNAL_IP"     >> /env/init-nodeport
       cat /env/init-nodeport
-  {{- if eq .Values.beacon.client "prysm" }}
-      touch /data/beacon/config.yaml
-      echo "p2p-host-ip: $EXTERNAL_IP" > /data/beacon/config.yaml
-      echo "p2p-tcp-port: $EXTERNAL_BEACON_PORT" >> /data/beacon/config.yaml
-      echo "p2p-udp-port: $EXTERNAL_BEACON_PORT" >> /data/beacon/config.yaml
-      echo "Updated Prysm config.yaml file at /data/beacon/config.yaml"
-  {{- end }}
       if [ -f "/data/beacon/config.yaml" ]; then echo "Beacon client config:" && cat "/data/beacon/config.yaml"; fi
 {{- end }}

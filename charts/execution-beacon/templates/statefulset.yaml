@@ -88,6 +88,8 @@ spec:
         - name: execution
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           command:
             - sh
             - -ac
@@ -277,6 +279,8 @@ spec:
         - name: beacon
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           {{/* Configuration for op-node beacon client */}}
           {{- if eq .Values.beacon.client "opNode" }}
           command:
