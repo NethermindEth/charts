@@ -1,5 +1,5 @@
 {{- if .Values.global.p2pNodePort.enabled -}}
-
+{{- range $i, $e := until (int .Values.global.replicaCount) }}
 ---
 apiVersion: v1
 kind: Service
@@ -63,5 +63,5 @@ spec:
   selector:
     {{- include "common.labels.matchLabels" $ | nindent 4 }}
     statefulset.kubernetes.io/pod-name: "{{ include "common.names.fullname" $ }}-{{ $i }}"
-
+{{- end }}
 {{- end }}
