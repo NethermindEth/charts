@@ -341,12 +341,11 @@ spec:
               --l1.trustrpc
               --l1={{ .Values.beacon.l1ExecutionEndpoint }}
               --l1.beacon={{ .Values.beacon.l1BeaconEndpoint }}
-            {{- if eq .Values.execution.client "opGeth" }}
               --syncmode=execution-layer
+            {{- if eq .Values.execution.client "opGeth" }}
               --l2.enginekind=geth
             {{- end }}
             {{- if eq .Values.execution.client "opReth" }}
-              --syncmode=execution-layer
               --l2.enginekind=reth
             {{- end }}
             {{- if .Values.beacon.restApi.enabled }}
