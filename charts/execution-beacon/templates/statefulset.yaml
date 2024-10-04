@@ -94,9 +94,6 @@ spec:
             - sh
             - -ac
             - >
-              {{- if .Values.global.p2pNodePort.enabled }}
-              . /env/init-nodeport;
-              {{- end }}
             {{- /* Configuration for Nethermind execution client */}}
             {{- if eq .Values.execution.client "opNethermind" }}
               exec /nethermind/Nethermind.Runner
@@ -183,13 +180,7 @@ spec:
             {{- end }}
             {{- end }}
               --maxpeers={{ .Values.execution.targetPeers }}
-            {{- if .Values.global.p2pNodePort.enabled }}
-              --nat=extip:$EXTERNAL_IP
-              --port=$EXTERNAL_EXECUTION_PORT
-            {{- else }}
-              --nat=extip:$POD_IP
               --port={{ include "execution.p2pPort" . }}
-            {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --metrics
               --metrics.port={{ .Values.execution.metrics.port }}
@@ -251,18 +242,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          {{- if and (eq .Values.execution.client "opNethermind") (.Values.global.p2pNodePort.enabled) }}
-            {{- range $i, $e := until (int .Values.global.replicaCount) }}
-            {{- $portExecution := add $.Values.global.p2pNodePort.startAtExecution $i }}
-            {{- if hasKey $.Values.global.p2pNodePort.replicaToNodePort ($i | toString) }}
-              {{- $portExecution = index $.Values.global.p2pNodePort.replicaToNodePort ($i | toString) }}
-            {{- end }}
-            - name: NETHERMIND_NETWORKCONFIG_DISCOVERYPORT
-              value: "{{ $portExecution }}"
-            - name: NETHERMIND_NETWORKCONFIG_P2PPORT
-              value: "{{ $portExecution }}"
-            {{- end }}
-          {{- end }}
           {{- if .Values.global.externalSecrets.enabled }}
           envFrom:
             - secretRef:
