@@ -102,7 +102,7 @@ spec:
               exec /nethermind/Nethermind.Runner
               --config={{ .Values.global.network }}
               --datadir=/data/execution
-            {{- if hasPrefix .Values.global.network "op-" }}
+            {{- if .Values.execution.sequencerUrl }}
               --Optimism.SequencerUrl={{ .Values.execution.sequencerUrl }}
             {{- end }}
             {{- if .Values.execution.jsonrpc.enabled }}
@@ -155,7 +155,7 @@ spec:
               --datadir=/data/execution
               --ipcdisable
               --op-network={{ .Values.global.network }}
-            {{- if hasPrefix .Values.global.network "op-" }}
+            {{- if .Values.execution.sequencerUrl }}
               --rollup.disabletxpoolgossip=true
               --rollup.sequencerhttp={{ .Values.execution.sequencerUrl }}
             {{- end }}

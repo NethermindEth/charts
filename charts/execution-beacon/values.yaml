@@ -269,7 +269,7 @@ global:
 
 execution:
   client: opNethermind
-  sequencerUrl: "http://localhost:8888"
+  sequencerUrl: ""
 
   # -- Whether or not to allocate persistent volume disk for the data directory.
   # In case of node failure, the node data directory will still persist.
