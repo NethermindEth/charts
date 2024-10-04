@@ -306,9 +306,6 @@ spec:
             - sh
             - -ac
             - >
-              {{- if .Values.global.p2pNodePort.enabled }}
-              . /env/init-nodeport;
-              {{- end }}
               exec op-node
               --network={{ .Values.global.network }}
               --l2=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}
@@ -335,15 +332,8 @@ spec:
               --p2p.peerstore.path=/data/beacon/opnode_peerstore_db
               --p2p.discovery.path=/data/beacon/opnode_discovery_db
               --p2p.priv.path=/data/beacon/opnode_p2p_priv.txt
-            {{- if .Values.global.p2pNodePort.enabled }}
-              --p2p.advertise.tcp=$EXTERNAL_BEACON_PORT
-              --p2p.advertise.udp=$EXTERNAL_BEACON_PORT
-              --p2p.advertise.ip=$EXTERNAL_IP
-            {{- else }}
-              --p2p.advertise.ip=$POD_IP
               --p2p.advertise.tcp={{ include "beacon.p2pPort" . }}
               --p2p.advertise.udp={{ include "beacon.p2pPort" . }}
-            {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.beacon.metrics.enabled }}
               --metrics.enabled={{ .Values.beacon.metrics.enabled }}
               --metrics.addr={{ .Values.beacon.metrics.host }}
