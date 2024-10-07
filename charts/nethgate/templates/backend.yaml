@@ -1,5 +1,5 @@
 {{- if .Values.deployment.kong.enabled }}
-{{- if and .Values.proxy.ingress.enabled }}
+{{- if and .Values.proxy.ingress.enabled (eq .Values.proxy.ingress.ingressClassName "gce") }}
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
