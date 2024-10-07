@@ -374,8 +374,7 @@ proxy:
   ingress:
     # Enable/disable exposure using ingress.
     enabled: false
-    # ingressClassName: gce
-    # backendConfig: {}
+    backendConfig: {}
     #     timeoutSec: 400
     #     sessionAffinity:
     #       affinityType: "GENERATED_COOKIE"
