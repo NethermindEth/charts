@@ -1246,18 +1246,7 @@ deployment:
       type: LoadBalancer
       loadBalancerIP: <ip>
 ```
-# Migrator DOC
-```
-deployment:
-  voyager_migrator:
-    enabled: true
-    image:
-      repository: nethermindeth/voyager_migrator
-      migrator_tag: 0.0.1-dev403
-      pullSecrets:
-      - "regcred"
-```
-## Custom ENV for both Nethgate and migrator both
+## Custom ENV for Nethgate
 ```
 deployment:
   customNethgateEnv:
