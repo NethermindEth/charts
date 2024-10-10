@@ -1800,10 +1800,16 @@ extensions/v1beta1
 
 {{- define "kong.proxy.compatibleReadiness" -}}
 {{- $proxyReadiness := .Values.readinessProbe -}}
-{{- if (or (semverCompare "< 3.3.0" (include "kong.effectiveVersion" .Values.image)) (and .Values.ingressController.enabled (semverCompare "< 2.11.0" (include "kong.effectiveVersion" .Values.ingressController.image)))) -}}
+{{- $effectiveVersion := include "kong.effectiveVersion" .Values.image | default "0.0.0" -}}
+{{- $ingressVersion := include "kong.effectiveVersion" .Values.ingressController.image | default "0.0.0" -}}
+
+{{- if (or (and (not (eq .Values.image.tag "latest")) (semverCompare "< 3.3.0" $effectiveVersion)) 
+           (and .Values.ingressController.enabled (not (eq .Values.ingressController.image.tag "latest")) (semverCompare "< 2.11.0" $ingressVersion)) 
+           (eq .Values.image.tag "latest")) -}}
     {{- if (eq $proxyReadiness.httpGet.path "/status/ready") -}}
         {{- $_ := set $proxyReadiness.httpGet "path" "/status" -}}
     {{- end -}}
 {{- end -}}
-{{- (toYaml $proxyReadiness) -}}
+
+{{- (toYaml $proxyReadiness) | nindent 2 -}}
 {{- end -}}
