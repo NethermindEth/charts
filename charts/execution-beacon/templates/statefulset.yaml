@@ -88,6 +88,9 @@ spec:
         - name: download-world-trie-state
           image: google/cloud-sdk:496.0.0
           command: ["/bin/sh", "-c", "gsutil -m cp -n gs://op-mainnet-world-trie-state/world_trie_state.jsonl /data/execution/world_trie_state.jsonl"]
+          env:
+            - name: CLOUDSDK_CONFIG
+              value: /tmp/gcloud
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
             - name: data
