@@ -90,7 +90,7 @@ spec:
           securityContext:
             runAsNonRoot: false
             runAsUser: 0
-          command: ["/bin/sh", "-c", "gsutil -m cp -n gs://op-mainnet-world-trie-state/world_trie_state.jsonl /data/execution/world_trie_state.jsonl"]
+          command: ['/bin/sh', '/scripts/init-download-state.sh']
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
             - name: data
@@ -99,13 +99,15 @@ spec:
             - name: data-execution
               mountPath: /data/execution
           {{- end }}
+            - name: scripts-init
+              mountPath: /scripts
         # Initialize state using op-reth to perform minimal bootstrap which is currently recommended https://reth.rs/run/sync-op-mainnet.html#minimal-bootstrap-recommended
         - name: op-reth-bootstrap
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
             {{- toYaml .Values.global.securityContext | nindent 12 }}
-          command: ["/bin/sh", "-c", "if [ ! -d /data/execution/static_files ] || [ -z \"$(ls -A /data/execution/static_files)\" ]; then exec op-reth init-state --log.file.directory=/data/execution/logs --without-ovm --datadir=/data/execution --chain=optimism /data/execution/world_trie_state.jsonl; fi"]
+          command: ['/bin/sh', '/scripts/init-state.sh']    
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
             - name: data
@@ -113,11 +115,7 @@ spec:
           {{- else }}
             - name: data-execution
               mountPath: /data/execution
-            - name: data-beacon
-              mountPath: /data/beacon
           {{- end }}
-            - name: env-nodeport
-              mountPath: /env
             - name: scripts-init
               mountPath: /scripts
       {{- end }}
