@@ -83,7 +83,7 @@ spec:
               mountPath: /env
             - name: scripts-init
               mountPath: /scripts
-        {{- if eq .Values.execution.client "opReth" }}
+        {{- if and (eq .Values.execution.client "opReth") (eq .Values.global.network "op-mainnet") }}
         # Download world trie state from GCS bucket if it doesn't exist
         - name: download-world-trie-state
           image: google/cloud-sdk:496.0.0
