@@ -90,9 +90,6 @@ spec:
           securityContext:
             {{- toYaml .Values.global.securityContext | nindent 12 }}
           command: ["/bin/sh", "-c", "gsutil -m cp -n gs://op-mainnet-world-trie-state/world_trie_state.jsonl /data/execution/world_trie_state.jsonl"]
-          env:
-            - name: CLOUDSDK_CONFIG
-              value: /data/gcloud
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
             - name: data
