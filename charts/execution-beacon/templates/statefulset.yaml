@@ -83,6 +83,49 @@ spec:
               mountPath: /env
             - name: scripts-init
               mountPath: /scripts
+        {{- if eq .Values.execution.client "opReth" }}
+        # Download world trie state from GCS bucket if it doesn't exist
+        - name: download-world-trie-state
+          image: google/cloud-sdk:496.0.0
+          command: ["/bin/sh", "-c", "gsutil -m cp -n gs://op-mainnet-world-trie-state/world_trie_state.jsonl /data/execution/world_trie_state.jsonl"]
+          volumeMounts:
+          {{- if .Values.global.sharedPersistence.enabled }}
+            - name: data
+              mountPath: /data
+          {{- else }}
+            - name: data-execution
+              mountPath: /data/execution
+          {{- end }}
+        # Initialize state using op-reth to perform minimal bootstrap which is currently recommended https://reth.rs/run/sync-op-mainnet.html#minimal-bootstrap-recommended
+        - name: op-reth-bootstrap
+          image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
+          imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
+          securityContext:
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
+          command:
+            - sh
+            - -ac
+            - >
+              exec op-reth init-state
+              --without-ovm
+              --datadir=/data/execution
+              --chain=optimism
+              /data/execution/world_trie_state.jsonl
+          volumeMounts:
+          {{- if .Values.global.sharedPersistence.enabled }}
+            - name: data
+              mountPath: /data
+          {{- else }}
+            - name: data-execution
+              mountPath: /data/execution
+            - name: data-beacon
+              mountPath: /data/beacon
+          {{- end }}
+            - name: env-nodeport
+              mountPath: /env
+            - name: scripts-init
+              mountPath: /scripts
+      {{- end }}
       containers:
         {{/* Container used for Execution clients: op-nethermind, op-geth, op-reth */}}
         - name: execution
@@ -199,6 +242,7 @@ spec:
               exec op-reth node
               --datadir=/data/execution
               --log.file.directory=/data/execution/logs
+              --debug.tip=0x098f87b75c8b861c775984f9d5dbe7b70cbbbc30fc15adb03a5044de0144f2d0
             {{- if eq .Values.global.network "op-mainnet" }}
               --chain=optimism
             {{- else }}
