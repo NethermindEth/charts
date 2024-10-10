@@ -38,6 +38,7 @@ data:
       cat /env/init-nodeport
       if [ -f "/data/beacon/config.yaml" ]; then echo "Beacon client config:" && cat "/data/beacon/config.yaml"; fi
 {{- end }}
+{{- if eq .Values.execution.client "opReth" }}
   init-download-state.sh: |
     #!/bin/sh
     gsutil -m cp -n gs://op-mainnet-world-trie-state/world_trie_state.jsonl /data/execution/world_trie_state.jsonl
@@ -49,3 +50,4 @@ data:
     else 
       echo "/data/execution/static_files is not empty, skipping initialization.";
     fi
+{{- end }}
