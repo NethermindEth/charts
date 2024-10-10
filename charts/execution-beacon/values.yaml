@@ -270,6 +270,7 @@ global:
 execution:
   client: opNethermind
   sequencerUrl: ""
+  debugTip: 0x03233091b7e45fb83e4873d429f8b8be851b98fb96a32776113e3ddbcfac8e03 #126479353 latest finalized block on op-mainnet
 
   # -- Whether or not to allocate persistent volume disk for the data directory.
   # In case of node failure, the node data directory will still persist.

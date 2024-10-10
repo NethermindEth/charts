@@ -246,7 +246,7 @@ spec:
               exec op-reth node
               --datadir=/data/execution
               --log.file.directory=/data/execution/logs
-              --debug.tip=0x098f87b75c8b861c775984f9d5dbe7b70cbbbc30fc15adb03a5044de0144f2d0
+              --debug.tip={{ .Values.execution.debugTip }}
             {{- if eq .Values.global.network "op-mainnet" }}
               --chain=optimism
             {{- else }}
