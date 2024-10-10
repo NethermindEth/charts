@@ -238,6 +238,8 @@ spec:
               --debug.tip={{ .Values.execution.debugTip }}
             {{- if eq .Values.global.network "op-mainnet" }}
               --chain=optimism
+            {{- else if eq .Values.global.network "base-mainnet" }}
+              --chain=base
             {{- else }}
               --chain={{ .Values.global.network }}
             {{- end }}
