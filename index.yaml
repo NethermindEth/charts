@@ -184,6 +184,27 @@ entries:
   nethgate:
   - apiVersion: v2
     appVersion: "3.5"
+    created: "2024-10-10T14:17:42.55959292Z"
+    dependencies:
+    - condition: postgresql.enabled
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 11.9.13
+    description: The Cloud-Native Ingress and API-management
+    digest: dfd2d5ff1f18db1698cfb79379b51ed49b35324f7cd58ed9223fd3ae4007d060
+    maintainers:
+    - email: anish@nethermind.io
+      name: anishgehlot
+    - email: manjeet@nethermind.io
+      name: Manjeet
+    name: nethgate
+    sources:
+    - https://github.com/Kong/charts/tree/main/charts/kong
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/nethgate-2.33.7/nethgate-2.33.7.tgz
+    version: 2.33.7
+  - apiVersion: v2
+    appVersion: "3.5"
     created: "2024-10-08T11:45:40.195435909Z"
     dependencies:
     - condition: postgresql.enabled
@@ -286,4 +307,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.0/zenrock-mpc-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-08T11:45:40.195455135Z"
+generated: "2024-10-10T14:17:42.559618267Z"
