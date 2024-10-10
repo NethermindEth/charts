@@ -88,7 +88,8 @@ spec:
         - name: download-world-trie-state
           image: google/cloud-sdk:496.0.0
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            runAsNonRoot: false
+            runAsUser: 0
           command: ["/bin/sh", "-c", "gsutil -m cp -n gs://op-mainnet-world-trie-state/world_trie_state.jsonl /data/execution/world_trie_state.jsonl"]
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
