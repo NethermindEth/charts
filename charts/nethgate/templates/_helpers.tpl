@@ -1810,6 +1810,5 @@ extensions/v1beta1
         {{- $_ := set $proxyReadiness.httpGet "path" "/status" -}}
     {{- end -}}
 {{- end -}}
-
-{{- (toYaml $proxyReadiness) | nindent 2 -}}
+{{- (toYaml $proxyReadiness) -}}
 {{- end -}}
