@@ -105,16 +105,7 @@ spec:
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
             {{- toYaml .Values.global.securityContext | nindent 12 }}
-          command:
-            - sh
-            - -ac
-            - >
-              exec op-reth init-state
-              --log.file.directory=/data/execution/logs
-              --without-ovm
-              --datadir=/data/execution
-              --chain=optimism
-              /data/execution/world_trie_state.jsonl
+          command: ["/bin/sh", "-c", "if [ ! -d /data/execution/static_files ] || [ -z \"$(ls -A /data/execution/static_files)\" ]; then exec op-reth init-state --log.file.directory=/data/execution/logs --without-ovm --datadir=/data/execution --chain=optimism /data/execution/world_trie_state.jsonl; fi"]
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
             - name: data
