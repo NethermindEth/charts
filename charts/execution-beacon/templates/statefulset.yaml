@@ -110,6 +110,7 @@ spec:
             - -ac
             - >
               exec op-reth init-state
+              --log.file.directory=/data/execution/logs
               --without-ovm
               --datadir=/data/execution
               --chain=optimism
