@@ -373,7 +373,11 @@ spec:
               {{- end }}
               exec op-node
               --network={{ .Values.global.network }}
+              {{- if .Values.global.jrcpInterceptor.enabled }}
+              --l2=http://localhost:{{ .Values.global.jrcpInterceptor.ports.http }}
+              {{- else }}
               --l2=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}
+              {{- end }}
               {{- if .Values.global.externalSecrets.enabled }}
               --l2.jwt-secret=/external-secrets/JWT_SECRET
               {{- else }}
@@ -603,4 +607,3 @@ spec:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
     {{- end }}
-
