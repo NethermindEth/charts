@@ -526,6 +526,22 @@ spec:
           imagePullPolicy: {{ .Values.global.jrcpInterceptor.image.pullPolicy }}
           securityContext:
             {{- toYaml .Values.global.securityContext | nindent 12 }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "DEBUG: Current working directory: $(pwd)"
+              echo "DEBUG: Contents of current directory: $(ls -la)"
+              echo "DEBUG: PATH: $PATH"
+              echo "DEBUG: Which nginx: $(which nginx 2>&1)"
+              echo "DEBUG: Which openresty: $(which openresty 2>&1)"
+              echo "DEBUG: Nginx version: $(nginx -v 2>&1)"
+              echo "DEBUG: OpenResty version: $(openresty -v 2>&1)"
+              echo "DEBUG: Contents of /usr/local/openresty/nginx/sbin:"
+              ls -la /usr/local/openresty/nginx/sbin
+              echo "DEBUG: Contents of entrypoint.sh:"
+              cat /entrypoint.sh
+              echo "DEBUG: Executing entrypoint.sh"
+              exec /entrypoint.sh
           env:
             - name: LISTEN_PORT
               value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
