@@ -118,23 +118,7 @@ spec:
           {{- end }}
             - name: scripts-init
               mountPath: /scripts
-        {{- end }}
-        {{- if and .Values.global.jrcpInterceptor.enabled .Values.execution.jsonrpc.enabled }}
-        - name: init-jrpc-interceptor
-          image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
-          imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 65534  # This is typically the 'nobody' user
-          command: ['/bin/sh', '-c']
-          args:
-            - |
-              mkdir -p /usr/local/openresty/nginx/client_body_temp
-              chmod 755 /usr/local/openresty/nginx/client_body_temp
-          volumeMounts:
-            - name: jrpc-interceptor-temp
-              mountPath: /usr/local/openresty/nginx
-        {{- end }}
+      {{- end }}
       containers:
         {{/* Container used for Execution clients: op-nethermind, op-geth, op-reth */}}
         - name: execution
@@ -525,23 +509,14 @@ spec:
           image: "{{ .Values.global.jrcpInterceptor.image.repository }}:{{ .Values.global.jrcpInterceptor.image.tag }}"
           imagePullPolicy: {{ .Values.global.jrcpInterceptor.image.pullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              echo "DEBUG: Current working directory: $(pwd)"
-              echo "DEBUG: Contents of current directory: $(ls -la)"
-              echo "DEBUG: PATH: $PATH"
-              echo "DEBUG: Which nginx: $(which nginx 2>&1)"
-              echo "DEBUG: Which openresty: $(which openresty 2>&1)"
-              echo "DEBUG: Nginx version: $(nginx -v 2>&1)"
-              echo "DEBUG: OpenResty version: $(openresty -v 2>&1)"
-              echo "DEBUG: Contents of /usr/local/openresty/nginx/sbin:"
-              ls -la /usr/local/openresty/nginx/sbin
-              echo "DEBUG: Contents of entrypoint.sh:"
-              cat /entrypoint.sh
-              echo "DEBUG: Executing entrypoint.sh"
-              exec /entrypoint.sh
+            runAsNonRoot: false
+            runAsUser: 0
+            allowPrivilegeEscalation: true
+            capabilities:
+              add:
+                - CHOWN
+                - SETGID
+                - SETUID
           env:
             - name: LISTEN_PORT
               value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
@@ -563,10 +538,7 @@ spec:
             - containerPort: {{ .Values.global.jrcpInterceptor.ports.metrics }}
               name: jrpc-metrics
               protocol: TCP
-          {{- end }}
-          volumeMounts:
-            - name: jrpc-interceptor-temp
-              mountPath: /usr/local/openresty/nginx
+          {{- end }}       
       {{- end }}
       volumes:
         - name: scripts-init
@@ -584,10 +556,6 @@ spec:
       {{- end }}
         - name: env-nodeport
           emptyDir: {}
-      {{- if and .Values.global.jrcpInterceptor.enabled .Values.execution.jsonrpc.enabled }}
-        - name: jrpc-interceptor-temp
-          emptyDir: {}
-      {{- end }}
   volumeClaimTemplates:
     {{- if .Values.global.sharedPersistence.enabled }}
     - metadata:
@@ -634,10 +602,3 @@ spec:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
     {{- end }}
-
-
-
-
-
-
-
