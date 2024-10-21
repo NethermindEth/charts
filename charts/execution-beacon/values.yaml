@@ -85,7 +85,7 @@ global:
   jrcpInterceptor:
     enabled: false
     image:
-      repository: "nethermindeth/jrpc-interceptor"
+      repository: "ghcr.io/nethermindeth/jrpc-interceptor"
       tag: "main"
       pullPolicy: IfNotPresent
     service:
