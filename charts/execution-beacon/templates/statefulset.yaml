@@ -517,6 +517,7 @@ spec:
                 - CHOWN
                 - SETGID
                 - SETUID
+                - NET_BIND_SERVICE
           env:
             - name: LISTEN_PORT
               value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
@@ -602,3 +603,4 @@ spec:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
     {{- end }}
+
