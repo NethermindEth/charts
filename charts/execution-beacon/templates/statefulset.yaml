@@ -504,6 +504,35 @@ spec:
               scheme: {{ .Values.global.ethsider.readinessProbe.httpGet.scheme }}
         {{- end }}
       {{- end }}
+      {{- if and .Values.global.jrcpInterceptor.enabled .Values.execution.jsonrpc.enabled }}
+        - name: jrpc-interceptor
+          image: "{{ .Values.global.jrcpInterceptor.repository }}:{{ .Values.global.jrcpInterceptor.tag }}"
+          imagePullPolicy: {{ .Values.global.jrcpInterceptor.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
+          env:
+            - name: LISTEN_PORT
+              value: "{{ .Values.jrcpInterceptor.host }}:{{ .Values.jrcpInterceptor.ports.http }}"
+            - name: SERVICE_TO_PROXY
+              value: "http://localhost:{{ .Values.execution.jsonrpc.engine.port }}"
+            - name: LOG_SERVER_URL
+              value: "{{ .Values.jrcpInterceptor.host }}:{{ .Values.jrcpInterceptor.ports.logServer }}"
+            - name: PROMETHEUS_URL
+              value: "{{ .Values.jrcpInterceptor.host }}:{{ .Values.jrcpInterceptor.ports.metrics }}"
+            - name: USE_PROMETHEUS
+              value: {{ .Values.jrcpInterceptor.usePrometheus | quote }}
+            - name: LOG_SERVER_DEBUG
+              value: {{ .Values.jrcpInterceptor.logServerDebug | quote }}
+          ports:
+            - containerPort: {{ .Values.jrcpInterceptor.ports.http }}
+              name: jrcpInterceptor
+              protocol: TCP
+          {{- if and .Values.global.metrics.enabled .Values.jrcpInterceptor.metrics.enabled }}
+            - containerPort: {{ .Values.jrcpInterceptor.ports.metrics }}
+              name: metrics-jrpc-interceptor
+              protocol: TCP
+          {{- end }}       
+      {{- end }}
       volumes:
         - name: scripts-init
           configMap:

@@ -385,6 +385,29 @@ execution:
   extraFlags: []
   resources: {}
 
+jrcpInterceptor:
+  enabled: false
+  service:
+    svcHeadless: true
+    type: ClusterIP
+  host: "0.0.0.0"
+  ports:
+    http: 8081
+    logServer: 514
+    metrics: 9120
+  usePrometheus: true
+  logServerDebug: true
+  metrics:
+    serviceMonitor:
+      enabled: true
+      namespace: ""
+      additionalLabels: {}
+      interval: 30s
+      scrapeTimeout: ""
+      honorLabels: false
+      relabelings: []
+      metricRelabelings: []
+
 beacon:
   client: op-node
   l1ExecutionEndpoint: "http://localhost:8545"

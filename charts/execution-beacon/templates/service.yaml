@@ -38,6 +38,11 @@ spec:
     - port: {{ .Values.execution.jsonrpc.engine.port }}
       targetPort: engine-exec
       name: engine-exec
+  {{- if .Values.jrcpInterceptor.enabled }}
+    - name: jrcp-interceptor
+      port: {{ .Values.jrcpInterceptor.ports.http }}
+      targetPort: jrcp-interceptor
+  {{- end }}
   {{- end }}
   {{- if eq .Values.execution.client "erigon" }}
     - name: grpc-exec
