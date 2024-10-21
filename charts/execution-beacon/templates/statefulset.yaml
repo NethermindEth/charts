@@ -568,6 +568,10 @@ spec:
       {{- end }}
         - name: env-nodeport
           emptyDir: {}
+      {{- if and .Values.global.jrcpInterceptor.enabled .Values.execution.jsonrpc.enabled }}
+        - name: jrpc-interceptor-temp
+          emptyDir: {}
+      {{- end }}
   volumeClaimTemplates:
     {{- if .Values.global.sharedPersistence.enabled }}
     - metadata:
@@ -614,5 +618,6 @@ spec:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
     {{- end }}
+
 
 
