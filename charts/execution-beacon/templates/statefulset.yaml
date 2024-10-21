@@ -508,8 +508,10 @@ spec:
         - name: jrpc-interceptor
           image: "{{ .Values.global.jrcpInterceptor.image.repository }}:{{ .Values.global.jrcpInterceptor.image.tag }}"
           imagePullPolicy: {{ .Values.global.jrcpInterceptor.image.pullPolicy }}
+          # TODO: adjust securityContext to deal with mkdir() "/usr/local/openresty/nginx/client_body_temp" failed (13: Permission denied)
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            runAsNonRoot: false
+            runAsUser: 0
           env:
             - name: LISTEN_PORT
               value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
