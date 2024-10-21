@@ -42,10 +42,12 @@ spec:
     - name: jrpc-inter
       port: {{ .Values.global.jrcpInterceptor.ports.http }}
       targetPort: jrpc-inter
+      protocol: TCP
   {{- if .Values.global.jrcpInterceptor.metrics.enabled }}
     - name: jrpc-metrics
       port: {{ .Values.global.jrcpInterceptor.ports.metrics }}
       targetPort: jrpc-metrics
+      protocol: TCP
   {{- end }}
   {{- end }}
   {{- end }}
