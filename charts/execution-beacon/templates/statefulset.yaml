@@ -506,8 +506,8 @@ spec:
       {{- end }}
       {{- if and .Values.global.jrcpInterceptor.enabled .Values.execution.jsonrpc.enabled }}
         - name: jrpc-interceptor
-          image: "{{ .Values.global.jrcpInterceptor.repository }}:{{ .Values.global.jrcpInterceptor.tag }}"
-          imagePullPolicy: {{ .Values.global.jrcpInterceptor.pullPolicy }}
+          image: "{{ .Values.global.jrcpInterceptor.image.repository }}:{{ .Values.global.jrcpInterceptor.image.tag }}"
+          imagePullPolicy: {{ .Values.global.jrcpInterceptor.image.pullPolicy }}
           securityContext:
             {{- toYaml .Values.global.securityContext | nindent 12 }}
           env:
