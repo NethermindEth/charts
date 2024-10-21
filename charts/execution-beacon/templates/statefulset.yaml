@@ -135,7 +135,6 @@ spec:
             - name: jrpc-interceptor-temp
               mountPath: /usr/local/openresty/nginx
         {{- end }}
-      {{- end }}
       containers:
         {{/* Container used for Execution clients: op-nethermind, op-geth, op-reth */}}
         - name: execution
