@@ -511,7 +511,7 @@ spec:
           securityContext:
             runAsNonRoot: false
             runAsUser: 0
-            allowPrivilegeEscalation: true
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - CHOWN
