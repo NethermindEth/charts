@@ -44,8 +44,9 @@ spec:
       targetPort: jrpc-inter
   {{- if .Values.global.jrcpInterceptor.metrics.enabled }}
     - name: jrpc-metrics
-      port: {{ .Values.global.jrcpInterceptor.ports.metrics }}
+      port: {{ .Values.global.jrcpInterceptor.metrics.port }}
       targetPort: jrpc-metrics
+  {{- end }}
   {{- end }}
   {{- end }}
   {{- if eq .Values.execution.client "erigon" }}
