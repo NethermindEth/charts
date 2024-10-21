@@ -102,7 +102,7 @@ metadata:
     {{- end }}
 spec:
   endpoints:
-    - port: metrics-jrpc-interceptor
+    - port: jrpc-metrics
       path: /metrics
       {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.interval }}
       interval: {{ .Values.jrcpInterceptor.metrics.serviceMonitor.interval }}

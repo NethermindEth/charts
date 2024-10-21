@@ -39,9 +39,9 @@ spec:
       targetPort: engine-exec
       name: engine-exec
   {{- if .Values.jrcpInterceptor.enabled }}
-    - name: jrcp-interceptor
+    - name: jrpc-inter
       port: {{ .Values.jrcpInterceptor.ports.http }}
-      targetPort: jrcp-interceptor
+      targetPort: jrpc-inter
   {{- end }}
   {{- end }}
   {{- if eq .Values.execution.client "erigon" }}

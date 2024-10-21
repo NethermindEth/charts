@@ -525,11 +525,11 @@ spec:
               value: {{ .Values.jrcpInterceptor.logServerDebug | quote }}
           ports:
             - containerPort: {{ .Values.jrcpInterceptor.ports.http }}
-              name: jrpc-interceptor
+              name: jrpc-inter
               protocol: TCP
           {{- if and .Values.global.metrics.enabled .Values.jrcpInterceptor.metrics.enabled }}
             - containerPort: {{ .Values.jrcpInterceptor.ports.metrics }}
-              name: metrics-jrpc-interceptor
+              name: jrpc-metrics
               protocol: TCP
           {{- end }}       
       {{- end }}
