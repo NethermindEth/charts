@@ -86,7 +86,7 @@ global:
     enabled: false
     image:
       repository: "ghcr.io/nethermindeth/jrpc-interceptor"
-      tag: "main"
+      tag: "sha256:f8ff2aea4c4e8fbd3cb146b2cb327d89f75ada7105e96a195e447d68a16abced"
       pullPolicy: IfNotPresent
     service:
       svcHeadless: true
