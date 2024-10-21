@@ -514,7 +514,7 @@ spec:
             - name: LISTEN_PORT
               value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
             - name: SERVICE_TO_PROXY
-              value: "http://localhost:{{ .Values.execution.jsonrpc.engine.port }}"
+              value: "localhost:{{ .Values.execution.jsonrpc.engine.port }}"
             - name: LOG_SERVER_URL
               value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.logServer }}"
             - name: PROMETHEUS_URL
