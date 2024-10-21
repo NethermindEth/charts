@@ -124,12 +124,12 @@ spec:
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
-            runAsUser: 0
+            runAsNonRoot: true
+            runAsUser: 65534  # This is typically the 'nobody' user
           command: ['/bin/sh', '-c']
           args:
             - |
               mkdir -p /usr/local/openresty/nginx/client_body_temp
-              chown 65534:65534 /usr/local/openresty/nginx/client_body_temp
               chmod 755 /usr/local/openresty/nginx/client_body_temp
           volumeMounts:
             - name: jrpc-interceptor-temp
@@ -618,6 +618,7 @@ spec:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
     {{- end }}
+
 
 
 
