@@ -91,7 +91,6 @@ global:
     service:
       svcHeadless: true
       type: ClusterIP
-    host: "127.0.0.1"
     ports:
       http: 8081
       logServer: 514

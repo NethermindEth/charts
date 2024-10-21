@@ -518,14 +518,18 @@ spec:
                 - SETGID
                 - SETUID
           env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
             - name: LISTEN_PORT
-              value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
+              value: "$(POD_IP):{{ .Values.global.jrcpInterceptor.ports.http }}"
             - name: SERVICE_TO_PROXY
               value: "localhost:{{ .Values.execution.jsonrpc.engine.port }}"
             - name: LOG_SERVER_URL
-              value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.logServer }}"
+              value: "$(POD_IP):{{ .Values.global.jrcpInterceptor.ports.logServer }}"
             - name: PROMETHEUS_URL
-              value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.metrics }}"
+              value: "$(POD_IP):{{ .Values.global.jrcpInterceptor.ports.metrics }}"
             - name: USE_PROMETHEUS
               value: {{ .Values.global.jrcpInterceptor.usePrometheus | quote }}
             - name: LOG_SERVER_DEBUG
@@ -602,3 +606,4 @@ spec:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
     {{- end }}
+
