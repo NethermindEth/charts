@@ -512,23 +512,23 @@ spec:
             {{- toYaml .Values.global.securityContext | nindent 12 }}
           env:
             - name: LISTEN_PORT
-              value: "{{ .Values.jrcpInterceptor.host }}:{{ .Values.jrcpInterceptor.ports.http }}"
+              value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
             - name: SERVICE_TO_PROXY
               value: "http://localhost:{{ .Values.execution.jsonrpc.engine.port }}"
             - name: LOG_SERVER_URL
-              value: "{{ .Values.jrcpInterceptor.host }}:{{ .Values.jrcpInterceptor.ports.logServer }}"
+              value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.logServer }}"
             - name: PROMETHEUS_URL
-              value: "{{ .Values.jrcpInterceptor.host }}:{{ .Values.jrcpInterceptor.ports.metrics }}"
+              value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.metrics }}"
             - name: USE_PROMETHEUS
-              value: {{ .Values.jrcpInterceptor.usePrometheus | quote }}
+              value: {{ .Values.global.jrcpInterceptor.usePrometheus | quote }}
             - name: LOG_SERVER_DEBUG
-              value: {{ .Values.jrcpInterceptor.logServerDebug | quote }}
+              value: {{ .Values.global.jrcpInterceptor.logServerDebug | quote }}
           ports:
-            - containerPort: {{ .Values.jrcpInterceptor.ports.http }}
+            - containerPort: {{ .Values.global.jrcpInterceptor.ports.http }}
               name: jrpc-inter
               protocol: TCP
-          {{- if and .Values.global.metrics.enabled .Values.jrcpInterceptor.metrics.enabled }}
-            - containerPort: {{ .Values.jrcpInterceptor.ports.metrics }}
+          {{- if and .Values.global.metrics.enabled .Values.global.jrcpInterceptor.metrics.enabled }}
+            - containerPort: {{ .Values.global.jrcpInterceptor.ports.metrics }}
               name: jrpc-metrics
               protocol: TCP
           {{- end }}       

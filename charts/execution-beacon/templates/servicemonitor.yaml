@@ -90,34 +90,34 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ template "common.names.fullname" . }}-jrpc-interceptor
-  {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.namespace }}
-  namespace: {{ .Values.jrcpInterceptor.metrics.serviceMonitor.namespace }}
+  {{- if .Values.global.jrcpInterceptor.metrics.serviceMonitor.namespace }}
+  namespace: {{ .Values.global.jrcpInterceptor.metrics.serviceMonitor.namespace }}
   {{- else }}
   namespace: {{ .Release.Namespace | quote }}
   {{- end }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.additionalLabels }}
-    {{- toYaml .Values.jrcpInterceptor.metrics.serviceMonitor.additionalLabels | nindent 4 }}
+    {{- if .Values.global.jrcpInterceptor.metrics.serviceMonitor.additionalLabels }}
+    {{- toYaml .Values.global.jrcpInterceptor.metrics.serviceMonitor.additionalLabels | nindent 4 }}
     {{- end }}
 spec:
   endpoints:
     - port: jrpc-metrics
       path: /metrics
-      {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.interval }}
-      interval: {{ .Values.jrcpInterceptor.metrics.serviceMonitor.interval }}
+      {{- if .Values.global.jrcpInterceptor.metrics.serviceMonitor.interval }}
+      interval: {{ .Values.global.jrcpInterceptor.metrics.serviceMonitor.interval }}
       {{- end }}
-      {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.scrapeTimeout }}
-      scrapeTimeout: {{ .Values.jrcpInterceptor.metrics.serviceMonitor.scrapeTimeout }}
+      {{- if .Values.global.jrcpInterceptor.metrics.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.global.jrcpInterceptor.metrics.serviceMonitor.scrapeTimeout }}
       {{- end }}
-      {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.honorLabels }}
-      honorLabels: {{ .Values.jrcpInterceptor.metrics.serviceMonitor.honorLabels }}
+      {{- if .Values.global.jrcpInterceptor.metrics.serviceMonitor.honorLabels }}
+      honorLabels: {{ .Values.global.jrcpInterceptor.metrics.serviceMonitor.honorLabels }}
       {{- end }}
-      {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.relabelings }}
-      relabelings: {{- toYaml .Values.jrcpInterceptor.metrics.serviceMonitor.relabelings | nindent 6 }}
+      {{- if .Values.global.jrcpInterceptor.metrics.serviceMonitor.relabelings }}
+      relabelings: {{- toYaml .Values.global.jrcpInterceptor.metrics.serviceMonitor.relabelings | nindent 6 }}
       {{- end }}
-      {{- if .Values.jrcpInterceptor.metrics.serviceMonitor.metricRelabelings }}
-      metricRelabelings: {{- toYaml .Values.jrcpInterceptor.metrics.serviceMonitor.metricRelabelings | nindent 6 }}
+      {{- if .Values.global.jrcpInterceptor.metrics.serviceMonitor.metricRelabelings }}
+      metricRelabelings: {{- toYaml .Values.global.jrcpInterceptor.metrics.serviceMonitor.metricRelabelings | nindent 6 }}
       {{- end }}
   namespaceSelector:
     matchNames:

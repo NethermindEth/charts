@@ -82,6 +82,33 @@ global:
       kind: SecretStore
     data: []
 
+  jrcpInterceptor:
+    enabled: false
+    image:
+      repository: "nethermindeth/jrpc-interceptor"
+      tag: "main"
+      pullPolicy: IfNotPresent
+    service:
+      svcHeadless: true
+      type: ClusterIP
+    host: "0.0.0.0"
+    ports:
+      http: 8081
+      logServer: 514
+      metrics: 9120
+    usePrometheus: true
+    logServerDebug: true
+    metrics:
+      serviceMonitor:
+        enabled: true
+        namespace: ""
+        additionalLabels: {}
+        interval: 30s
+        scrapeTimeout: ""
+        honorLabels: false
+        relabelings: []
+        metricRelabelings: []
+
   ethsider:
     enabled: true
     repository: "nethermindeth/ethsider"
@@ -384,29 +411,6 @@ execution:
   # -- Extra flags to pass to the node
   extraFlags: []
   resources: {}
-
-jrcpInterceptor:
-  enabled: false
-  service:
-    svcHeadless: true
-    type: ClusterIP
-  host: "0.0.0.0"
-  ports:
-    http: 8081
-    logServer: 514
-    metrics: 9120
-  usePrometheus: true
-  logServerDebug: true
-  metrics:
-    serviceMonitor:
-      enabled: true
-      namespace: ""
-      additionalLabels: {}
-      interval: 30s
-      scrapeTimeout: ""
-      honorLabels: false
-      relabelings: []
-      metricRelabelings: []
 
 beacon:
   client: op-node

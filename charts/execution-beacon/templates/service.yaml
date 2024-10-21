@@ -38,9 +38,9 @@ spec:
     - port: {{ .Values.execution.jsonrpc.engine.port }}
       targetPort: engine-exec
       name: engine-exec
-  {{- if .Values.jrcpInterceptor.enabled }}
+  {{- if .Values.global.jrcpInterceptor.enabled }}
     - name: jrpc-inter
-      port: {{ .Values.jrcpInterceptor.ports.http }}
+      port: {{ .Values.global.jrcpInterceptor.ports.http }}
       targetPort: jrpc-inter
   {{- end }}
   {{- end }}
