@@ -118,6 +118,23 @@ spec:
           {{- end }}
             - name: scripts-init
               mountPath: /scripts
+        {{- end }}
+        {{- if and .Values.global.jrcpInterceptor.enabled .Values.execution.jsonrpc.enabled }}
+        - name: init-jrpc-interceptor
+          image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
+          imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
+          securityContext:
+            runAsUser: 0
+          command: ['/bin/sh', '-c']
+          args:
+            - |
+              mkdir -p /usr/local/openresty/nginx/client_body_temp
+              chown 65534:65534 /usr/local/openresty/nginx/client_body_temp
+              chmod 755 /usr/local/openresty/nginx/client_body_temp
+          volumeMounts:
+            - name: jrpc-interceptor-temp
+              mountPath: /usr/local/openresty/nginx
+        {{- end }}
       {{- end }}
       containers:
         {{/* Container used for Execution clients: op-nethermind, op-geth, op-reth */}}
@@ -508,10 +525,8 @@ spec:
         - name: jrpc-interceptor
           image: "{{ .Values.global.jrcpInterceptor.image.repository }}:{{ .Values.global.jrcpInterceptor.image.tag }}"
           imagePullPolicy: {{ .Values.global.jrcpInterceptor.image.pullPolicy }}
-          # TODO: adjust securityContext to deal with mkdir() "/usr/local/openresty/nginx/client_body_temp" failed (13: Permission denied)
           securityContext:
-            runAsNonRoot: false
-            runAsUser: 0
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
           env:
             - name: LISTEN_PORT
               value: "{{ .Values.global.jrcpInterceptor.host }}:{{ .Values.global.jrcpInterceptor.ports.http }}"
@@ -533,7 +548,10 @@ spec:
             - containerPort: {{ .Values.global.jrcpInterceptor.ports.metrics }}
               name: jrpc-metrics
               protocol: TCP
-          {{- end }}       
+          {{- end }}
+          volumeMounts:
+            - name: jrpc-interceptor-temp
+              mountPath: /usr/local/openresty/nginx
       {{- end }}
       volumes:
         - name: scripts-init
@@ -597,3 +615,5 @@ spec:
           requests:
             storage: {{ .Values.beacon.persistence.size | quote }}
     {{- end }}
+
+
