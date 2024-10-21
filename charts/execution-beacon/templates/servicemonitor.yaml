@@ -84,7 +84,6 @@ spec:
     matchLabels:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
 {{- end }}
-
 {{- if and .Values.global.jrcpInterceptor.enabled .Values.execution.jsonrpc.enabled }}
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -126,5 +125,4 @@ spec:
   selector:
     matchLabels:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
-{{- end }}
 {{- end }}
