@@ -67,7 +67,7 @@ data:
         kind: PersistentVolumeClaim
       accessModes:
       - ReadWriteOnce
-      storageClassName: premium-rwo
+      storageClassName: {{ $.Values.pvc.storageClassName }}
       resources:
         requests:
           storage: {{ .Values.backupJunoDataJob.storageSize }}
@@ -80,7 +80,7 @@ data:
     spec:
       accessModes:
         - ReadWriteOnce
-      storageClassName: premium-rwo
+      storageClassName: {{ $.Values.pvc.storageClassName }}
       resources:
         requests:
           storage: {{ .Values.backupJunoDataJob.storageSize }}
