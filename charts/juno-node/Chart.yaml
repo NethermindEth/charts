@@ -1,6 +1,6 @@
 apiVersion: v2
 name: juno-chart
-version: 0.1.6
+version: 0.1.7
 appVersion: "1"
 description: A Helm chart for deploying Juno service
 maintainers:
