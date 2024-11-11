@@ -1,0 +1,31 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "dlcbtc.name" . }}
+  namespace:  {{ template "dlcbtc.namespace" . }}
+  labels:
+    {{- include "dlcbtc.matchLabels" . | nindent 4 }}
+spec:
+{{- if .Values.global.sessionAffinity.enabled }}
+  sessionAffinity: ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: {{ .Values.global.sessionAffinity.timeoutSeconds }}
+{{- end }}
+  type: {{ .Values.global.service.type }} # ClusterIP, NodePort, LoadBalancer, or ExternalName
+{{- if .Values.global.service.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.global.service.externalTrafficPolicy }}
+{{- end }}
+{{- if .Values.global.service.svcHeadless}}
+  clusterIP: None
+{{- end }}
+  ports:
+    {{- range $idx, $Port := .Values.global.service.Ports }}
+    - name: {{ $Port.name }}
+      port: {{ $Port.port }}
+      targetPort: {{ $Port.name }}
+      protocol: {{ $Port.protocol }}
+    {{- end }}
+  selector:
+    {{- include "dlcbtc.matchLabels" . | nindent 4 }}
