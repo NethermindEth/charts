@@ -16,7 +16,7 @@
 /charts/cert-manager/ @gehlotanish @Manjeet-Nethermind
 /charts/common/ @aivarasko @matilote
 /charts/dirk/ @aivarasko @matilote
-/charts/dlcbtc-attestors/ @gehlotanish
+/charts/dlcbtc-attestor/ @gehlotanish
 /charts/ethereum-node/ @gehlotanish @Manjeet-Nethermind
 /charts/execution-beacon/ @aivarasko @AntiD2ta @matilote
 /charts/external-dns/ @gehlotanish @Manjeet-Nethermind
