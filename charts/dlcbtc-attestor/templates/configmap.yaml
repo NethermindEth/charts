@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "dlcbtc.name" . }}
+  namespace:  {{ template "dlcbtc.namespace" . }}
+  labels:
+    {{- include "dlcbtc.metaLabels" . | nindent 4 }}
+data:
+  config.toml: |
+{{ .Values.configMap.config | indent 4 }}

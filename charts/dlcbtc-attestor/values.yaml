@@ -1,0 +1,214 @@
+##########
+# Global #
+##########
+global:
+  replicaCount: 1
+  image:
+    imagePullPolicy: IfNotPresent
+    repository: public.ecr.aws/dlc-link/dlc-attestor
+    tag: v1.5.4-testnet
+
+  externalSecrets:
+    enabled: false
+    secretStoreRef:
+      name: secretStoreRef
+      kind: SecretStore
+    data: []
+
+  # -- Service account
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  #      
+  serviceAccount:
+    create: false
+    annotations: {}
+
+  # This section can be used to configure some extra labels that will be added to each Kubernetes object generated.
+  extraLabels: {}
+  extraMatchLabels: {}
+
+  # -- Credentials to fetch images from private registry
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  #
+  imagePullSecrets: {}
+
+  # -- Node labels for pod assignment
+  # ref: https://kubernetes.io/docs/user-guide/node-selection/
+  #
+  nodeSelector: {}
+
+  # -- Tolerations for pod assignment
+  # ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  #
+  tolerations: {}
+
+  # -- Affinity for pod assignment
+  # ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+  #
+  affinity: {}
+  ## Example:
+  ## affinity:
+  ##   podAntiAffinity:
+  ##     requiredDuringSchedulingIgnoredDuringExecution:
+  ##     - labelSelector:
+  ##         matchExpressions:
+  ##         - key: app.kubernetes.io/name
+  ##           operator: In
+  ##           values:
+  ##           - prysm
+  ##       topologyKey: kubernetes.io/hostname
+
+  # -- Pod Security Context
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+  #
+  podSecurityContext: {}
+  ## Example
+  # podSecurityContext:
+  #   runAsNonRoot: true
+  #   runAsUser: 10000
+  #   fsGroup: 10000
+
+  securityContext: {}
+  ## Example
+  # securityContext:
+  #   readOnlyRootFilesystem: true
+  #   runAsNonRoot: true
+  #   runAsUser: 10000
+  #   capabilities:
+  #     drop:
+  #     - ALL
+
+  sessionAffinity:
+    # -- Whether to enable session affinity or not
+    enabled: false
+    # -- The session duration in seconds
+    timeoutSeconds: 86400
+
+  healthProbe:
+    consensus:
+      livenessProbe: {}
+        # httpGet:
+        #   path: /health
+        #   port: 26657
+        #   scheme: HTTP
+        # initialDelaySeconds: 30
+        # periodSeconds: 10
+        # failureThreshold: 3
+      readinessProbe: {}
+        # httpGet:
+        #   path: /health
+        #   port: 26657
+        #   scheme: HTTP
+        # initialDelaySeconds: 30
+        # periodSeconds: 10
+        # failureThreshold: 3
+
+  service:
+    svcHeadless: false
+    type: ClusterIP
+    externalTrafficPolicy: "Cluster"
+    Ports: 
+    - name: ATTESTOR_BACKEND_PORT
+      port: 8811
+      protocol: TCP
+    - name: BLOCKCHAIN_INTERFACE_PORT
+      port: 8801
+      protocol: TCP
+
+#############
+# dlcBtc    #
+#############
+
+configMap:
+  config: |
+    name = "${ATTESTOR_NAME}"
+    ip = "127.0.0.1"
+    port = 8811
+    bitcoincore_rpc_url = "${BITCOIN_CORE_RPC_ENDPOINT}"
+    bitcoincore_rpc_username = "${BITCOIN_CORE_RPC_USERNAME}"
+    bitcoincore_rpc_password = "${BITCOIN_CORE_RPC_PASSWORD}"
+    periodic_check_interval_seconds = 120
+    required_btc_confirmations = 6
+    num_recent_events_to_sync = 10
+    blockchain_interface_port = 8801
+    evm_deployment_environment = "testnet"
+
+    [db]
+    database_url = "${DATABASE_URL}"
+    migration = true
+    max_connections = 5
+
+    [[chains]]
+    network = "arbsepolia"
+    chain_type = "evm"
+    endpoint = "${ARB_SEP_ENDPOINT}"
+    private_key = "${EVM_PRIVATE_KEY}"
+    api_key = "${INFURA_API_KEY}"
+
+    [[chains]]
+    network = "basesepolia"
+    chain_type = "evm"
+    endpoint = "${BASE_SEP_ENDPOINT}"
+    private_key = "${EVM_PRIVATE_KEY}"
+    api_key = "${INFURA_API_KEY}"
+
+    [[chains]]
+    network = "sepolia"
+    chain_type = "evm"
+    endpoint = "${SEPOLIA_ENDPOINT}"
+    private_key = "${EVM_PRIVATE_KEY}"
+    api_key = "${INFURA_API_KEY}"
+
+    [[chains]]
+    network = "xrpl-testnet"
+    chain_type = "ripple"
+    endpoint = "ws://54.159.133.135:6005"
+    private_key = "${XRPL_SEED}"
+    issuer_address = "ra3oyRVfy4yD4NJPrVcewvDtisZ3FhkcYL"
+
+    [tss]
+    old_threshold = 4
+    new_threshold = 5
+
+    participants = [
+      { name = "attestor-1", domain = "https://testnet.dlc.link/attestor-1" },
+      { name = "attestor-2", domain = "https://testnet.dlc.link/attestor-2" },
+      { name = "attestor-3", domain = "https://testnet.dlc.link/attestor-3" },
+      { name = "despread-1", domain = "https://attestor.testnet.dlc.despreadlabs.io" },
+      { name = "HashKeyCloud-1", domain = "http://103.164.81.14:8811" },
+      { name = "LinkPool-0", domain = "https://arb-sepolia-dlc-attestor-0.public.linkpool.io/jK245aUH8GvfgFp5fmUKdnTJLlS9nnAz" },
+      { name = "stakin-testnet-1", domain = "http://dlc-testnet.stakin-nodes.com:8811" },
+      { name = "nethermind", domain = "http://dlc.testnet.nethermind.dev" }
+    ]
+    coordinator = { name = "attestor-1", domain = "https://testnet.dlc.link/attestor-1" }
+    coordinator_pubkey = "0293fb8715a2c59fe60ee28b13e2e03677617742c7e2fcf52a27d58be7b35473cf"
+
+## Container ENV
+env:
+   - name: ATTESTOR_NAME
+     value: "nethermind"
+
+# -- Monitoring
+metrics:
+  enabled: true
+  serviceMonitor: 
+    interval: 30s
+    # -- The timeout after which the scrape is ended
+    scrapeTimeout: ""
+    # -- Metrics RelabelConfigs to apply to samples before scraping.
+    relabelings: []
+    # -- Metrics RelabelConfigs to apply to samples before ingestion.
+    metricRelabelings: []
+    # -- Specify honorLabels parameter to add the scrape endpoint
+    honorLabels: false
+
+#################
+# Miscellaneous #
+#################
+
+extraObjects: []
+# - apiVersion: v1
+#   kind: Secret
+#   metadata:
+#     name: '{{ include "generic-app.fullname" . }}'
+#   stringData:
+#     SOME_SECRET: "<secret val>"
