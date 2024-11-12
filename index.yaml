@@ -23,6 +23,17 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/aztec-prover-0.1.0/aztec-prover-0.1.0.tgz
     version: 0.1.0
+  dlc-link-attestor:
+  - apiVersion: v2
+    appVersion: 1.5.0
+    created: "2024-11-12T05:25:03.45187168Z"
+    description: A Helm chart for Kubernetes
+    digest: a990a2a801d39a27bf5cd229c2043e149cdf19e629b8ecebf9bf8c7b5a04a328
+    name: dlc-link-attestor
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/dlc-link-attestor-0.1.0/dlc-link-attestor-0.1.0.tgz
+    version: 0.1.0
   juno-chart:
   - apiVersion: v2
     appVersion: "1"
@@ -321,4 +332,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.0/zenrock-mpc-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-29T08:29:24.602047187Z"
+generated: "2024-11-12T05:25:03.451904632Z"
