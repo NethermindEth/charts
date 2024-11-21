@@ -258,6 +258,7 @@ spec:
             - {{ . | quote }}
             {{- end -}}
 
+          {{- end }}
           {{- if $root.Values.metrics.enabled }}
           ports:
             - containerPort: {{ $root.Values.metrics.port }}
@@ -287,6 +288,5 @@ spec:
       {{- end }}
         - name: data
           emptyDir: {}
-{{- end }}
 {{- end }}
 {{- end }}
