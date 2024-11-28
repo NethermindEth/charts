@@ -181,3 +181,8 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 128Mi
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      dnsConfig:
+        {{- toYaml .Values.dnsConfig | nindent 8 }}
+      {{- end }}
