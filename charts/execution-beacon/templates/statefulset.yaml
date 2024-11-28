@@ -83,6 +83,18 @@ spec:
               mountPath: /env
             - name: scripts-init
               mountPath: /scripts
+        {{/* Container used for collecting enodes needed for bootnodes */}}
+        - name: enode-collector
+          image: "{{ .Values.global.enodeCollectorImage.repository }}:{{ .Values.global.enodeCollectorImage.tag }}"
+          imagePullPolicy: {{ .Values.global.enodeCollectorImage.pullPolicy }}
+          env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          volumeMounts:
+          - name: env-nodeport
+            mountPath: /env
         {{/* Container used for initialising nimbus checkpoint sync */}}
         {{- if and (eq .Values.beacon.client "nimbus") .Values.beacon.checkPointSync.enabled }}
         - name: init-nimbus
@@ -154,7 +166,6 @@ spec:
             {{- end }}
             {{- end }} 
             {{- end }}
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
             {{- if .Values.global.externalSecrets.enabled }}
               --JsonRpc.JwtSecretFile=/external-secrets/JWT_SECRET
             {{- else }}
@@ -163,7 +174,6 @@ spec:
               --JsonRpc.EnginePort={{ .Values.execution.jsonrpc.engine.port }}
               --JsonRpc.EngineHost={{ .Values.execution.jsonrpc.host }}
               --JsonRpc.EngineEnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
-            {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --Metrics.Enabled={{ .Values.execution.metrics.enabled }}
               --Metrics.ExposePort={{ .Values.execution.metrics.port }}
@@ -186,10 +196,11 @@ spec:
             {{- else if eq .Values.execution.client "geth" }}
               exec geth
               --syncmode=snap
+              --bootnodes=$BOOTNODES
               --datadir=/data/execution
               --ipcdisable
               --{{ .Values.global.network }}
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
             {{- else }}
               --authrpc.jwtsecret=/secret/jwtsecret
@@ -235,7 +246,7 @@ spec:
               --data-path=/data/execution
               --sync-mode=X_SNAP
               --p2p-enabled=true
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if .Values.global.externalSecrets.enabled }}
               --engine-jwt-secret=/external-secrets/JWT_SECRET
             {{- else }}
               --engine-jwt-secret=/secret/jwtsecret
@@ -271,7 +282,7 @@ spec:
             {{- if .Values.execution.terminalTotalDifficulty }}
               --override.terminaltotaldifficulty={{ .Values.execution.terminalTotalDifficulty }}
             {{- end }}
-            {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
+            {{- if .Values.global.externalSecrets.enabled }}
               --authrpc.jwtsecret=/external-secrets/JWT_SECRET
             {{- else }}
               --authrpc.jwtsecret=/secret/jwtsecret
@@ -340,14 +351,14 @@ spec:
             - name: metrics-exec
               containerPort: {{ .Values.execution.metrics.port }}
             {{- end }}
-            {{- if .Values.global.p2pNodePort.enabled }}
+          {{- if .Values.global.p2pNodePort.enabled }}
             - name: p2p-tcp-exec
               containerPort: {{ include "execution.p2pPort" . }}
               protocol: TCP
             - name: p2p-udp-exec
               containerPort: {{ include "execution.p2pPort" . }}
               protocol: UDP
-            {{- end }}
+          {{- end }}
           volumeMounts:
           {{- if .Values.global.sharedPersistence.enabled }}
             - name: data
