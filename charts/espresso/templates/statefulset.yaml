@@ -1,0 +1,141 @@
+{{- range $type, $specs := .Values.nodes }}
+---
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" $ }}
+kind: StatefulSet
+metadata:
+  name: "{{ include "common.names.fullname" $ }}-{{ $type }}"
+  {{- with $.Values.global.namespaceOverride }}
+  namespace: {{ . }}
+  {{- end }}
+spec:
+  serviceName: "{{ include "common.names.fullname" $ }}-{{ $type }}"
+  replicas: {{ $specs.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" $ | nindent 6 }}
+      type: {{ $type }}
+  template:
+    metadata:
+      labels:
+        {{- include "common.labels.matchLabels" $ | nindent 8 }}
+        type: {{ $type }}
+    spec:
+      serviceAccountName: {{ include "common.names.fullname" $ }}
+      {{- if $.Values.externalSecrets.enabled }}
+      initContainers:
+        - name: keygen  # Generates keys for the sequencer
+          image: {{ include "espresso.build_image_name" (list $.Values.image.repository $.Values.image.tag) }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command: ["keygen", "-o", "/keys", "-n", "{{ $specs.replicaCount }}"]
+          volumeMounts:
+          - name: keys
+            mountPath: /keys
+        - name: keystore-cli-pv-keys  # Updates Secret Manager with private keys in the proper format
+          image: {{ include "espresso.build_image_name" (list $.Values.keystoreCLI.image.repository $.Values.keystoreCLI.image.tag) }}
+          imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
+          args: ["pv-keys"]
+          env:
+          - name: KEYS_PATH
+            value: /keys
+          - name: PROJECT_ID
+            value: {{ (required "Project ID is required" $.Values.keystoreCLI.projectId) | quote }}
+          - name: SECRET_ID
+            value: {{ required "Secret ID is required" $.Values.keystoreCLI.pv.secretId }}
+          volumeMounts:
+          - name: keys
+            mountPath: /keys
+        {{- if $specs.sqlStorage }}
+        - name: keystore-cli-db-keys  # Updates Secret Manager with DB credentials in the proper format
+          image:  {{ include "espresso.build_image_name" (list $.Values.keystoreCLI.image.repository $.Values.keystoreCLI.image.tag) }}
+          imagePullPolicy: {{ $.Values.keystoreCLI.image.pullPolicy }}
+          args: ["db-keys"]
+          env:
+          - name: PROJECT_ID
+            value: {{ (required "Project ID is required" $.Values.keystoreCLI.projectId) | quote }}
+          - name: SECRET_ID
+            value: {{ required "Secret ID is required" $.Values.keystoreCLI.db.secretId }}
+          - name: SEQUENCER_POSTGRES_HOST
+            value: {{ (required "DB host is required" $.Values.keystoreCLI.db.host) | quote }}
+          - name: SEQUENCER_POSTGRES_USER
+            value: {{ (required "DB user is required" $.Values.keystoreCLI.db.user) | quote }}
+          volumeMounts:
+          - name: keys
+            mountPath: /keys
+        {{- end }}
+        - name: init-setenv   # Sets keys environment variables for the sequencer
+          image: {{ include "espresso.build_image_name" (list $.Values.initImage.repository $.Values.initImage.tag) }}
+          imagePullPolicy: {{ $.Values.initImage.pullPolicy }}
+          command: ['/bin/bash', '/scripts/init.sh'] 
+          envFrom:
+            - secretRef:
+                {{- if $.Values.externalSecrets.enabled }}
+                name: {{ $.Values.externalSecrets.name }}-{{ $type }}
+                {{- else }}
+                name: k8s-espresso-sequencer-secrets-{{ $type }}
+                {{- end }}
+          volumeMounts:
+            - name: init-env
+              mountPath: /etc/espresso
+            - name: scripts-init
+              mountPath: /scripts
+      {{- end }}
+      containers:
+        - name: "sequencer-{{ $type }}"
+          image: {{ include "espresso.build_image_name" (list $.Values.image.repository $.Values.image.tag) }} 
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command: {{ toYaml $specs.command | nindent 12 }}
+          env:
+            {{- range $key, $value := $.Values.nodes_config }}
+            - name: {{ $key }}
+              value: {{ required (printf "%s is required" $key) $value | quote }}
+            {{- end }}
+            - name: ESPRESSO_SEQUENCER_IDENTITY_NODE_NAME
+              value: {{ $specs.nodeName }}-$(hostname | awk -F'-' '{print $NF}')
+            - name: ESPRESSO_SEQUENCER_IDENTITY_OPERATING_SYSTEM
+              value: $(uname -sr)
+            {{- with $.Values.global.networkType }}
+            - name: ESPRESSO_SEQUENCER_IDENTITY_NETWORK_TYPE
+              value: {{ . }}
+            {{- end }}
+            - name: ESPRESSO_SEQUENCER_KEY_FILE
+              value: /etc/espresso/.env
+          ports:
+            - name: api
+              containerPort: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
+          {{- if or $specs.volumeMount }}
+          volumeMounts:
+            - name: consensus-data
+              mountPath: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_STORAGE_PATH }}
+            - name: init-env
+              mountPath: /etc/espresso
+          {{- end }}
+          {{- with $specs.resources }}
+          resources:
+            {{ toYaml . | nindent 12 | trim }}
+          {{- end }}
+      volumes:
+        - name: keys
+          emptyDir: {}
+        - name: init-env
+          emptyDir: {}
+        - name: scripts-init
+          configMap:
+            name: {{ include "common.names.fullname" $ }}-init-{{ $type }}
+  volumeClaimTemplates:
+    {{- if $specs.volumeMount }}
+    - metadata:
+        name: consensus-data
+        labels:
+          {{- include "common.labels.statefulset" $ | nindent 8 }}
+      {{- with $.Values.global.persistence.annotations }}
+        annotations:
+          {{ toYaml . | nindent 10 | trim }}
+      {{- end }}
+      spec:
+        accessModes: {{ $.Values.global.persistence.accessModes }}
+        storageClassName: {{ $.Values.global.persistence.storageClassName }}
+        resources:
+          requests:
+            storage: {{ $.Values.global.persistence.size | quote }}
+    {{- end }}
+{{- end }}
