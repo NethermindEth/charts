@@ -248,7 +248,7 @@ global:
     fsGroup: 10000
 
   securityContext:
-    readOnlyRootFilesystem: true
+    readOnlyRootFilesystem: false
     runAsNonRoot: true
     runAsUser: 10000
     capabilities:
