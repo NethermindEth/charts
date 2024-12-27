@@ -91,7 +91,7 @@ spec:
           imagePullPolicy: {{ .Values.beacon.imagePullPolicy }}
           securityContext:
             runAsNonRoot: false
-            runAsUser: 0
+            runAsUser: 1000
           command:
             - sh
             - -ac
