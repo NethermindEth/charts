@@ -38,7 +38,7 @@ spec:
         {{ toYaml . | nindent 8 | trim }}
     {{- end }}
       securityContext:
-        {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.global.securityContext | nindent 8 }}
     {{- if .Values.global.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.global.terminationGracePeriodSeconds }}
     {{- end }}
@@ -50,7 +50,7 @@ spec:
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            runAsNonRoot: true
           env:
             - name: POD_IP
               valueFrom:
