@@ -50,7 +50,7 @@ spec:
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
-            runAsNonRoot: true
+            runAsNonRoot: false
           env:
             - name: POD_IP
               valueFrom:
@@ -89,7 +89,7 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.beacon.imagePullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            runAsNonRoot: false
           command:
             - sh
             - -ac
