@@ -51,6 +51,7 @@ spec:
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
             runAsNonRoot: false
+            runAsUser: 0
           env:
             - name: POD_IP
               valueFrom:
@@ -90,6 +91,7 @@ spec:
           imagePullPolicy: {{ .Values.beacon.imagePullPolicy }}
           securityContext:
             runAsNonRoot: false
+            runAsUser: 0
           command:
             - sh
             - -ac
