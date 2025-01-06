@@ -73,6 +73,8 @@ externalSecrets:
 ##
 enabled: true
 
+gasLimit: "36000000"
+
 ## What type of validator to use.
 ## Options for Ethereum: prysm, lighthouse, teku
 ## Options for Gnosis: prysm, lighthouse
