@@ -110,6 +110,8 @@ validatorsNoOfKeys: 100
 ## Whether a builder should be used for proposalConfig
 enableBuilder: false
 
+gasLimit: "36000000"
+
 ## Validators image version
 ## ref: https://gcr.io/prysmaticlabs/prysm/validator
 ## ref: https://hub.docker.com/r/sigp/lighthouse
