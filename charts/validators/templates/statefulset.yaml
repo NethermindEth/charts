@@ -104,7 +104,7 @@ spec:
             {{- if not $root.Values.enableBuilder }}
             - "--no-proposal-builder-enabled"
             {{- end }}
-            {{- if not $root.Values.gasLimit }}
+            {{- if $root.Values.gasLimit }}
             - "--gas-limit"
             - "{{ $root.Values.gasLimit }}"
             {{- end }}
