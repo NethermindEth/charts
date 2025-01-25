@@ -167,7 +167,7 @@ spec:
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --metrics-enabled={{ .Values.execution.metrics.enabled }}
               --metrics-exposeport={{ .Values.execution.metrics.port }}
-              --metrics-exposehost=+
+              --metrics-exposehost={{ .Values.execution.metrics.host }}
               --metrics-nodename=$POD_NAME
             {{- end }}
               --Network.MaxActivePeers={{ .Values.execution.targetPeers }}
