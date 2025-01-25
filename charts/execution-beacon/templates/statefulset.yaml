@@ -101,7 +101,7 @@ spec:
             - >
               exec /home/user/nimbus-eth2/build/nimbus_beacon_node
               trustedNodeSync
-              --backfill=false 
+              --backfill=false
               --network={{ .Values.global.network }}
               --data-dir=/data/beacon
               --trusted-node-url={{ .Values.beacon.checkPointSync.url }}
@@ -152,7 +152,7 @@ spec:
             {{- if .Values.execution.jsonrpc.websocket.enabled }}
               --JsonRpc.WebSocketsPort={{ .Values.execution.jsonrpc.websocket.port }}
             {{- end }}
-            {{- end }} 
+            {{- end }}
             {{- end }}
             {{- if or .Values.global.JWTSecret .Values.global.externalSecrets.enabled }}
             {{- if .Values.global.externalSecrets.enabled }}
@@ -165,9 +165,10 @@ spec:
               --JsonRpc.EngineEnabledModules={{ .Values.execution.jsonrpc.namespaces.nethermind | join "," }}
             {{- end }}
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
-              --Metrics.Enabled={{ .Values.execution.metrics.enabled }}
-              --Metrics.ExposePort={{ .Values.execution.metrics.port }}
-              --Metrics.NodeName=$POD_NAME
+              --metrics-enabled={{ .Values.execution.metrics.enabled }}
+              --metrics-exposeport={{ .Values.execution.metrics.port }}
+              --metrics-exposehost=+
+              --metrics-nodename=$POD_NAME
             {{- end }}
               --Network.MaxActivePeers={{ .Values.execution.targetPeers }}
             {{- if .Values.global.p2pNodePort.enabled }}
@@ -226,7 +227,7 @@ spec:
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --metrics
               --metrics.port={{ .Values.execution.metrics.port }}
-              --metrics.addr={{ .Values.execution.metrics.host }}  
+              --metrics.addr={{ .Values.execution.metrics.host }}
             {{- end }}
             {{- /* Configuration for Besu execution client */}}
             {{- else if eq .Values.execution.client "besu" }}
@@ -253,7 +254,7 @@ spec:
             {{- if and .Values.global.metrics.enabled .Values.execution.metrics.enabled }}
               --metrics-enabled=true
               --metrics.port={{ .Values.execution.metrics.port }}
-              --metrics.addr={{ .Values.execution.metrics.host }}  
+              --metrics.addr={{ .Values.execution.metrics.host }}
             {{- end }}
             {{- /* Configuration for Erigon execution client */}}
             {{- else if eq .Values.execution.client "erigon" }}
@@ -382,7 +383,7 @@ spec:
           Configuration for Prysm beacon client
           */}}
           {{- if eq .Values.beacon.client "prysm" }}
-          args: 
+          args:
             - "--datadir=/data/beacon"
             - "--execution-endpoint=http://localhost:{{ .Values.execution.jsonrpc.engine.port }}"
             - "--{{ .Values.global.network }}"
@@ -636,7 +637,7 @@ spec:
               --rest
               --rest.port={{ index .Values.beacon.restApi.portMap .Values.beacon.client }}
               --rest.address={{ .Values.beacon.restApi.host }}
-              --rest.cors={{ .Values.beacon.restApi.corsOrigins | join "," }} 
+              --rest.cors={{ .Values.beacon.restApi.corsOrigins | join "," }}
             {{- end }}
               --execution.urls=http://127.0.0.1:{{ .Values.execution.jsonrpc.engine.port }}
               --targetPeers={{ .Values.beacon.targetPeers }}
