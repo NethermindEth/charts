@@ -287,7 +287,7 @@ spec:
                   BUCKET_NAME="$BUCKET_NAME"
 
                   # Construct the Cloudflare API URL with account ID and bucket name
-                  CLOUDFLARE_API_URL="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/r2/buckets/$BUCKET_NAME/objects?prefix={{ .Values.backupJunoDataJob.network }}/"
+                  CLOUDFLARE_API_URL="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/r2/buckets/$BUCKET_NAME/objects?per_page=50&prefix={{ .Values.backupJunoDataJob.network }}/"
                   # Get the list of objects with the specified prefix
                   objects=$(curl -s -X GET "$CLOUDFLARE_API_URL" -H "Authorization: Bearer $API_TOKEN" | jq -r '.result')
 
@@ -302,8 +302,8 @@ spec:
                   delete_number=$((object_count - RETENTION_LIMIT))
                   # Sort the objects by last_modified date and delete the oldest ones
                   echo "$objects" | jq -r '.[] | [.key, .last_modified] | @tsv' | sort -k2 | head -n "$delete_number" | while IFS=$'\t' read -r key last_modified; do
-                  delete_url="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/r2/buckets/$BUCKET_NAME/objects/${key}tar"
-                  echo "Deleting ${key}tar at $delete_url"
+                  delete_url="https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/r2/buckets/$BUCKET_NAME/objects/${key}"
+                  echo "Deleting ${key} at $delete_url"
                   delete_response=$(curl -s -X DELETE "$delete_url" -H "Authorization: Bearer $API_TOKEN")
                   echo "Delete response: $delete_response"
                   done
