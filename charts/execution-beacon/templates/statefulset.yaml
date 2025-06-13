@@ -135,7 +135,7 @@ spec:
               {{- end }}
             {{- /* Configuration for Nethermind execution client */}}
             {{- if eq .Values.execution.client "nethermind" }}
-              exec /nethermind/Nethermind.Runner
+              exec /nethermind/nethermind
               --config={{ .Values.global.network }}
               --datadir=/data/execution
             {{- if .Values.execution.jsonrpc.enabled }}
