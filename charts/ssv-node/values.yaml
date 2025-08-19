@@ -8,27 +8,35 @@ imagePullSecrets: []
 replicaCount: 1
 
 image:
-  repository: bloxstaking/ssv-node
+  repository: ssvlabs/ssv-node
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: "v1.3.0-rc.1"
+  tag: "v2.3.3"
 
 config:
   args:
     - make BUILD_PATH=/go/bin/ssvnode start-node
-  network: holesky
+  network: mainnet
   privateKeyFile: /etc/ssv-node/encrypted_private_key.json
   passwordFile: /etc/ssv-node/password
   executionAddress: "ws://geth:8546"
   beaconAddress: "http://lighthouse:5062"
   logLevel: info
+  dbPath: /data/db
 
-env_vars:
+env:
   - name: CONFIG_PATH
     value: /config/config.yaml
 
 externalSecrets:
   enabled: false
+
+persistence:
+  enabled: true
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+  storageClass: ""
+  mountPath: /data
 
 serviceAccount:
   # Specifies whether a service account should be created
