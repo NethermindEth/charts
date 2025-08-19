@@ -19,7 +19,7 @@ data:
       TcpPort: {{ .Values.service.ports.p2pTCP }}
       UdpPort: {{ .Values.service.ports.p2pUDP }}
     db:
-      Path: /data/db
+      Path: {{ .Values.config.dbPath }}
     eth2:
       BeaconNodeAddr: {{ .Values.config.beaconAddress }}
     eth1:
