@@ -272,6 +272,18 @@ entries:
     version: 2.33.5
   ssv-node:
   - apiVersion: v2
+    created: "2025-08-19T14:36:45.566912678Z"
+    description: A Helm chart for Kubernetes
+    digest: 13993e2e0ff8309156dcd18f5b85d10d04b3d02d8b0f1af84b9650b762dab2df
+    maintainers:
+    - email: denis.policastro@nethermind.io
+      name: 0xDones
+    name: ssv-node
+    type: application
+    urls:
+    - https://github.com/NethermindEth/charts/releases/download/ssv-node-0.2.0/ssv-node-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     created: "2024-08-06T07:14:42.097726804Z"
     description: A Helm chart for Kubernetes
     digest: f9aa95c7b1085b3f7f886cd6c388f1baff25757653413efee24db0af9c2602b5
@@ -332,4 +344,4 @@ entries:
     urls:
     - https://github.com/NethermindEth/charts/releases/download/zenrock-mpc-0.1.0/zenrock-mpc-0.1.0.tgz
     version: 0.1.0
-generated: "2024-11-12T05:25:03.451904632Z"
+generated: "2025-08-19T14:36:45.566956269Z"
