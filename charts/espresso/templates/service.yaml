@@ -1,0 +1,28 @@
+{{- range $type, $specs := .Values.nodes }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ include "common.names.fullname" $ }}-{{ $type }}"
+  labels:
+    {{- include "common.labels.standard" $ | nindent 4 }}
+    pod: "{{ include "common.names.fullname" $ }}"
+    type: api
+  {{- with $.Values.service.annotations }}
+  annotations:
+    {{ toYaml . | nindent 4 | trim }}
+  {{- end }}
+  {{- with $.Values.global.namespaceOverride }}
+  namespace: {{ . }}
+  {{- end }}
+spec:
+  type: {{ $.Values.service.type }} # ClusterIP, NodePort, LoadBalancer, or ExternalName
+  ports:
+    - name: api
+      port: {{ $.Values.nodes_config.ESPRESSO_SEQUENCER_API_PORT }}
+      targetPort: api
+      protocol: TCP
+  selector:
+    {{- include "common.labels.matchLabels" $ | nindent 4 }}
+    type: {{ $type }}
+{{- end }}

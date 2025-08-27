@@ -1,0 +1,281 @@
+global:
+  # -- Service account
+  # ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  #
+  serviceAccount:
+    create: false
+    annotations: {}
+
+  namespaceOverride: ""
+
+  # -- Whether or not to allocate persistent volume disk for the data directory.
+  # In case of node failure, the node data directory will still persist.
+  #
+  persistence:
+    storageClassName: ""
+    accessModes:
+      - ReadWriteOnce
+    size: 150Gi
+    annotations: {}
+
+  rbac:
+    create: true
+
+  # -- Network type to be used in Espresso's Node Validator Dashboard for identity purposes.
+  # Values: Residential, Hosted, AWS, Azure, GCP, Cloud Provider.
+  # If the value is a well known cloud provider, then availability zone could be added. E.g. AWS us-east-1a.
+  networkType: ""
+
+nodes:
+  normal:
+    replicaCount: 1
+    command:
+      - "sequencer"
+      - "--"
+      - "http"
+      - "--"
+      - "catchup"
+      - "--"
+      - "status"
+    sqlStorage: false
+    volumeMount: true
+    resources:
+      requests:
+        memory: "12000Mi"
+    # -- Secrets to be used by the node.
+    # The secret key must be the same as the one in the Secret resource or ExternalSecret resource.
+    secrets:
+      # -- Sequencer secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the node type.
+      sequencerSecretKey: ""
+      data: []
+    # secrets:
+    #   data:
+    #     - secretKey: espresso-sequencer-private-keys-normal-asia
+    #       remoteRef:
+    #         key: "espresso-sequencer-private-keys-normal-asia"
+    # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
+    nodeName: ""
+    # nodeName: "nethermind-sequencer-<region>"
+  # da:
+  #   replicaCount: 0
+  #   command:
+  #     - "sequencer"
+  #     - "--"
+  #     - "storage-sql"
+  #     - "--"
+  #     - "http"
+  #     - "--"
+  #     - "catchup"
+  #     - "--"
+  #     - "status"
+  #     - "--"
+  #     - "query"
+  #   sqlStorage: true
+  #   volumeMount: false
+  #   resources:
+  #     requests:
+  #       memory: "12000Mi"
+    # -- Secrets to be used by the node.
+    # The secret key must be the same as the one in the Secret resource or ExternalSecret resource.
+    # secrets:
+    #   # -- Sequencer secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the sequencer node secrets.
+    #   sequencerSecretKey: ""
+    #   # -- Postgres secret key. Must match the secret key in the Secret resource or ExternalSecret resource for the postgres related secrets.
+    #   postgresSecretKey: ""
+    #   data: []
+    # # secrets:
+    # #   data:
+    # #     - secretKey: espresso-sequencer-private-keys-normal-asia
+    # #       remoteRef:
+    # #         key: "espresso-sequencer-private-keys-normal-asia"
+    # # -- Node name to identify the node in the Espresso's Node Validator Dashboard. The node index will be appended to the node name.
+    # nodeName: ""
+    # nodeName: "nethermind-sequencer-da-<region>"
+
+nodes_config:
+  # Required parameters
+  ESPRESSO_SEQUENCER_L1_PROVIDER: ""   # JSON-RPC endpoint for Sepolia testnet
+  ESPRESSO_SEQUENCER_ORCHESTRATOR_URL: https://orchestrator-7BEFB0C9FFC.decaf.testnet.espresso.network
+  ESPRESSO_SEQUENCER_CDN_ENDPOINT: "cdn.decaf.testnet.espresso.network:1737"
+  ESPRESSO_STATE_RELAY_SERVER_URL: https://state-relay.decaf.testnet.espresso.network
+  ESPRESSO_SEQUENCER_STATE_PEERS: https://query.decaf.testnet.espresso.network
+  ESPRESSO_SEQUENCER_GENESIS_FILE: "/genesis/decaf.toml"   # Path to file containing genesis state
+  ESPRESSO_SEQUENCER_LIBP2P_BIND_ADDRESS: "0.0.0.0:31000"   # The address to bind Libp2p to in host:port form. Other nodes should be able to access this.
+  ESPRESSO_SEQUENCER_LIBP2P_ADVERTISE_ADDRESS: "0.0.0.0:31000"   # The address we should advertise to other nodes as being our Libp2p endpoint (in host:port form). It should resolve a connection to the above bind address.
+  # Optional parameters
+  RUST_LOG: "warn,libp2p=off"
+  RUST_LOG_FORMAT: "json"
+  ESPRESSO_SEQUENCER_STORAGE_PATH: "/mount/sequencer/store/"    # Path in container to store consensus state
+  ESPRESSO_SEQUENCER_API_PORT: 80      # Port on which to host metrics and healthchecks
+  ESPRESSO_SEQUENCER_IDENTITY_COMPANY_NAME: "Nethermind"
+  ESPRESSO_SEQUENCER_IDENTITY_COMPANY_WEBSITE: "https://nethermind.io"
+
+image:
+  repository: ghcr.io/espressosystems/espresso-sequencer/sequencer
+  tag: main
+  pullPolicy: IfNotPresent
+
+# -- Init image is used to manage which secrets the pod should use.
+initImage:
+  repository: "bitnami/kubectl"
+  tag: "1.28"
+  pullPolicy: IfNotPresent
+
+# -- Keystore-CLI settings. Used to manage keys on Secret Store.
+keystoreCLI:
+  image:
+    repository: "nethermindeth/espresso-keystore-cli"
+    tag: "v0.1.1"
+    pullPolicy: IfNotPresent
+  projectId: ""  # GCP Project ID
+  pv:
+    secretId: ""   # GCP Secret ID
+  db:
+    secretId: ""   # GCP Secret ID of the DB credentials
+    host: ""       # DB host
+    user: ""       # DB user
+
+service:
+  type: ClusterIP
+  # Port will target ESPRESSO_SEQUENCER_API_PORT
+  annotations: {}
+
+serviceMonitor:
+  # -- The namespace in which the ServiceMonitor will be created
+  namespace: ""
+  # -- The interval at which metrics should be scraped
+  # interval: 30s
+  # -- The timeout after which the scrape is ended
+  scrapeTimeout: ""
+  # -- Metrics RelabelConfigs to apply to samples before scraping.
+  relabellings: []
+  # -- Metrics RelabelConfigs to apply to samples before ingestion.
+  metricRelabelings: []
+  # -- Specify honorLabels parameter to add the scrape endpoint
+  honorLabels: false
+  # -- Additional labels that can be used so ServiceMonitor resource(s) can be discovered by Prometheus
+  additionalLabels: {}
+# -- Custom PrometheusRule to be defined
+# ref: https://github.com/coreos/prometheus-operator#customresourcedefinitions
+#
+prometheusRule:
+  # -- Create a default set of Alerts
+  default: true
+  # -- The namespace in which the prometheusRule will be created
+  namespace: ""
+  # -- Additional labels for the prometheusRule
+  additionalLabels: {}
+  # -- Custom Prometheus rules
+  rules: []
+
+ingress:
+  enabled: false
+  className: ""
+
+  # -- Route Prefix. Can skip it if any item of path has the path defined.
+  routePrefix: /
+
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  labels: {}
+
+  # -- Hostnames.
+  # Can be provided if Ingress is enabled.
+  hosts: []
+  # hosts:
+  #   - host: espresso.example.com
+  #     -- Paths to use for ingress rules
+  #     paths:
+  #       - path: "/metrics"
+  #         port: 9000
+  #         pathType: "Prefix"
+  #       - path: "/api"
+  #         port: 8080
+  #         pathType: "Exact"
+  #       - path: "/health"
+  #         port: 8085
+  #         pathType: "Prefix"
+  #         serviceName: "alternativeServiceName"
+  #   - paths:
+  #       - path: "/metrics"
+  #         port: 9000
+  #         pathType: "Prefix"
+  #     By default, the Service created by this chart is used as the target
+  #     Service for the Ingress.
+  #     If not defined the following default object will be used:
+  #     hosts:
+  #       paths:
+  #       - path: "/"
+  #         port: 8000
+  #         pathType: "ImplementationSpecific"
+  #         serviceName: "<common.names.fullname>"
+
+
+  # -- TLS configuration for Ingress
+  # Secret must be manually created in the namespace
+  #
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+externalSecrets:
+  enabled: false
+  name: "eso-espresso-sequencer-secrets"
+  secretStoreRef:
+    name: secretStoreRef
+    kind: SecretStore
+
+# -- Provide a name to substitute for the full names of resources
+fullnameOverride: ""
+
+# -- Service account
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+#
+serviceAccount:
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  #
+  name: ""
+
+rbac:
+  # -- The name of the role to use.
+  # If not set and create is true, a name is generated using the fullname template
+  #
+  name: ""
+  create: true
+  # -- Required ClusterRole rules
+  clusterRules:
+   # # -- Required to create ServiceMonitor CRD
+    # #
+    - apiGroups: [""]
+      resources:
+      - "services"
+      - "endpoints"
+      verbs:
+      - "get"
+      - "list"
+      - "watch"
+  # -- Required Role rules
+  rules:
+    # -- Required to create Sequencer env Secret.
+    #
+    - apiGroups: [""]
+      resources:
+      - "secrets"
+      verbs:
+      - "create"
+      - "get"
+      - "list"
+      - "watch"
+      - "delete"
+    - apiGroups: [""]
+      resources:
+      - "services"
+      verbs:
+      - "get"
+      - "list"
+      - "watch"
