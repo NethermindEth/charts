@@ -119,10 +119,15 @@ spec:
                   - -c
                   - |
                     exec >> /proc/1/fd/1 2>&1
+                    echo "Stopping dirk..."
+                    kill -TERM 1
+                    sleep {{ .Values.dirk.lifecycle.preStop.sleepBeforeExport }}
+                    echo "Exporting slashing protection..."
                     /app/dirk --export-slashing-protection \
                       --base-dir /data/dirk \
                       --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
                       --slashing-protection-file /data/dirk/slashing-protection.json
+                    echo "Export complete"
           {{- end }}
           ports:
             - name: http

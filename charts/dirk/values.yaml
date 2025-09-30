@@ -77,6 +77,8 @@ dirk:
   lifecycle:
     preStop:
       enabled: true
+      # Time to wait (in seconds) for dirk to stop before running export
+      sleepBeforeExport: 10
 
 imagePullSecrets: []
 
