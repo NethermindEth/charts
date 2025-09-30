@@ -118,16 +118,16 @@ spec:
                   - /bin/sh
                   - -c
                   - |
-                    exec >> /proc/1/fd/1 2>&1
-                    echo "Stopping dirk..."
+                    LOGFILE="/data/dirk/prestop-hook.log"
+                    echo "$(date): Stopping dirk..." | tee -a $LOGFILE >> /proc/1/fd/1 2>&1
                     kill -TERM 1
                     sleep {{ .Values.dirk.lifecycle.preStop.sleepBeforeExport }}
-                    echo "Exporting slashing protection..."
+                    echo "$(date): Exporting slashing protection..." | tee -a $LOGFILE
                     /app/dirk --export-slashing-protection \
                       --base-dir /data/dirk \
                       --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
-                      --slashing-protection-file /data/dirk/slashing-protection.json
-                    echo "Export complete"
+                      --slashing-protection-file /data/dirk/slashing-protection.json 2>&1 | tee -a $LOGFILE
+                    echo "$(date): Export complete" | tee -a $LOGFILE
           {{- end }}
           ports:
             - name: http
