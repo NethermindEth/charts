@@ -115,14 +115,15 @@ spec:
             - |
               LOGFILE="/data/dirk/slashing-export.log"
               trap '
+                echo "$(date): Received SIGTERM, stopping dirk..." >> $LOGFILE
                 kill -TERM $DIRK_PID
                 wait $DIRK_PID
+                echo "$(date): Dirk stopped, exporting..." >> $LOGFILE
                 /app/dirk --export-slashing-protection \
                   --base-dir /data/dirk \
                   --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
-                  --slashing-protection-file /data/dirk/slashing-protection.json \
-                  --log-level debug \
-                  --log-file /data/dirk/slashing-export.log
+                  --slashing-protection-file /data/dirk/slashing-protection.json 2>&1 >> $LOGFILE
+                echo "$(date): Export complete" >> $LOGFILE
                 exit 0
               ' TERM
               /app/dirk --base-dir /data/dirk &
