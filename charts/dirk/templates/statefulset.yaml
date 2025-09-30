@@ -118,14 +118,11 @@ spec:
                   - /bin/sh
                   - -c
                   - |
-                    set -e
-                    echo "Starting slashing protection export..."
+                    exec >> /proc/1/fd/1 2>&1
                     dirk --export-slashing-protection \
                       --base-dir /data/dirk \
                       --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
                       --slashing-protection-file /data/dirk/slashing-protection.json
-                    echo "Slashing protection exported successfully to /data/dirk/slashing-protection.json"
-                    ls -la /data/dirk/slashing-protection.json || echo "Warning: File not found after export"
           {{- end }}
           ports:
             - name: http
