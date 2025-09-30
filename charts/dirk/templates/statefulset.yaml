@@ -120,9 +120,8 @@ spec:
                   - |
                     LOGFILE="/data/dirk/prestop-hook.log"
                     echo "$(date): Stopping dirk..." | tee -a $LOGFILE >> /proc/1/fd/1 2>&1
-                    kill -TERM 1
-                    sleep {{ .Values.dirk.lifecycle.preStop.sleepBeforeExport }}
-                    echo "$(date): Exporting slashing protection..." | tee -a $LOGFILE
+                    while killall -0 dirk; do sleep 1; done
+                    echo "$(date): Dirk stopped, exporting..." | tee -a $LOGFILE
                     /app/dirk --export-slashing-protection \
                       --base-dir /data/dirk \
                       --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
