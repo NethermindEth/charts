@@ -44,6 +44,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "dirk.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       securityContext:
         {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
       initContainers:
@@ -117,10 +118,14 @@ spec:
                   - /bin/sh
                   - -c
                   - |
-                    /app/dirk --export-slashing-protection \
+                    set -e
+                    echo "Starting slashing protection export..."
+                    dirk --export-slashing-protection \
                       --base-dir /data/dirk \
                       --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
-                      --slashing-protection-file=/data/slashing-protection.json
+                      --slashing-protection-file /data/dirk/slashing-protection.json
+                    echo "Slashing protection exported successfully to /data/dirk/slashing-protection.json"
+                    ls -la /data/dirk/slashing-protection.json || echo "Warning: File not found after export"
           {{- end }}
           ports:
             - name: http

@@ -114,6 +114,9 @@ readinessProbe:
 
 minReadySeconds: 10
 
+## Termination grace period in seconds (time allowed for preStop hook to complete)
+terminationGracePeriodSeconds: 60
+
 persistence:
   storageClassName: ""
   accessModes:
