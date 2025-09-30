@@ -60,6 +60,23 @@ dirk:
   tracing:
 
   fetchKeysExtraFlags: []
+  
+  ## Network configuration
+  ## Specify the network to use the correct genesis validators root
+  network: "holesky"  # Options: mainnet, holesky, hoodi, sepolia
+  
+  ## Genesis validators root mapping by network
+  ## ref: https://github.com/eth-clients/eth2-networks
+  genesisValidatorsRoot:
+    mainnet: "0x4b363db94e286120d76eb905340fdd4e54bfe9f06bf33ff6cf5ad27f511bfe95"
+    holesky: "0x9143aa7c615a7f7115e2b6aac319c03529df8242ae705fba9df39b79c59fa8b1"
+    hoodi: "0x212f13fc4df078b6cb7db228f1c8307566dcecf900867401a92023d7ba99cb5f"
+    sepolia: "0xd8ea171f3c94aea21ebc42a1ed61052acf3f9209c00e4efbaaddac09ed9b8078"
+  
+  ## Lifecycle hooks configuration for slashing protection export
+  lifecycle:
+    preStop:
+      enabled: true
 
 imagePullSecrets: []
 

@@ -109,6 +109,19 @@ spec:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}
           args: [ "--base-dir", "/data/dirk" ]
+          {{- if .Values.dirk.lifecycle.preStop.enabled }}
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    /app/dirk --export-slashing-protection \
+                      --base-dir /data/dirk \
+                      --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
+                      --slashing-protection-file=/data/slashing-protection.json
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.httpPort }}
