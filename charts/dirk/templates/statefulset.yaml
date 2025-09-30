@@ -109,25 +109,26 @@ spec:
           envFrom:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}
-          args: [ "--base-dir", "/data/dirk" ]
-          {{- if .Values.dirk.lifecycle.preStop.enabled }}
-          lifecycle:
-            preStop:
-              exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  - |
-                    LOGFILE="/data/dirk/prestop-hook.log"
-                    echo "$(date): Stopping dirk..." | tee -a $LOGFILE >> /proc/1/fd/1 2>&1
-                    while killall -0 dirk; do sleep 1; done
-                    echo "$(date): Dirk stopped, exporting..." | tee -a $LOGFILE
-                    /app/dirk --export-slashing-protection \
-                      --base-dir /data/dirk \
-                      --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
-                      --slashing-protection-file /data/dirk/slashing-protection.json 2>&1 | tee -a $LOGFILE
-                    echo "$(date): Export complete" | tee -a $LOGFILE
-          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              LOGFILE="/data/dirk/slashing-export.log"
+              trap '
+                echo "$(date): Received SIGTERM, stopping dirk..." >> $LOGFILE
+                kill -TERM $DIRK_PID
+                wait $DIRK_PID
+                echo "$(date): Dirk stopped, exporting..." >> $LOGFILE
+                /app/dirk --export-slashing-protection \
+                  --base-dir /data/dirk \
+                  --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
+                  --slashing-protection-file /data/dirk/slashing-protection.json 2>&1 >> $LOGFILE
+                echo "$(date): Export complete" >> $LOGFILE
+                exit 0
+              ' TERM
+              /app/dirk --base-dir /data/dirk &
+              DIRK_PID=$!
+              wait $DIRK_PID
           ports:
             - name: http
               containerPort: {{ .Values.service.httpPort }}

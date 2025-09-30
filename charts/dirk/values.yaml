@@ -73,11 +73,6 @@ dirk:
     hoodi: "0x212f13fc4df078b6cb7db228f1c8307566dcecf900867401a92023d7ba99cb5f"
     sepolia: "0xd8ea171f3c94aea21ebc42a1ed61052acf3f9209c00e4efbaaddac09ed9b8078"
   
-  ## Lifecycle hooks configuration for slashing protection export
-  lifecycle:
-    preStop:
-      enabled: true
-
 imagePullSecrets: []
 
 ## Provide a name in place of operator for `app:` labels
