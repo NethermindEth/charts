@@ -6,7 +6,11 @@ metadata:
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
 spec:
+  {{- if not .Values.vouchMultiInstance }}
   replicas: 1
+  {{- else }}
+  replicas: 2
+  {{- end }}
   selector:
     matchLabels:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
@@ -50,7 +54,10 @@ spec:
             - -ac
             - >
               mkdir -p {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/;
-              cp /config/vouch.yaml {{ .Values.vouchDataDir }}/;
+              export INDEX=$((${HOSTNAME##*-}));
+              echo "Statefulset index";
+              echo $INDEX;
+              [ "$INDEX" = 0 ] && cp /config/vouch.yaml {{ .Values.vouchDataDir }}/vouch.yaml || cp /config/vouch-inactive.yaml {{ .Values.vouchDataDir }}/vouch.yaml;
               printenv CA_CRT | base64 -d  > {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.crt;
               printenv CA_KEY | base64 -d  > {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.key;
               bash /scripts/generate_cert.sh {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ ca {{ include "common.names.fullname" . }};
