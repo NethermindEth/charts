@@ -6,7 +6,11 @@ metadata:
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
 spec:
+  {{- if not .Values.vouchMultiInstance }}
   replicas: 1
+  {{- else }}
+  replicas: 2
+  {{- end }}
   selector:
     matchLabels:
       {{- include "common.labels.matchLabels" . | nindent 6 }}
@@ -51,6 +55,8 @@ spec:
             - >
               apk add openssl;
               mkdir -p {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/;
+              export INDEX=$((${HOSTNAME##*-}));
+              [ "$INDEX" = 0 ] && cp cp /config/vouch.yaml {{ .Values.vouchDataDir }}/ || echo cp /config/vouch-inactive.yaml {{ .Values.vouchDataDir }}/;
               cp /config/vouch.yaml {{ .Values.vouchDataDir }}/;
               printenv vouch-ca.crt | base64 -d  > {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.crt;
               printenv vouch-ca.key | base64 -d  > {{ .Values.vouchDataDir }}/{{ include "common.names.fullname" . }}/certs/ca.key;

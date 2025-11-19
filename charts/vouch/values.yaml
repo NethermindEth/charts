@@ -67,6 +67,8 @@ vouch:
   strategies:
   submitter:
 
+vouchMultiInstance:
+
 relays: []
 
 imagePullSecrets: []
