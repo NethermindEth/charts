@@ -51,10 +51,23 @@ gasLimit:
 
 vouchDataDir: /data/vouch
 
-vouchMultiInstance:
 
 vouchFullConfig:
+
+# Multi-instance Vouch configuration
+#
+# vouchMultiInstance: true
+#
+# Config options
+# Option 1: Use vouchInactiveFullConfig directly – the inactive instance will load this config in full.
+# Option 2: Use vouchInactiveConfigAddition – the inactive instance starts with the full vouchFullConfig
+# and only adds the additional settings from vouchInactiveConfigAddition.
+vouchMultiInstance:
+
+# Option 1
 vouchInactiveFullConfig:
+# Option 2
+vouchInactiveConfigAddition:
 
 relays: []
 

@@ -7,12 +7,14 @@ metadata:
     {{- include "common.labels.standard" . | nindent 4 }}
 data:
   vouch.yaml: |
-  {{- if .Values.vouchFullConfig }}
     {{- toYaml .Values.vouchFullConfig | nindent 4 }}
-  {{- end }}
   vouch-inactive.yaml: |
   {{- if .Values.vouchInactiveFullConfig }}
     {{- toYaml .Values.vouchInactiveFullConfig | nindent 4 }}
+  {{- end }}
+  {{- if .Values.vouchInactiveConfigAddition }}
+    {{- toYaml .Values.vouchFullConfig | nindent 4 }}
+    {{- toYaml .Values.vouchInactiveConfigAddition | nindent 4 }}
   {{- end }}
 ---
 apiVersion: v1
