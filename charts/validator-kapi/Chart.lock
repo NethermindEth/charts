@@ -3,7 +3,7 @@ dependencies:
   repository: file://../common
   version: 1.0.0
 - name: postgresql
-  repository: https://charts.bitnami.com/bitnami/
-  version: 12.2.6
-digest: sha256:10931c3310ac282e9608cc8d77176b6e16cf8ee299bba34b75d0d96d12145778
-generated: "2023-03-28T21:51:52.672669+02:00"
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 13.2.23
+digest: sha256:7b9f05b7edc7f63ef9deccb8b2bf13a45eb3dc375496972cb86f43b6964ef170
+generated: "2026-01-12T17:16:56.172597+02:00"
