@@ -8,13 +8,13 @@ metadata:
 data:
   vouch.yaml: |
     {{- toYaml .Values.vouchFullConfig | nindent 4 }}
-  vouch-inactive.yaml: |
-  {{- if .Values.vouchInactiveFullConfig }}
-    {{- toYaml .Values.vouchInactiveFullConfig | nindent 4 }}
+  vouch-fallback.yaml: |
+  {{- if .Values.vouchFallbackFullConfig }}
+    {{- toYaml .Values.vouchFallbackFullConfig | nindent 4 }}
   {{- end }}
-  {{- if .Values.vouchInactiveConfigAddition }}
+  {{- if .Values.vouchFallbackConfigAddition }}
     {{- toYaml .Values.vouchFullConfig | nindent 4 }}
-    {{- toYaml .Values.vouchInactiveConfigAddition | nindent 4 }}
+    {{- toYaml .Values.vouchFallbackConfigAddition | nindent 4 }}
   {{- end }}
 ---
 apiVersion: v1

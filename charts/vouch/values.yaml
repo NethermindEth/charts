@@ -59,15 +59,15 @@ vouchFullConfig:
 # vouchMultiInstance: true
 #
 # Config options
-# Option 1: Use vouchInactiveFullConfig directly – the inactive instance will load this config in full.
-# Option 2: Use vouchInactiveConfigAddition – the inactive instance starts with the full vouchFullConfig
-# and only adds the additional settings from vouchInactiveConfigAddition.
+# Option 1: Use vouchFallbackFullConfig directly – the fallback instance will load this config in full.
+# Option 2: Use vouchFallbackConfigAddition – the fallback instance starts with the full vouchFullConfig
+# and only adds the additional settings from vouchFallbackConfigAddition.
 vouchMultiInstance:
 
 # Option 1
-vouchInactiveFullConfig:
+vouchFallbackFullConfig:
 # Option 2
-vouchInactiveConfigAddition:
+vouchFallbackConfigAddition:
 
 relays: []
 
