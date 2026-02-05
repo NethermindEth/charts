@@ -51,39 +51,23 @@ gasLimit:
 
 vouchDataDir: /data/vouch
 
-# use vouchFullConfig: to provide all vouch.yaml values
-# use vouch: to populate good defaults and to do minimal changes
+
 vouchFullConfig:
-vouch:
-  beaconnodeaddress: localhost:5052
-  beaconnodeaddresses:
-  - localhost:5051
-  - localhost:5052
-  loglevel: 'debug'
-  graffiti:
-    static:
-      value: 'My graffiti'
-  accountmanager:
-    dirk:
-      endpoints:
-        - dirk-1:8881
-        - dirk-2:8881
-        - dirk-3:8881
-      accounts:
-        - Validators
-      timeout: 1m
-  feerecipient:
-    defaultaddress: '0x0000000000000000000000000000000000000001'
-  metrics:
-    prometheus:
-      loglevel: 'trace'
-      listenaddress: '0.0.0.0:8081'
-  blockrelay:
-    listen-address: '0.0.0.0:18550'
-    fallbackfeerecipient: '0x0000000000000000000000000000000000000001'
-  tracing:
-  strategies:
-  submitter:
+
+# Multi-instance Vouch configuration
+#
+# vouchMultiInstance: true
+#
+# Config options
+# Option 1: Use vouchFallbackFullConfig directly – the fallback instance will load this config in full.
+# Option 2: Use vouchFallbackConfigAddition – the fallback instance starts with the full vouchFullConfig
+# and only adds the additional settings from vouchFallbackConfigAddition.
+vouchMultiInstance:
+
+# Option 1
+vouchFallbackFullConfig:
+# Option 2
+vouchFallbackConfigAddition:
 
 relays: []
 
