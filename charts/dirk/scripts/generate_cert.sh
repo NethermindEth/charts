@@ -9,6 +9,9 @@ generate_certs() {
 LOCATION=$1
 CA_CERT_NAME=$2
 CERT_NAME=$3
+DOMAIN=$4
+
+echo "DOMAIN: ${DOMAIN}"
 
 mkdir -p "${LOCATION}"
 pushd "${LOCATION}"
@@ -35,6 +38,11 @@ subjectAltName = @alt_names
 [alt_names]
 DNS.1 = "${CERT_NAME}"
 EOEXT
+
+if [ -n "${DOMAIN}" ]; then echo "DNS.2 = \"${CERT_NAME}.${DOMAIN}\"" >> "${CERT_NAME}.ext"; fi
+
+
+cat "${CERT_NAME}".ext
 
   openssl genrsa -out "${CERT_NAME}.key" 4096
   openssl req -out "${CERT_NAME}.csr" -key "${CERT_NAME}.key" -new -subj "/CN=${CERT_NAME}" -addext "subjectAltName=DNS:${CERT_NAME}"
