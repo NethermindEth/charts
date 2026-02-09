@@ -44,6 +44,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "dirk.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       securityContext:
         {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
       initContainers:
@@ -99,6 +100,31 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+        {{- if .Values.dirk.importSlashingProtection.enabled }}
+        - name: import-slashing-protection
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.global.securityContext | nindent 12 }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "$(date): Checking for slashing protection file..."
+              if [ -f "{{ .Values.dirk.importSlashingProtection.protectionFile }}" ]; then
+                echo "$(date): Importing slashing protection..."
+                /app/dirk --import-slashing-protection \
+                  --base-dir /data/dirk \
+                  --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
+                  --slashing-protection-file {{ .Values.dirk.importSlashingProtection.protectionFile }}
+                echo "$(date): Import complete"
+              else
+                echo "$(date): No slashing protection file found, skipping import"
+              fi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+        {{- end }}
       containers:
         - name: dirk
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -108,7 +134,26 @@ spec:
           envFrom:
             - secretRef:
                 name: eso-{{ include "common.names.fullname" . }}
-          args: [ "--base-dir", "/data/dirk" ]
+          command:
+            - /bin/sh
+            - -c
+            - |
+              LOGFILE="/data/dirk/slashing-export.log"
+              trap '
+                echo "$(date): Received SIGTERM, stopping dirk..." >> $LOGFILE
+                kill -TERM $DIRK_PID
+                wait $DIRK_PID
+                echo "$(date): Dirk stopped, exporting..." >> $LOGFILE
+                /app/dirk --export-slashing-protection \
+                  --base-dir /data/dirk \
+                  --genesis-validators-root {{ index .Values.dirk.genesisValidatorsRoot .Values.dirk.network }} \
+                  --slashing-protection-file {{ .Values.dirk.importSlashingProtection.protectionFile }} 2>&1 >> $LOGFILE
+                echo "$(date): Export complete" >> $LOGFILE
+                exit 0
+              ' TERM
+              /app/dirk --base-dir /data/dirk &
+              DIRK_PID=$!
+              wait $DIRK_PID
           ports:
             - name: http
               containerPort: {{ .Values.service.httpPort }}
