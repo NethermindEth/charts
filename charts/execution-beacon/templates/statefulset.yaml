@@ -38,7 +38,7 @@ spec:
         {{ toYaml . | nindent 8 | trim }}
     {{- end }}
       securityContext:
-        {{- toYaml .Values.global.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.global.securityContextPod | nindent 8 }}
     {{- if .Values.global.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.global.terminationGracePeriodSeconds }}
     {{- end }}
@@ -50,7 +50,8 @@ spec:
           image: "{{ .Values.global.initImage.repository }}:{{ .Values.global.initImage.tag }}"
           imagePullPolicy: {{ .Values.global.initImage.pullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            runAsNonRoot: false
+            runAsUser: 0
           env:
             - name: POD_IP
               valueFrom:
@@ -89,7 +90,8 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.beacon.imagePullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            runAsNonRoot: false
+            runAsUser: {{ .Values.global.securityContextContainers.runAsUser }}
           command:
             - sh
             - -ac
@@ -115,12 +117,7 @@ spec:
           image: "{{ (pluck .Values.execution.client .Values.global.image.execution | first ).repository }}:{{ (pluck .Values.execution.client .Values.global.image.execution | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
+            {{ toYaml .Values.global.securityContextContainers | nindent 12 | trim }}
           {{- if .Values.global.externalSecrets.enabled }}
           envFrom:
             - secretRef:
@@ -377,12 +374,7 @@ spec:
           image: "{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).repository }}:{{ (pluck .Values.beacon.client .Values.global.image.beacon | first ).tag }}"
           imagePullPolicy: {{ .Values.global.image.imagePullPolicy }}
           securityContext:
-            readOnlyRootFilesystem: false
-            runAsNonRoot: true
-            runAsUser: 10000
-            capabilities:
-              drop:
-              - ALL
+            {{ toYaml .Values.global.securityContextContainers | nindent 12 | trim }}
           {{/* Configuration for Prysm beacon client */}}
           {{- if eq .Values.beacon.client "prysm" }}
           args: 
@@ -715,7 +707,7 @@ spec:
           image: "{{ .Values.global.ethsider.repository }}:{{ .Values.global.ethsider.tag }}"
           imagePullPolicy: {{ .Values.global.ethsider.pullPolicy }}
           securityContext:
-            {{- toYaml .Values.global.securityContext | nindent 12 }}
+            {{- toYaml .Values.global.securityContextContainers | nindent 12 }}
           env:
             - name: EXECUTION_ENDPOINT
               value: "http://localhost:{{ .Values.execution.jsonrpc.http.port }}"

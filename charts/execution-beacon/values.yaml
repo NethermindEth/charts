@@ -242,13 +242,12 @@ global:
   ## Pod Security Context
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
   ##
-  podSecurityContext:
+  securityContextPod:
     runAsNonRoot: true
     runAsUser: 10000
-    fsGroup: 10000
 
-  securityContext:
-    readOnlyRootFilesystem: true
+  securityContextContainers:
+    readOnlyRootFilesystem: false
     runAsNonRoot: true
     runAsUser: 10000
     capabilities:
