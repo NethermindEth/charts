@@ -41,7 +41,6 @@ global:
     tag: "v0.0.26"
 
 loader:
-  EIP2335_PASSWORD: "test"
   ENCRYPTION: "EIP2335"
   ENCRYPT_WITH_METADATA: "false"
   BEACON_ENDPOINT: "http://192.168.11.104:5052"
