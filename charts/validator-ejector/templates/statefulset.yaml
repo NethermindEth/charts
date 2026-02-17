@@ -51,30 +51,10 @@ spec:
                 secretKeyRef:
                   name: eso-{{ include "common.names.fullname" . }}
                   key: MESSAGES_PASSWORD
-            - name: ENCRYPTION
-              value: {{ .Values.loader.ENCRYPTION | quote }}
-            - name: ENCRYPT_WITH_METADATA
-              value: {{ .Values.loader.ENCRYPT_WITH_METADATA | quote }}
-            - name: BEACON_ENDPOINT
-              value: {{ .Values.loader.BEACON_ENDPOINT | quote }}
-            - name: CUSTODIAN_WEB3SIGNER_MAPPER
-              value: {{ .Values.loader.CUSTODIAN_WEB3SIGNER_MAPPER | quote }}
-            - name: STORAGE_LOCATION
-              value: {{ .Values.loader.STORAGE_LOCATION | quote }}
-            - name: FETCH_INTERVAL
-              value: {{ .Values.loader.FETCH_INTERVAL | quote }}
-            - name: LOADER_MAPPER
-              value: {{ .Values.loader.LOADER_MAPPER | quote }}
-            - name: SIGNER_MAPPER
-              value: {{ .Values.loader.SIGNER_MAPPER | quote }}
-            - name: KEY_LOADER_TYPE
-              value: {{ .Values.loader.KEY_LOADER_TYPE | quote }}
-            - name: ENCRYPTION_TYPE
-              value: {{ .Values.loader.ENCRYPTION_TYPE | quote }}
-            - name: LidoKAPI_OPERATOR_ID
-              value: {{ .Values.loader.LidoKAPI_OPERATOR_ID | quote }}
-            - name: LidoKAPI_KEYS_PERCENT
-              value: {{ .Values.loader.LidoKAPI_KEYS_PERCENT | quote }}
+            {{- range $key, $value := .Values.loader }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           volumeMounts:
             - name: data-ejector
               mountPath: /data
