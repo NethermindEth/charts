@@ -24,6 +24,7 @@ metadata:
 spec:
   type: {{ $.Values.global.p2pNodePort.type }}
   externalTrafficPolicy: Local
+  publishNotReadyAddresses: true
   ports:
     - name: p2p-tcp-exec
       port: {{ include "execution.p2pPort" $ }}
@@ -58,6 +59,7 @@ metadata:
 spec:
   type: {{ $.Values.global.p2pNodePort.type }}
   externalTrafficPolicy: Local
+  publishNotReadyAddresses: true
   ports:
     - name: p2p-tcp-beacon
       port: {{ include "beacon.p2pPort" $ }}
